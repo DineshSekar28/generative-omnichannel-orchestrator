@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Omnichannel AI Orchestrator - Architecture Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #ffffff;
+            --bg-card: #f8fafc;
+            --bg-hover: #e2e8f0;
+            --accent-blue: #0284c7;
+            --accent-green: #16a34a;
+            --accent-purple: #9333ea;
+            --accent-orange: #ea580c;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border: #cbd5e1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 32px 24px;
+            line-height: 1.6;
+        }
+
+        /* ============ HEADER ============ */
+        header {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-sub);
+            font-size: 1rem;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* ============ MASTER DIAGRAM SECTION ============ */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            font-size: 1.8rem;
+        }
+
+        .master-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .diagram-placeholder {
+            background: #f0f9ff;
+            border: 2px solid var(--accent-blue);
+            border-radius: 6px;
+            padding: 20px;
+            color: var(--text-sub);
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .diagram-placeholder:hover {
+            background: #e0f2fe;
+            border-color: #0284c7;
+        }
+
+        .diagram-placeholder img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .master-info {
+            background: #eff6ff;
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-top: 16px;
+        }
+
+        /* ============ VISUAL FLOW DIAGRAM ============ */
+        .flow-diagram {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+
+        .flow-diagram svg {
+            min-width: 100%;
+            height: auto;
+        }
+
+        .plane-box {
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .plane-box:hover {
+            opacity: 0.8;
+        }
+
+        .plane-box:hover rect {
+            filter: brightness(0.9);
+        }
+
+        /* ============ PLANE SECTIONS ============ */
+        .planes-container {
+            display: grid;
+            gap: 24px;
+        }
+
+        .plane-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .plane-section:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 16px rgba(56, 189, 248, 0.1);
+        }
+
+        /* ============ PLANE HEADER (CLICKABLE) ============ */
+        .plane-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dbeafe, #ddf4f2);
+            border-bottom: 2px solid var(--border);
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .plane-header:hover {
+            background: linear-gradient(135deg, #bfdbfe, #bff4ed);
+        }
+
+        .plane-header.expanded {
+            background: linear-gradient(135deg, #93c5fd, #7dd3c0);
+        }
+
+        .plane-title-group {
+            flex: 1;
+        }
+
+        .plane-number {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+        }
+
+        .plane-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+
+        .plane-emoji {
+            font-size: 1.4rem;
+            margin-right: 12px;
+        }
+
+        .plane-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+
+        .expand-icon {
+            font-size: 1.4rem;
+            color: var(--accent-blue);
+            transition: transform 0.3s ease;
+            width: 24px;
+            text-align: center;
+        }
+
+        .plane-header.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        /* ============ PLANE CONTENT ============ */
+        .plane-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #f5f9fc;
+        }
+
+        .plane-content.expanded {
+            max-height: 2000px;
+        }
+
+        .plane-content-inner {
+            padding: 24px;
+        }
+
+        /* Plane Diagram */
+        .plane-diagram-container {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .plane-diagram-label {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .diagram-placeholder.plane-diagram {
+            padding: 20px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        /* Services List */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .service-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-blue);
+            transition: width 0.2s ease;
+        }
+
+        .service-card:hover {
+            background: #f0f9ff;
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+        }
+
+        .service-card:hover::before {
+            width: 8px;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .service-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            flex: 1;
+        }
+
+        .service-tag {
+            font-family: monospace;
+            font-size: 0.7rem;
+            background: var(--accent-blue);
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .service-codebase {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #0284c7;
+            background: #eff6ff;
+            padding: 4px 8px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            display: block;
+            overflow-x: auto;
+            border: 1px solid #bfdbfe;
+        }
+
+        .service-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .view-diagram-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #eff6ff;
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .view-diagram-btn:hover {
+            background: var(--accent-blue);
+            color: #ffffff;
+        }
+
+        /* ============ DATA STORES SECTION ============ */
+        .datastores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .datastore-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .datastore-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+        }
+
+        .datastore-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, #0284c7, #9333ea);
+        }
+
+        .datastore-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .datastore-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+
+        .datastore-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        /* ============ MODAL/DIAGRAM VIEWER ============ */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.7);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.open {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.2);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-sub);
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--accent-blue);
+        }
+
+        .modal-diagram {
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        .modal-diagram img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plane-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .expand-icon {
+                align-self: flex-end;
+                margin-top: -32px;
+            }
+        }
+
+        /* ============ FOOTER ============ */
+        footer {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 24px;
+            margin-top: 48px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: #0284c7;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+            color: #0972ba;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============ HEADER ============ -->
+    <header>
+        <h1>🏗️ Generative Omnichannel AI Orchestrator</h1>
+        <p class="subtitle">
+            <span class="stat-badge">📊 8 Architectural Planes</span>
+            <span class="stat-badge">🔧 21 Microservices</span>
+            <span class="stat-badge">💾 3 Data Stores</span>
+            <span class="stat-badge">⚡ Enterprise-Scale</span>
+        </p>
+    </header>
+
+    <!-- ============ MASTER DIAGRAM ============ -->
+    <section class="section">
+        <div class="section-title">
+            <span class="section-icon">🎯</span>
+            Master Architecture Overview
+        </div>
+        <div class="master-container">
+            <div class="diagram-placeholder">
+                <img src="diagrams/master/master-architecture.png" alt="Master Architecture" onerror="this.innerHTML='📊 Master Diagram (Pending Upload)'">
+            </div>
+            <p style="color: var(--text-sub); font-size: 0.9rem;">Complete system architecture showing all 8 planes, external systems, and data persistence layer.</p>
+        </div>
+    </section>
+
+    <!-- ============ VISUAL FLOW DIAGRAM ============ -->
+    <section class="section">
+        <div class="section-title">
+            <span class="section-icon">🔄</span>
+            Data & Control Flow
+        </div>
+        <div class="flow-diagram">
+            <svg viewBox="0 0 1400 500" xmlns="http://www.w3.org/2000/svg" id="flowDiagram">
+                <!-- Background -->
+                <rect width="1400" height="500" fill="#ffffff"/>
+                
+                <!-- Title -->
+                <text x="700" y="25" text-anchor="middle" font-size="16" fill="#0284c7" font-weight="bold">Correct Data & Control Flow Architecture (Click any plane to explore)</text>
+                
+                <!-- ============ DESIGN-TIME LAYER (Top) ============ -->
+                <text x="50" y="60" font-size="12" fill="#0284c7" font-weight="bold">DESIGN-TIME</text>
+                <g class="plane-box" onclick="navigateToPlane(1)">
+                    <rect x="20" y="75" width="100" height="80" fill="#dbeafe" stroke="#0284c7" stroke-width="2" rx="4"/>
+                    <text x="70" y="100" text-anchor="middle" font-size="11" fill="#0284c7" font-weight="bold">Plane 1</text>
+                    <text x="70" y="118" text-anchor="middle" font-size="9" fill="#64748b">Design-Time</text>
+                    <text x="70" y="130" text-anchor="middle" font-size="9" fill="#64748b">Control</text>
+                </g>
+                
+                <!-- ============ DATA STORES (Center) ============ -->
+                <g>
+                    <rect x="570" y="40" width="260" height="120" fill="#f0f9ff" stroke="#0284c7" stroke-width="2" rx="4" stroke-dasharray="5,5"/>
+                    <text x="700" y="60" text-anchor="middle" font-size="12" fill="#0284c7" font-weight="bold">💾 DATA STORES</text>
+                    <text x="700" y="80" text-anchor="middle" font-size="9" fill="#64748b">Templates, Policies,</text>
+                    <text x="700" y="93" text-anchor="middle" font-size="9" fill="#64748b">Session Context,</text>
+                    <text x="700" y="106" text-anchor="middle" font-size="9" fill="#64748b">Metrics & Logs</text>
+                    <text x="700" y="119" text-anchor="middle" font-size="8" fill="#64748b" font-style="italic">(MongoDB, Neo4j, PostgreSQL)</text>
+                </g>
+                
+                <!-- Arrow: Plane 1 → Data Stores -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#0284c7"/>
+                    </marker>
+                    <marker id="arrowhead-orange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#ea580c"/>
+                    </marker>
+                    <marker id="arrowhead-purple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#9333ea"/>
+                    </marker>
+                </defs>
+                
+                <line x1="120" y1="115" x2="570" y2="100" stroke="#0284c7" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="340" y="95" font-size="9" fill="#0284c7" font-weight="600">Stores templates/policies</text>
+                
+                <!-- ============ RUNTIME PIPELINE (Bottom) ============ -->
+                <text x="50" y="240" font-size="12" fill="#16a34a" font-weight="bold">RUNTIME EXECUTION</text>
+                
+                <!-- Customer Input -->
+                <g>
+                    <circle cx="100" cy="300" r="25" fill="#e0e7ff" stroke="#0284c7" stroke-width="2"/>
+                    <text x="100" y="305" text-anchor="middle" font-size="9" fill="#0284c7" font-weight="bold">User</text>
+                </g>
+                
+                <text x="100" y="340" text-anchor="middle" font-size="8" fill="#64748b">Customer</text>
+                <text x="100" y="350" text-anchor="middle" font-size="8" fill="#64748b">Requests</text>
+                
+                <!-- Arrow: User → Plane 2 -->
+                <line x1="125" y1="300" x2="180" y2="300" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowhead)"/>
+                
+                <!-- Plane 2 -->
+                <g class="plane-box" onclick="navigateToPlane(2)">
+                    <rect x="180" y="260" width="90" height="80" fill="#cffafe" stroke="#06b6d4" stroke-width="2" rx="4"/>
+                    <text x="225" y="283" text-anchor="middle" font-size="11" fill="#0891b2" font-weight="bold">Plane 2</text>
+                    <text x="225" y="298" text-anchor="middle" font-size="8" fill="#64748b">Real-Time</text>
+                    <text x="225" y="308" text-anchor="middle" font-size="8" fill="#64748b">Streaming</text>
+                    <text x="225" y="318" text-anchor="middle" font-size="8" fill="#64748b">&amp; Frontend</text>
+                </g>
+                
+                <!-- Arrow: Plane 2 → Plane 3 -->
+                <line x1="270" y1="300" x2="325" y2="300" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowhead)"/>
+                
+                <!-- Plane 3 -->
+                <g class="plane-box" onclick="navigateToPlane(3)">
+                    <rect x="325" y="260" width="90" height="80" fill="#dcfce7" stroke="#16a34a" stroke-width="2" rx="4"/>
+                    <text x="370" y="283" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="bold">Plane 3</text>
+                    <text x="370" y="298" text-anchor="middle" font-size="8" fill="#64748b">Orchestration</text>
+                    <text x="370" y="308" text-anchor="middle" font-size="8" fill="#64748b">&amp; Gateways</text>
+                </g>
+                
+                <!-- Arrow: Plane 3 → Plane 4 -->
+                <line x1="415" y1="300" x2="470" y2="300" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowhead)"/>
+                
+                <!-- Plane 4 -->
+                <g class="plane-box" onclick="navigateToPlane(4)">
+                    <rect x="470" y="260" width="90" height="80" fill="#dcfce7" stroke="#22c55e" stroke-width="2" rx="4"/>
+                    <text x="515" y="283" text-anchor="middle" font-size="11" fill="#15803d" font-weight="bold">Plane 4</text>
+                    <text x="515" y="298" text-anchor="middle" font-size="8" fill="#64748b">MCP</text>
+                    <text x="515" y="308" text-anchor="middle" font-size="8" fill="#64748b">Providers</text>
+                </g>
+                
+                <!-- Arrow: Plane 4 → Plane 5 -->
+                <line x1="560" y1="300" x2="615" y2="300" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowhead)"/>
+                
+                <!-- Plane 5 -->
+                <g class="plane-box" onclick="navigateToPlane(5)">
+                    <rect x="615" y="260" width="90" height="80" fill="#cffafe" stroke="#06b6d4" stroke-width="2" rx="4"/>
+                    <text x="660" y="283" text-anchor="middle" font-size="11" fill="#0891b2" font-weight="bold">Plane 5</text>
+                    <text x="660" y="298" text-anchor="middle" font-size="8" fill="#64748b">Stateful</text>
+                    <text x="660" y="308" text-anchor="middle" font-size="8" fill="#64748b">Intelligence</text>
+                </g>
+                
+                <!-- Arrow: Plane 5 → External LLMs -->
+                <line x1="705" y1="300" x2="760" y2="300" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowhead)"/>
+                
+                <!-- External LLMs -->
+                <g>
+                    <circle cx="800" cy="300" r="30" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+                    <text x="800" y="303" text-anchor="middle" font-size="9" fill="#9333ea" font-weight="bold">LLM</text>
+                    <text x="800" y="315" text-anchor="middle" font-size="8" fill="#7e22ce">APIs</text>
+                </g>
+                
+                <!-- ============ OBSERVABILITY & FEEDBACK (Right Side) ============ -->
+                <!-- Plane 6: All planes report metrics -->
+                <g class="plane-box" onclick="navigateToPlane(6)">
+                    <rect x="900" y="240" width="110" height="100" fill="#fed7aa" stroke="#ea580c" stroke-width="2" rx="4"/>
+                    <text x="955" y="265" text-anchor="middle" font-size="11" fill="#c2410c" font-weight="bold">Plane 6</text>
+                    <text x="955" y="280" text-anchor="middle" font-size="8" fill="#64748b">Observability</text>
+                    <text x="955" y="290" text-anchor="middle" font-size="8" fill="#64748b">&amp; Governance</text>
+                    <text x="955" y="305" text-anchor="middle" font-size="8" fill="#64748b">(Monitoring,</text>
+                    <text x="955" y="315" text-anchor="middle" font-size="8" fill="#64748b">Quality, PII)</text>
+                </g>
+                
+                <!-- Arrows from Planes 2-5 to Plane 6 (metrics) -->
+                <line x1="225" y1="340" x2="930" y2="300" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrowhead-orange)"/>
+                <line x1="370" y1="340" x2="930" y2="300" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrowhead-orange)"/>
+                <line x1="515" y1="340" x2="930" y2="305" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrowhead-orange)"/>
+                <line x1="660" y1="340" x2="945" y2="310" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrowhead-orange)"/>
+                
+                <!-- Plane 6 → Data Stores (logs metrics) -->
+                <line x1="955" y1="340" x2="700" y2="160" stroke="#ea580c" stroke-width="2" marker-end="url(#arrowhead-orange)"/>
+                <text x="850" y="240" font-size="9" fill="#ea580c" font-weight="600">Emits metrics &amp; logs</text>
+                
+                <!-- ============ EVALUATION & MAINTENANCE (Right Bottom) ============ -->
+                <!-- Plane 7 -->
+                <g class="plane-box" onclick="navigateToPlane(7)">
+                    <rect x="900" y="380" width="110" height="90" fill="#f3e8ff" stroke="#9333ea" stroke-width="2" rx="4"/>
+                    <text x="955" y="405" text-anchor="middle" font-size="11" fill="#7e22ce" font-weight="bold">Plane 7</text>
+                    <text x="955" y="420" text-anchor="middle" font-size="8" fill="#64748b">Evaluation</text>
+                    <text x="955" y="430" text-anchor="middle" font-size="8" fill="#64748b">&amp; MLOps</text>
+                </g>
+                
+                <!-- Arrow: Data Stores → Plane 7 (reads data for evaluation) -->
+                <line x1="740" y1="140" x2="955" y2="380" stroke="#9333ea" stroke-width="2" marker-end="url(#arrowhead-purple)"/>
+                <text x="820" y="260" font-size="9" fill="#9333ea" font-weight="600">Reads for QA</text>
+                
+                <!-- Plane 8 -->
+                <g class="plane-box" onclick="navigateToPlane(8)">
+                    <rect x="1050" y="380" width="110" height="90" fill="#fef3c7" stroke="#ea580c" stroke-width="2" rx="4"/>
+                    <text x="1105" y="405" text-anchor="middle" font-size="11" fill="#b45309" font-weight="bold">Plane 8</text>
+                    <text x="1105" y="420" text-anchor="middle" font-size="8" fill="#64748b">Maintenance</text>
+                    <text x="1105" y="430" text-anchor="middle" font-size="8" fill="#64748b">&amp; Lifecycle</text>
+                </g>
+                
+                <!-- Arrow: Plane 8 ← → Data Stores (maintenance) -->
+                <line x1="780" y1="140" x2="1085" y2="380" stroke="#ea580c" stroke-width="2" marker-end="url(#arrowhead-orange)"/>
+                <text x="900" y="260" font-size="9" fill="#ea580c" font-weight="600">Maintains hygiene</text>
+                
+                <!-- ============ FEEDBACK LOOP ============ -->
+                <!-- Plane 7 → Plane 5 (model improvement) -->
+                <path d="M 955 380 Q 800 200 660 260" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#arrowhead-purple)" stroke-dasharray="5,5"/>
+                <text x="750" y="310" font-size="9" fill="#9333ea" font-weight="600">Feedback &amp;</text>
+                <text x="750" y="323" font-size="9" fill="#9333ea" font-weight="600">Learning</text>
+                
+                <!-- ============ LEGEND ============ -->
+                <text x="50" y="460" font-size="11" fill="#0284c7" font-weight="bold">━━ Execution Flow</text>
+                <text x="250" y="460" font-size="11" fill="#ea580c" font-weight="bold">╌╌ Metrics/Observability</text>
+                <text x="520" y="460" font-size="11" fill="#9333ea" font-weight="bold">╌ ╌ Feedback/Learning</text>
+            </svg>
+        </div>
+        <div class="master-info">
+            ✅ <strong>Correct Flow:</strong> Plane 1 stores templates in Data Stores → User requests enter Plane 2 → Execution pipeline (2→3→4→5) → All planes report to Plane 6 → Plane 7 reads for QA → Feedback loop improves AI.
+        </div>
+    </section>
+
+    <!-- ============ PLANES & SERVICES ============ -->
+    <section class="section">
+        <div class="section-title">
+            <span class="section-icon">📂</span>
+            Explore Planes & Services
+        </div>
+        <div class="planes-container" id="planesContainer">
+            <!-- Planes will be generated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- ============ DATA STORES ============ -->
+    <section class="section">
+        <div class="section-title">
+            <span class="section-icon">💾</span>
+            Data Persistence Layer
+        </div>
+        <div class="datastores-grid">
+            <div class="datastore-card">
+                <div class="datastore-icon">📄</div>
+                <div class="datastore-name">MongoDB</div>
+                <div class="datastore-desc">Stores conversational history, session data, and event logs from all channels (Agent, IVR, SMS).</div>
+            </div>
+            <div class="datastore-card">
+                <div class="datastore-icon">🔗</div>
+                <div class="datastore-name">Neo4j</div>
+                <div class="datastore-desc">Graph-based session management, entity relationships, and context nodes for state continuity. Subject to periodic hygiene sweeps.</div>
+            </div>
+            <div class="datastore-card">
+                <div class="datastore-icon">🔍</div>
+                <div class="datastore-name">PostgreSQL + pgvector</div>
+                <div class="datastore-desc">Vector embeddings, semantic search indexes, and relational data for RAG and retrieval across the system.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ MODAL FOR DIAGRAMS ============ -->
+    <div id="diagramModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeDiagramModal()">&times;</span>
+            <h2 id="modalTitle" style="margin-bottom: 16px; color: var(--accent-blue);"></h2>
+            <div class="modal-diagram">
+                <img id="modalImage" src="" alt="Diagram">
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Generative Omnichannel AI Orchestrator • Complete C4 Architecture Documentation</p>
+        <p style="margin-top: 12px;">
+            <a href="#" onclick="alert('GitHub repo link');">GitHub Repository</a> | 
+            <a href="#" onclick="alert('YAML file link');">Download YAML</a> | 
+            <a href="#" onclick="alert('Latest version');">v1.0 (July 2026)</a>
+        </p>
+    </footer>
+
+    <script>
+        // ============ ARCHITECTURE DATA ============
+        const planes = [
+            {
+                number: 1,
+                name: "Design-Time Control",
+                emoji: "🎨",
+                subtitle: "Workflow & Agent Template Authoring",
+                desc: "Where architects and data scientists author workflows, manage agent templates, and configure KYC operations. Primary interaction during editorial/design phase.",
+                planeDiagram: "diagrams/planes/plane-01-design-time.png",
+                services: [
+                    {
+                        id: "commandstudio-workflow-ui",
+                        name: "commandstudio-workflow-ui",
+                        code: "svc-v-commandstudio-workflow",
+                        tag: "UI",
+                        desc: "Visual, low-code studio for authoring Directed Acyclic Graphs (DAGs) with in-context testing and workflow design.",
+                        diagram: "diagrams/services/plane-01/commandstudio-workflow-ui.png"
+                    },
+                    {
+                        id: "kyc-datastudio-ui",
+                        name: "kyc-datastudio-ui",
+                        code: "svc-v-kyc-datastudio",
+                        tag: "UI",
+                        desc: "Customer profile management UI for KYC data studio. Enables exploration, masking toggles, and compliance form filling.",
+                        diagram: "diagrams/services/plane-01/kyc-datastudio-ui.png"
+                    },
+                    {
+                        id: "commandstudio-domain",
+                        name: "commandstudio-domain",
+                        code: "svc-d-commandstudio",
+                        tag: "Domain",
+                        desc: "Core domain service managing workflow/template lifecycles, policy validation, and safety guardrails. Handles persistence and versioning.",
+                        diagram: "diagrams/services/plane-01/commandstudio-domain.png"
+                    }
+                ]
+            },
+            {
+                number: 2,
+                name: "Real-Time Streaming & Frontend",
+                emoji: "💬",
+                subtitle: "Agent Assistant, IVR, SMS Chat Handling",
+                desc: "Real-time multi-channel interface serving agents via live chat, call center systems, and SMS channels. Enables low-latency guidance streaming.",
+                planeDiagram: "diagrams/planes/plane-02-realtime.png",
+                services: [
+                    {
+                        id: "agentassist-ui",
+                        name: "agentassist-ui",
+                        code: "svc-v-chatbot-agentassist",
+                        tag: "UI",
+                        desc: "Angular-based Agent Assistant frontend embedded in CRM/dialer as iframe. Displays real-time guidance, transcripts, and suggested actions.",
+                        diagram: "diagrams/services/plane-02/agentassist-ui.png"
+                    },
+                    {
+                        id: "agentassist-gateway",
+                        name: "agentassist-gateway",
+                        code: "svc-d-chatbot-gateway-ast",
+                        tag: "Gateway",
+                        desc: "FastAPI REST aggregator routing LOB-specific requests, persisting consolidated payloads to MongoDB, and coordinating downstream services.",
+                        diagram: "diagrams/services/plane-02/agentassist-gateway.png"
+                    },
+                    {
+                        id: "agentassist-livestream",
+                        name: "agentassist-livestream-engine",
+                        code: "svc-d-chatbot-ast-ls",
+                        tag: "WebSocket",
+                        desc: "Real-time bi-directional WebSocket engine maintaining persistent connections, streaming guidance and transcripts to agent desktop.",
+                        diagram: "diagrams/services/plane-02/agentassist-livestream.png"
+                    }
+                ]
+            },
+            {
+                number: 3,
+                name: "Orchestration & Gateways",
+                emoji: "🔀",
+                subtitle: "Multi-Channel Request Routing & Control",
+                desc: "Central routing and orchestration hub that receives requests from all channels (IVR, SMS, Agent) and dispatches to execution layers.",
+                planeDiagram: "diagrams/planes/plane-03-orchestration.png",
+                services: [
+                    {
+                        id: "ivr-gateway",
+                        name: "ivr-gateway",
+                        code: "svc-d-chatbot-gateway-ivr",
+                        tag: "Gateway",
+                        desc: "Deterministic router handling incoming IVR voice and SMS traffic. Routes by intent/keyword and normalizes responses into standard DTOs.",
+                        diagram: "diagrams/services/plane-03/ivr-gateway.png"
+                    },
+                    {
+                        id: "genai-orchestrator",
+                        name: "genai-workflow-orchestrator",
+                        code: "svc-c-genaiworkflow",
+                        tag: "Core",
+                        desc: "Central orchestration control plane managing multi-step GenAI flows, context injection, and cross-channel workflow coordination.",
+                        diagram: "diagrams/services/plane-03/genai-workflow-orchestrator.png"
+                    }
+                ]
+            },
+            {
+                number: 4,
+                name: "MCP Capability Providers",
+                emoji: "🛠️",
+                subtitle: "Tool Execution & Context",
+                desc: "Model Context Protocol (MCP) servers providing standardized tool execution, context injection, and capability management across channels.",
+                planeDiagram: "diagrams/planes/plane-04-mcp.png",
+                services: [
+                    {
+                        id: "mcp-agentassist",
+                        name: "mcp-agentassist",
+                        code: "svc-d-luna-aa-mcp",
+                        tag: "MCP",
+                        desc: "MCP context provider tailored for agent assistance. Supplies agent-specific context, suggestion generation, and workflow guidance.",
+                        diagram: "diagrams/services/plane-04/mcp-agentassist.png"
+                    },
+                    {
+                        id: "mcp-telephony",
+                        name: "mcp-telephony",
+                        code: "svc-d-luna-ivr-mcp",
+                        tag: "MCP",
+                        desc: "MCP provider for triggering IVR voice/SMS actions. Handles tool execution for voice synthesis, SMS sending, and call routing.",
+                        diagram: "diagrams/services/plane-04/mcp-telephony.png"
+                    },
+                    {
+                        id: "mcp-core",
+                        name: "mcp-core",
+                        code: "svc-d-luna-mcp",
+                        tag: "MCP",
+                        desc: "Main MCP provider executing core intents and tools. Routes to downstream services and handles deterministic execution flows.",
+                        diagram: "diagrams/services/plane-04/mcp-core.png"
+                    }
+                ]
+            },
+            {
+                number: 5,
+                name: "Stateful Intelligence",
+                emoji: "🧠",
+                subtitle: "Generative AI & RAG Processing",
+                desc: "AI processing layer handling intent classification, context retrieval (RAG), and generative response creation via LLM APIs.",
+                planeDiagram: "diagrams/planes/plane-05-intelligence.png",
+                services: [
+                    {
+                        id: "chatbot-ml-engine",
+                        name: "chatbot-ml-engine",
+                        code: "svc-d-chatbot-ml",
+                        tag: "Engine",
+                        desc: "FastAPI ML engine for intent detection, NLP processing, context assembly, and safety guardrail enforcement before response generation.",
+                        diagram: "diagrams/services/plane-05/chatbot-ml-engine.png"
+                    },
+                    {
+                        id: "ml-model-server",
+                        name: "ml-model-server",
+                        code: "svc-d-mlmodels",
+                        tag: "Server",
+                        desc: "High-throughput model inference server. Handles Cross-Encoder routing, model versioning, and batch processing for optimal throughput.",
+                        diagram: "diagrams/services/plane-05/ml-model-server.png"
+                    }
+                ]
+            },
+            {
+                number: 6,
+                name: "Observability & Governance",
+                emoji: "📊",
+                subtitle: "Monitoring, Compliance & Data Protection",
+                desc: "Real-time monitoring, quality guardrails, and data protection layer ensuring system health, compliance, and PII safeguards.",
+                planeDiagram: "diagrams/planes/plane-06-observability.png",
+                services: [
+                    {
+                        id: "monitoring-service",
+                        name: "monitoring-service",
+                        code: "svc-d-luna-monitoring",
+                        tag: "Monitor",
+                        desc: "Metrics collector and operational telemetry aggregator. Streams metrics from all planes into MongoDB for real-time dashboard and alerting.",
+                        diagram: "diagrams/services/plane-06/monitoring-service.png"
+                    },
+                    {
+                        id: "quality-drift-monitor",
+                        name: "quality-drift-monitor",
+                        code: "svc-d-luna-near-realtime-monitor",
+                        tag: "Monitor",
+                        desc: "Near-real-time guardrail service monitoring response quality, detecting drift, and generating quality-gate alerts for stakeholders.",
+                        diagram: "diagrams/services/plane-06/quality-drift-monitor.png"
+                    },
+                    {
+                        id: "pii-redaction",
+                        name: "pii-redaction-service",
+                        code: "svc-d-genai-pii-redaction",
+                        tag: "Filter",
+                        desc: "Data protection filter detecting and redacting PII (email, phone, SSN, etc.) before logging. Ensures compliance and privacy guardrails.",
+                        diagram: "diagrams/services/plane-06/pii-redaction-service.png"
+                    }
+                ]
+            },
+            {
+                number: 7,
+                name: "Evaluation & MLOps Pipeline",
+                emoji: "📈",
+                subtitle: "Quality Assurance & Model Training",
+                desc: "Continuous evaluation, synthetic data generation, and feedback loop pipeline for model improvement and quality assurance.",
+                planeDiagram: "diagrams/planes/plane-07-evaluation.png",
+                services: [
+                    {
+                        id: "eval-automation",
+                        name: "eval-automation-engine",
+                        code: "svc-d-gt-eval-automation",
+                        tag: "Engine",
+                        desc: "Quality assurance service running automated model evaluations against ground truth. Calculates accuracy, latency, and safety metrics.",
+                        diagram: "diagrams/services/plane-07/eval-automation-engine.png"
+                    },
+                    {
+                        id: "synthetic-data-gen",
+                        name: "synthetic-data-generator",
+                        code: "svc-d-sample-generation",
+                        tag: "Generator",
+                        desc: "Synthetic data factory using LLM calls to generate diverse evaluation scenarios. Creates test datasets for model tuning and coverage.",
+                        diagram: "diagrams/services/plane-07/synthetic-data-generator.png"
+                    },
+                    {
+                        id: "telemetry-agentflow",
+                        name: "telemetry-agentflow",
+                        code: "svc-d-luna-agentflow",
+                        tag: "Telemetry",
+                        desc: "Captures agent workflow signals and interaction logs. Transforms telemetry into training signals for continuous model improvement.",
+                        diagram: "diagrams/services/plane-07/telemetry-agentflow.png"
+                    }
+                ]
+            },
+            {
+                number: 8,
+                name: "Maintenance & Lifecycle",
+                emoji: "🔧",
+                subtitle: "Infrastructure Hygiene & CI/CD",
+                desc: "Maintenance and operational services handling database hygiene, consistency checks, and automated testing gates before production deployment.",
+                planeDiagram: "diagrams/planes/plane-08-maintenance.png",
+                services: [
+                    {
+                        id: "neo4j-dbsync",
+                        name: "neo4j-dbsync-service",
+                        code: "svc-c-chatbot-dbsync-ast-bs",
+                        tag: "Maintenance",
+                        desc: "Cron-driven batch service for periodic Neo4j graph maintenance. Scans, detects, and purges expired session nodes to optimize graph performance.",
+                        diagram: "diagrams/services/plane-08/neo4j-dbsync-service.png"
+                    },
+                    {
+                        id: "qa-automation",
+                        name: "qa-automation-service",
+                        code: "svc-d-luna-qa-automation",
+                        tag: "QA",
+                        desc: "CI/CD testing gates and automated regression testing. Enforces quality standards before production deployment across all planes.",
+                        diagram: "diagrams/services/plane-08/qa-automation-service.png"
+                    }
+                ]
+            }
+        ];
+
+        // ============ RENDER PLANES ============
+        function renderPlanes() {
+            const container = document.getElementById('planesContainer');
+            
+            planes.forEach(plane => {
+                const planeEl = document.createElement('div');
+                planeEl.className = 'plane-section';
+                
+                planeEl.innerHTML = `
+                    <div class="plane-header" onclick="togglePlane(this)">
+                        <div class="plane-title-group">
+                            <div class="plane-number">PLANE ${plane.number}</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="plane-emoji">${plane.emoji}</span>
+                                <div>
+                                    <div class="plane-name">${plane.name}</div>
+                                    <div class="plane-subtitle">${plane.subtitle}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="expand-icon">▼</div>
+                    </div>
+                    <div class="plane-content">
+                        <div class="plane-content-inner">
+                            <div class="plane-diagram-container">
+                                <div class="plane-diagram-label">📊 Plane Architecture Diagram</div>
+                                <div class="diagram-placeholder plane-diagram">
+                                    <img src="${plane.planeDiagram}" alt="Plane ${plane.number} Diagram" onerror="this.parentElement.innerHTML='📊 Plane Diagram (Pending Upload)'">
+                                </div>
+                                <p style="color: var(--text-sub); font-size: 0.85rem; margin-top: 8px;">${plane.desc}</p>
+                            </div>
+                            <div class="services-grid">
+                                ${plane.services.map(service => `
+                                    <div class="service-card" data-service-id="${service.id}" onclick="openDiagramModalWithHash('${service.name}', '${service.diagram}', '${service.id}')">
+                                        <div class="service-header">
+                                            <span class="service-name">${service.name}</span>
+                                            <span class="service-tag">${service.tag}</span>
+                                        </div>
+                                        <span class="service-codebase">${service.code}</span>
+                                        <p class="service-desc">${service.desc}</p>
+                                        <button class="view-diagram-btn">View Diagram →</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(planeEl);
+            });
+        }
+
+        // ============ TOGGLE PLANE EXPANSION ============
+        function togglePlane(header) {
+            header.classList.toggle('expanded');
+            const content = header.nextElementSibling;
+            content.classList.toggle('expanded');
+        }
+
+        // ============ HASH ROUTING SYSTEM ============
+        const planeNames = [
+            'design-time-control',
+            'realtime-streaming',
+            'orchestration-gateways',
+            'mcp-providers',
+            'stateful-intelligence',
+            'observability-governance',
+            'evaluation-mlops',
+            'maintenance-lifecycle'
+        ];
+
+        // ============ UPDATE URL HASH ============
+        function updateHash(hash) {
+            window.location.hash = hash;
+        }
+
+        // ============ NAVIGATE TO PLANE FROM MASTER DIAGRAM ============
+        function navigateToPlane(planeNumber) {
+            // Update URL hash
+            const planeName = planeNames[planeNumber - 1];
+            updateHash(`plane-${planeNumber}-${planeName}`);
+            
+            // Scroll to planes section
+            document.getElementById('planesContainer').scrollIntoView({ behavior: 'smooth' });
+            
+            // Wait for scroll to complete, then expand the plane
+            setTimeout(() => {
+                expandPlaneByNumber(planeNumber);
+            }, 600);
+        }
+
+        // ============ EXPAND PLANE BY NUMBER ============
+        function expandPlaneByNumber(planeNumber) {
+            const planeSections = document.querySelectorAll('.plane-section');
+            if (planeSections[planeNumber - 1]) {
+                const planeHeader = planeSections[planeNumber - 1].querySelector('.plane-header');
+                const planeContent = planeSections[planeNumber - 1].querySelector('.plane-content');
+                
+                // Ensure plane is expanded
+                if (!planeHeader.classList.contains('expanded')) {
+                    planeHeader.classList.add('expanded');
+                    planeContent.classList.add('expanded');
+                }
+                
+                // Highlight the plane briefly
+                planeSections[planeNumber - 1].style.transition = 'all 0.3s';
+                planeSections[planeNumber - 1].style.borderColor = '#0284c7';
+                planeSections[planeNumber - 1].style.boxShadow = '0 0 20px rgba(2, 132, 199, 0.3)';
+                
+                setTimeout(() => {
+                    planeSections[planeNumber - 1].style.borderColor = '';
+                    planeSections[planeNumber - 1].style.boxShadow = '';
+                }, 2000);
+            }
+        }
+
+        // ============ OPEN DIAGRAM WITH HASH ============
+        function openDiagramModalWithHash(title, imageSrc, serviceId) {
+            // Update URL hash
+            updateHash(`service-${serviceId}`);
+            
+            // Open modal
+            const modal = document.getElementById('diagramModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalImage = document.getElementById('modalImage');
+            
+            modalTitle.textContent = title;
+            modalImage.src = imageSrc;
+            modal.classList.add('open');
+        }
+
+        // ============ CLOSE MODAL AND CLEAR HASH ============
+        function closeDiagramModal() {
+            const modal = document.getElementById('diagramModal');
+            modal.classList.remove('open');
+            
+            // Return to previous hash or home
+            const currentHash = window.location.hash;
+            if (currentHash.includes('service-')) {
+                // Extract plane number from current hash if possible
+                const planeMatch = currentHash.match(/plane-(\d+)/);
+                if (planeMatch) {
+                    updateHash(`plane-${planeMatch[1]}-${planeNames[parseInt(planeMatch[1]) - 1]}`);
+                } else {
+                    window.location.hash = '';
+                }
+            }
+        }
+
+        // ============ HANDLE HASH CHANGES ============
+        function handleHashChange() {
+            const hash = window.location.hash.substring(1);
+            
+            if (!hash) {
+                // No hash - scroll to top
+                window.scrollTo(0, 0);
+                return;
+            }
+            
+            // Parse hash
+            if (hash.startsWith('plane-')) {
+                const planeMatch = hash.match(/plane-(\d+)/);
+                if (planeMatch) {
+                    const planeNumber = parseInt(planeMatch[1]);
+                    document.getElementById('planesContainer').scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => {
+                        expandPlaneByNumber(planeNumber);
+                    }, 600);
+                }
+            } else if (hash.startsWith('service-')) {
+                // Service hash - find and show service
+                const serviceId = hash.replace('service-', '');
+                const serviceCard = document.querySelector(`[data-service-id="${serviceId}"]`);
+                if (serviceCard) {
+                    // First, ensure parent plane is expanded
+                    const planeSection = serviceCard.closest('.plane-section');
+                    if (planeSection) {
+                        const planeHeader = planeSection.querySelector('.plane-header');
+                        const planeContent = planeSection.querySelector('.plane-content');
+                        if (!planeHeader.classList.contains('expanded')) {
+                            planeHeader.classList.add('expanded');
+                            planeContent.classList.add('expanded');
+                        }
+                    }
+                    // Then scroll to service
+                    serviceCard.scrollIntoView({ behavior: 'smooth' });
+                    serviceCard.style.borderColor = '#0284c7';
+                    setTimeout(() => {
+                        serviceCard.style.borderColor = '';
+                    }, 1500);
+                }
+            }
+        }
+
+        // ============ INIT HASH ROUTING ============
+        window.addEventListener('hashchange', handleHashChange);
+
+        // Handle initial page load with hash
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPlanes();
+            // Handle hash if present on initial load
+            if (window.location.hash) {
+                setTimeout(handleHashChange, 500);
+            }
+        });
+
+
+
+        // Close modal when clicking outside
+        document.getElementById('diagramModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDiagramModal();
+            }
+        });
+
+
+    </script>
+
+</body>
+</html>

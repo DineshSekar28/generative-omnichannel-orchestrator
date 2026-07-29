@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Omnichannel AI Orchestrator - C4 Architecture (v1.0)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.8rem;
+            color: #38bdf8;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 20px;
+        }
+
+        .plane-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plane-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .plane-subtitle {
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: var(--text-secondary);
+        }
+
+        .service-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .service-node {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-left: 4px solid;
+            border-radius: 4px;
+            padding: 10px 12px;
+            transition: transform 0.15s ease;
+        }
+
+        .service-node:hover {
+            transform: translateX(4px);
+            background-color: rgba(15, 23, 42, 0.9);
+        }
+
+        .service-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .service-codebase {
+            font-family: monospace;
+            font-size: 0.75rem;
+            background: #0284c7;
+            color: white;
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+
+        .service-desc {
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+
+        .color-indigo { border-color: #6366f1; color: #818cf8; }
+        .color-cyan { border-color: #06b6d4; color: #22d3ee; }
+        .color-green { border-color: #22c55e; color: #4ade80; }
+        .color-darkgreen { border-color: #15803d; color: #86efac; }
+        .color-orange { border-color: #f97316; color: #fb923c; }
+        .color-purple { border-color: #a855f7; color: #c084fc; }
+        .color-brown { border-color: #a16207; color: #fde047; }
+        .color-navy { border-color: #1e40af; color: #60a5fa; }
+        .color-gray { border-color: #64748b; color: #cbd5e1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Generative Omnichannel AI Orchestrator</h1>
+        <p class="subtitle">Complete C4 Architecture (v1.0) • 21 Microservices | 8 Planes | 3 Data Stores</p>
+    </header>
+
+    <div class="architecture-grid" id="app"></div>
+
+    <script>
+        // Parsed YAML Data Object structure
+        const architectureData = [
+            {
+                name: "External Systems",
+                subtitle: "Multi-channel users & External AI",
+                colorClass: "color-gray",
+                borderHex: "#64748b",
+                services: [
+                    { name: "Customers", code: "External", desc: "Multi-channel users (Agent, IVR, SMS, future)" },
+                    { name: "Generative LLM APIs", code: "External API", desc: "External LLM services (OpenAI, Claude, etc)" }
+                ]
+            },
+            {
+                name: "Plane 1 - Design-Time Control",
+                subtitle: "🎨 Workflow & Agent Template Authoring",
+                colorClass: "color-indigo",
+                borderHex: "#6366f1",
+                services: [
+                    { name: "commandstudio-workflow-ui", code: "svc-v-commandstudio-workflow", desc: "Visual UI for drag-and-drop workflow authoring." },
+                    { name: "kyc-datastudio-ui", code: "svc-v-kyc-datastudio", desc: "Customer profile management UI for KYC data studio." },
+                    { name: "commandstudio-domain", code: "svc-d-commandstudio", desc: "Core domain service managing workflow/template lifecycles." }
+                ]
+            },
+            {
+                name: "Plane 2 - Real-Time Streaming & Frontend",
+                subtitle: "💬 Agent Assistant, IVR, SMS Chat Handling",
+                colorClass: "color-cyan",
+                borderHex: "#06b6d4",
+                services: [
+                    { name: "agentassist-ui", code: "svc-v-chatbot-agentassist", desc: "Agent Assistant frontend user interface." },
+                    { name: "agentassist-gateway", code: "svc-d-chatbot-gateway-ast", desc: "Line-of-Business (LOB) REST routing and request aggregator." },
+                    { name: "agentassist-livestream-engine", code: "svc-d-chatbot-ast-ls", desc: "Real-time WebSocket engine pushing live guidance to agents." }
+                ]
+            },
+            {
+                name: "Plane 3 - Orchestration & Gateways",
+                subtitle: "🔀 Multi-Channel Request Routing & Control",
+                colorClass: "color-green",
+                borderHex: "#22c55e",
+                services: [
+                    { name: "ivr-gateway", code: "svc-d-chatbot-gateway-ivr", desc: "Channel router handling incoming voice/IVR traffic." },
+                    { name: "genai-workflow-orchestrator", code: "svc-c-genaiworkflow", desc: "Central orchestration engine managing multi-step GenAI flows." }
+                ]
+            },
+            {
+                name: "Plane 4 - MCP Capability Providers",
+                subtitle: "🛠️ Tool Execution & Context",
+                colorClass: "color-darkgreen",
+                borderHex: "#15803d",
+                services: [
+                    { name: "mcp-agentassist", code: "svc-d-luna-aa-mcp", desc: "MCP context provider tailored for agent assistance." },
+                    { name: "mcp-telephony", code: "svc-d-luna-ivr-mcp", desc: "MCP provider for triggering IVR voice/SMS actions." },
+                    { name: "mcp-core", code: "svc-d-luna-mcp", desc: "Main MCP provider executing core intents and tools." }
+                ]
+            },
+            {
+                name: "Plane 5 - Stateful Intelligence",
+                subtitle: "🧠 Generative AI & RAG Processing",
+                colorClass: "color-cyan",
+                borderHex: "#06b6d4",
+                services: [
+                    { name: "chatbot-ml-engine", code: "svc-d-chatbot-ml", desc: "AI processing pipeline for intent detection and NLP." },
+                    { name: "ml-model-server", code: "svc-d-mlmodels", desc: "High-throughput model inference server." }
+                ]
+            },
+            {
+                name: "Plane 6 - Observability & Governance",
+                subtitle: "📊 Monitoring, Compliance & Data Protection",
+                colorClass: "color-orange",
+                borderHex: "#f97316",
+                services: [
+                    { name: "monitoring-service", code: "svc-d-luna-monitoring", desc: "Metrics collector and operational telemetry/logging." },
+                    { name: "quality-drift-monitor", code: "svc-d-luna-near-realtime-monitor", desc: "Guardrail service monitoring response quality & drift." },
+                    { name: "pii-redaction-service", code: "svc-d-genai-pii-redaction", desc: "Data protection filter removing sensitive PII data." }
+                ]
+            },
+            {
+                name: "Plane 7 - Evaluation & MLOps Pipeline",
+                subtitle: "📈 Quality Assurance & Model Training",
+                colorClass: "color-purple",
+                borderHex: "#a855f7",
+                services: [
+                    { name: "eval-automation-engine", code: "svc-d-gt-eval-automation", desc: "Quality assurance service running automated evaluations." },
+                    { name: "synthetic-data-generator", code: "svc-d-sample-generation", desc: "Generates synthetic test data for evaluations and tuning." },
+                    { name: "telemetry-agentflow", code: "svc-d-luna-agentflow", desc: "Captures agent workflow signals and feedback loops." }
+                ]
+            },
+            {
+                name: "Plane 8 - Maintenance & Lifecycle",
+                subtitle: "🔧 Infrastructure Hygiene & CI/CD",
+                colorClass: "color-brown",
+                borderHex: "#a16207",
+                services: [
+                    { name: "neo4j-dbsync-service", code: "svc-c-chatbot-dbsync-ast-bs", desc: "Backend maintenance service syncing & cleaning Neo4j." },
+                    { name: "qa-automation-service", code: "svc-d-luna-qa-automation", desc: "CI/CD testing gates and automated regression testing." }
+                ]
+            },
+            {
+                name: "Data Stores",
+                subtitle: "💾 Persistence Layer",
+                colorClass: "color-navy",
+                borderHex: "#1e40af",
+                services: [
+                    { name: "MongoDB", code: "Document Store", desc: "Stores conversational history, session data, and event logs." },
+                    { name: "Neo4j", code: "Graph DB", desc: "Graph-based session management, entities, and context nodes." },
+                    { name: "PostgreSQL + pgvector", code: "Vector DB", desc: "Vector embeddings, semantic search indexes, and RAG." }
+                ]
+            }
+        ];
+
+        // Render UI dynamically using D3
+        const container = d3.select("#app");
+
+        const planeCards = container.selectAll(".plane-card")
+            .data(architectureData)
+            .enter()
+            .append("div")
+            .attr("class", "plane-card");
+
+        // Headers
+        const headers = planeCards.append("div")
+            .attr("class", d => `plane-header ${d.colorClass}`)
+            .style("border-bottom-color", d => d.borderHex);
+
+        headers.append("span").text(d => d.name);
+        headers.append("span").attr("class", "plane-subtitle").text(d => d.subtitle);
+
+        // Service List
+        const serviceLists = planeCards.append("div")
+            .attr("class", "service-list");
+
+        const serviceNodes = serviceLists.selectAll(".service-node")
+            .data(d => d.services.map(s => ({ ...s, borderHex: d.borderHex })))
+            .enter()
+            .append("div")
+            .attr("class", "service-node")
+            .style("border-left-color", d => d.borderHex);
+
+        const serviceTitles = serviceNodes.append("div")
+            .attr("class", "service-title");
+
+        serviceTitles.append("span").text(d => d.name);
+        serviceTitles.append("span")
+            .attr("class", "service-codebase")
+            .text(d => d.code);
+
+        serviceNodes.append("div")
+            .attr("class", "service-desc")
+            .text(d => d.desc);
+    </script>
+</body>
+</html>
