@@ -820,7 +820,7 @@
                 emoji: "🎨",
                 subtitle: "Workflow & Agent Template Authoring",
                 desc: "Where architects and data scientists author workflows, manage agent templates, and configure KYC operations. Primary interaction during editorial/design phase.",
-                planeDiagram: "diagrams/planes/plane-01-design-time.png",
+                planeDiagram: "diagrams/planes/plane-01-design-time-control.png",
                 services: [
                     {
                         id: "commandstudio-workflow-ui",
@@ -854,7 +854,7 @@
                 emoji: "💬",
                 subtitle: "Agent Assistant, IVR, SMS Chat Handling",
                 desc: "Real-time multi-channel interface serving agents via live chat, call center systems, and SMS channels. Enables low-latency guidance streaming.",
-                planeDiagram: "diagrams/planes/plane-02-realtime.png",
+                planeDiagram: "diagrams/planes/plane-02-realtime-streaming.png",
                 services: [
                     {
                         id: "agentassist-ui",
@@ -878,7 +878,7 @@
                         code: "svc-d-chatbot-ast-ls",
                         tag: "WebSocket",
                         desc: "Real-time bi-directional WebSocket engine maintaining persistent connections, streaming guidance and transcripts to agent desktop.",
-                        diagram: "diagrams/services/plane-02/agentassist-livestream.png"
+                        diagram: "diagrams/services/plane-02/agentassist-livestream-engine.png"
                     }
                 ]
             },
@@ -888,7 +888,7 @@
                 emoji: "🔀",
                 subtitle: "Multi-Channel Request Routing & Control",
                 desc: "Central routing and orchestration hub that receives requests from all channels (IVR, SMS, Agent) and dispatches to execution layers.",
-                planeDiagram: "diagrams/planes/plane-03-orchestration.png",
+                planeDiagram: "diagrams/planes/plane-03-orchestration-gateways.png",
                 services: [
                     {
                         id: "ivr-gateway",
@@ -914,7 +914,7 @@
                 emoji: "🛠️",
                 subtitle: "Tool Execution & Context",
                 desc: "Model Context Protocol (MCP) servers providing standardized tool execution, context injection, and capability management across channels.",
-                planeDiagram: "diagrams/planes/plane-04-mcp.png",
+                planeDiagram: "diagrams/planes/plane-04-mcp-providers.png",
                 services: [
                     {
                         id: "mcp-agentassist",
@@ -948,7 +948,7 @@
                 emoji: "🧠",
                 subtitle: "Generative AI & RAG Processing",
                 desc: "AI processing layer handling intent classification, context retrieval (RAG), and generative response creation via LLM APIs.",
-                planeDiagram: "diagrams/planes/plane-05-intelligence.png",
+                planeDiagram: "diagrams/planes/plane-05-stateful-intelligence.png",
                 services: [
                     {
                         id: "chatbot-ml-engine",
@@ -974,7 +974,7 @@
                 emoji: "📊",
                 subtitle: "Monitoring, Compliance & Data Protection",
                 desc: "Real-time monitoring, quality guardrails, and data protection layer ensuring system health, compliance, and PII safeguards.",
-                planeDiagram: "diagrams/planes/plane-06-observability.png",
+                planeDiagram: "diagrams/planes/plane-06-observability-governance.png",
                 services: [
                     {
                         id: "monitoring-service",
@@ -1008,7 +1008,7 @@
                 emoji: "📈",
                 subtitle: "Quality Assurance & Model Training",
                 desc: "Continuous evaluation, synthetic data generation, and feedback loop pipeline for model improvement and quality assurance.",
-                planeDiagram: "diagrams/planes/plane-07-evaluation.png",
+                planeDiagram: "diagrams/planes/plane-07-evaluation-mlops.png",
                 services: [
                     {
                         id: "eval-automation",
@@ -1042,7 +1042,7 @@
                 emoji: "🔧",
                 subtitle: "Infrastructure Hygiene & CI/CD",
                 desc: "Maintenance and operational services handling database hygiene, consistency checks, and automated testing gates before production deployment.",
-                planeDiagram: "diagrams/planes/plane-08-maintenance.png",
+                planeDiagram: "diagrams/planes/plane-08-maintenance-lifecycle.png",
                 services: [
                     {
                         id: "neo4j-dbsync",
