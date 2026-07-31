@@ -464,6 +464,24 @@
         margin-bottom: 4px;
         font-family: monospace;
     }
+    #tooltip .tt-role {
+        display: block;
+        font-weight: 600;
+        color: #f1f5f9;
+        margin-bottom: 4px;
+    }
+    #tooltip .tt-desc {
+        display: block;
+        margin-bottom: 6px;
+    }
+    #tooltip .tt-stores {
+        display: block;
+        color: #94a3b8;
+        font-size: 0.68rem;
+    }
+    #tooltip .tt-stores strong {
+        color: #f1f5f9;
+    }
 
     /* ============ MODAL ============ */
     .modal {
@@ -639,7 +657,13 @@
     </div>
 </div>
 
-<div id="tooltip"></div>
+<div id="tooltip" role="tooltip">
+    <div class="tt-title"></div>
+    <div class="tt-code"></div>
+    <div class="tt-role"></div>
+    <div class="tt-desc"></div>
+    <div class="tt-stores"></div>
+</div>
 
 <div id="serviceModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-content">
@@ -996,17 +1020,19 @@ function findService(serviceId) {
 }
 
 function showTooltip(evt, serviceId) {
+    const tt = document.getElementById("tooltip");
+    if (!tt) return;
     const found = findService(serviceId);
     if (!found) return;
     const { svc, plane } = found;
     const stores = dataStores.filter(ds => ds.connections[plane.number]).map(ds => ds.name).join(", ") || "None";
-    const tt = document.getElementById("tooltip");
-    tt.innerHTML = `
-        <span class="tt-title">${svc.name}</span>
-        <span class="tt-code">${svc.code} &middot; ${svc.tag}${svc.role ? " &middot; " + svc.role : ""}</span>
-        ${svc.desc}<br><br>
-        <strong>Plane ${plane.number}</strong> data stores: ${stores}
-    `;
+
+    tt.querySelector(".tt-title").textContent = svc.name;
+    tt.querySelector(".tt-code").textContent = `${svc.code} · ${svc.tag}`;
+    tt.querySelector(".tt-role").textContent = svc.role || "";
+    tt.querySelector(".tt-desc").textContent = svc.desc;
+    tt.querySelector(".tt-stores").textContent = `Plane ${plane.number} data stores: ${stores}`;
+
     tt.style.display = "block";
     moveTooltip(evt);
 }
@@ -1114,6 +1140,13 @@ function attachGlobalListeners() {
 
 // ============ INIT ============
 function loadPlanes() {
+    const requiredIds = ["flowSelector", "planesRow", "datastoreBoxes", "legendPlanes", "legendFlows", "tooltip", "serviceModal"];
+    const missing = requiredIds.filter(id => !document.getElementById(id));
+    if (missing.length) {
+        console.error("master-architecture-interactive: required elements missing:", missing);
+        return;
+    }
+
     renderFlowSelector();
     renderPlanes();
     renderDataStores();
