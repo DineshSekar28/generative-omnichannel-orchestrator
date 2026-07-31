@@ -34,32 +34,28 @@
         --postgres: #4c1d95;
     }
 
+    html, body {
+        height: auto;
+    }
+
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         background-color: var(--bg-dark);
         color: var(--text-main);
-        padding: 24px;
+        padding: 16px;
         line-height: 1.5;
     }
 
-    a.back-link {
-        color: var(--accent-blue);
-        text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-    a.back-link:hover { text-decoration: underline; }
-
     header {
         border-bottom: 2px solid var(--border);
-        padding-bottom: 20px;
-        margin-bottom: 20px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 1.6rem;
         color: var(--accent-blue);
-        margin: 8px 0 6px;
+        margin: 0 0 6px;
     }
 
     .subtitle {
@@ -96,7 +92,16 @@
         flex-wrap: wrap;
     }
 
+    .flow-selector input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        pointer-events: none;
+    }
+
     .flow-tab {
+        display: inline-block;
         border: 2px solid var(--border);
         background: var(--bg-card);
         color: var(--text-main);
@@ -109,6 +114,11 @@
     }
 
     .flow-tab:hover { background: var(--bg-hover); }
+
+    .flow-selector input[type="radio"]:focus-visible + .flow-tab {
+        outline: 2px solid var(--accent-blue);
+        outline-offset: 2px;
+    }
 
     .flow-tab.active {
         color: #fff;
@@ -313,15 +323,22 @@
     .service-box[data-flow-scope="ivr"] { --flow-dot: #16a34a; }
     .service-box[data-flow-scope="both"] { --flow-dot: linear-gradient(180deg, #06b6d4, #16a34a); }
 
-    .service-box:hover {
+    .service-box:hover,
+    .service-box:focus-visible {
         transform: scale(1.045);
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         border-color: var(--plane-color, var(--accent-blue));
         z-index: 2;
     }
 
+    .service-box:focus-visible {
+        outline: 2px solid var(--plane-color, var(--accent-blue));
+        outline-offset: 2px;
+    }
+
     .service-box.dimmed {
         opacity: 0.4;
+        cursor: not-allowed;
         pointer-events: none;
     }
 
@@ -490,7 +507,14 @@
         display: inline-block;
         padding: 3px 8px;
         border-radius: 4px;
-        margin-bottom: 12px;
+        margin-bottom: 4px;
+    }
+
+    #modalRole {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 10px;
     }
 
     #modalDesc {
@@ -536,7 +560,6 @@
 <body>
 
 <header>
-    <a class="back-link" href="index.html">&larr; Back to Architecture Portal</a>
     <h1>LUNA AI System — Master Architecture</h1>
     <p class="subtitle">
         <span class="stat-badge">8 Architectural Planes</span>
@@ -547,11 +570,11 @@
 </header>
 
 <div class="flow-toolbar">
-    <div class="flow-selector" id="flowSelector"></div>
-    <button class="legend-toggle" id="legendToggle" onclick="toggleLegend()">Show Legend</button>
+    <div class="flow-selector" id="flowSelector" role="radiogroup" aria-label="User flow filter"></div>
+    <button class="legend-toggle" id="legendToggle" onclick="toggleLegend()" aria-expanded="false" aria-controls="legendPanel">Show Legend</button>
 </div>
 
-<div class="flow-description" id="flowDescription"></div>
+<div class="flow-description" id="flowDescription" role="status" aria-live="polite"></div>
 
 <div class="legend-panel" id="legendPanel">
     <div class="legend-group" id="legendPlanes">
@@ -583,12 +606,13 @@
 
 <div id="tooltip"></div>
 
-<div id="serviceModal" class="modal">
+<div id="serviceModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-content">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <span class="modal-close" id="modalCloseBtn" onclick="closeModal()" tabindex="0" role="button" aria-label="Close dialog">&times;</span>
         <span id="modalPlaneTag"></span>
         <div id="modalTitle"></div>
         <div id="modalCode"></div>
+        <div id="modalRole"></div>
         <p id="modalDesc"></p>
         <div class="modal-image-frame">
             <img id="modalImage" alt="Service diagram">
@@ -609,13 +633,13 @@ const planes = [
         number: 1, name: "Design-Time Control", subtitle: "Workflow & Agent Template Authoring",
         color: "var(--p1)", users: "Business Users / Architects / KYC Analysts", entry: "Web Browser",
         services: [
-            { id: "commandstudio-workflow-ui", name: "commandstudio-workflow-ui", code: "svc-v-commandstudio-workflow", tag: "UI",
+            { id: "commandstudio-workflow-ui", name: "commandstudio-workflow-ui", code: "svc-v-commandstudio-workflow", tag: "UI", role: "Visual DAG Workflow Editor",
               desc: "Visual, low-code studio for authoring Directed Acyclic Graphs (DAGs) with in-context testing and workflow design.",
               diagram: "diagrams/services/plane-01/commandstudio-workflow-ui.png" },
-            { id: "kyc-datastudio-ui", name: "kyc-datastudio-ui", code: "svc-v-kyc-datastudio", tag: "UI",
+            { id: "kyc-datastudio-ui", name: "kyc-datastudio-ui", code: "svc-v-kyc-datastudio", tag: "UI", role: "KYC Operations Workspace",
               desc: "Customer profile management UI for KYC data studio. Enables exploration, masking toggles, and compliance form filling.",
               diagram: "diagrams/services/plane-01/kyc-datastudio-ui.png" },
-            { id: "commandstudio-domain", name: "commandstudio-domain", code: "svc-d-commandstudio", tag: "Domain",
+            { id: "commandstudio-domain", name: "commandstudio-domain", code: "svc-d-commandstudio", tag: "Domain", role: "Template & Workflow Lifecycle Manager",
               desc: "Core domain service managing workflow/template lifecycles, policy validation, and safety guardrails. Handles persistence and versioning.",
               diagram: "diagrams/services/plane-01/commandstudio-domain.png" }
         ]
@@ -624,13 +648,13 @@ const planes = [
         number: 2, name: "Real-Time Streaming & Frontend", subtitle: "Agent Assistant, IVR, SMS Chat Handling",
         color: "var(--p2)", users: "Agents (AST) / Customers (IVR)", entry: "Agent Desktop / Telephony",
         services: [
-            { id: "agentassist-ui", name: "agentassist-ui", code: "svc-v-chatbot-agentassist", tag: "UI",
+            { id: "agentassist-ui", name: "agentassist-ui", code: "svc-v-chatbot-agentassist", tag: "UI", role: "Agent Copilot UI",
               desc: "Angular-based Agent Assistant frontend embedded in CRM/dialer as iframe. Displays real-time guidance, transcripts, and suggested actions.",
               diagram: "diagrams/services/plane-02/agentassist-ui.png" },
-            { id: "agentassist-gateway", name: "agentassist-gateway", code: "svc-d-chatbot-gateway-ast", tag: "Gateway",
+            { id: "agentassist-gateway", name: "agentassist-gateway", code: "svc-d-chatbot-gateway-ast", tag: "Gateway", role: "LOB Request Aggregator Gateway",
               desc: "FastAPI REST aggregator routing LOB-specific requests, persisting consolidated payloads to MongoDB, and coordinating downstream services.",
               diagram: "diagrams/services/plane-02/agentassist-gateway.png" },
-            { id: "agentassist-livestream", name: "agentassist-livestream-engine", code: "svc-d-chatbot-ast-ls", tag: "WebSocket",
+            { id: "agentassist-livestream", name: "agentassist-livestream-engine", code: "svc-d-chatbot-ast-ls", tag: "WebSocket", role: "Real-Time Streaming Engine",
               desc: "Real-time bi-directional WebSocket engine maintaining persistent connections, streaming guidance and transcripts to agent desktop.",
               diagram: "diagrams/services/plane-02/agentassist-livestream-engine.png" }
         ]
@@ -639,10 +663,10 @@ const planes = [
         number: 3, name: "Orchestration & Gateways", subtitle: "Multi-Channel Request Routing & Control",
         color: "var(--p3)", users: "System-internal routing", entry: "Runtime execution start",
         services: [
-            { id: "ivr-gateway", name: "ivr-gateway", code: "svc-d-chatbot-gateway-ivr", tag: "Gateway",
+            { id: "ivr-gateway", name: "ivr-gateway", code: "svc-d-chatbot-gateway-ivr", tag: "Gateway", role: "Telephony IVR Gateway",
               desc: "Deterministic router handling incoming IVR voice and SMS traffic. Routes by intent/keyword and normalizes responses into standard DTOs.",
               diagram: "diagrams/services/plane-03/ivr-gateway.png" },
-            { id: "genai-orchestrator", name: "genai-workflow-orchestrator", code: "svc-c-genaiworkflow", tag: "Core",
+            { id: "genai-orchestrator", name: "genai-workflow-orchestrator", code: "svc-c-genaiworkflow", tag: "Core", role: "Central GenAI Workflow Orchestrator",
               desc: "Central orchestration control plane managing multi-step GenAI flows, context injection, and cross-channel workflow coordination.",
               diagram: "diagrams/services/plane-03/genai-workflow-orchestrator.png" }
         ]
@@ -651,13 +675,13 @@ const planes = [
         number: 4, name: "MCP Capability Providers", subtitle: "Tool Execution & Context",
         color: "var(--p4)", users: "System-internal tool execution", entry: "Invoked by Orchestrator",
         services: [
-            { id: "mcp-agentassist", name: "mcp-agentassist", code: "svc-d-luna-aa-mcp", tag: "MCP",
+            { id: "mcp-agentassist", name: "mcp-agentassist", code: "svc-d-luna-aa-mcp", tag: "MCP", role: "Agent Assist Context Provider",
               desc: "MCP context provider tailored for agent assistance. Supplies agent-specific context, suggestion generation, and workflow guidance.",
               diagram: "diagrams/services/plane-04/mcp-agentassist.png" },
-            { id: "mcp-telephony", name: "mcp-telephony", code: "svc-d-luna-ivr-mcp", tag: "MCP",
+            { id: "mcp-telephony", name: "mcp-telephony", code: "svc-d-luna-ivr-mcp", tag: "MCP", role: "Telephony Tool Provider",
               desc: "MCP provider for triggering IVR voice/SMS actions. Handles tool execution for voice synthesis, SMS sending, and call routing.",
               diagram: "diagrams/services/plane-04/mcp-telephony.png" },
-            { id: "mcp-core", name: "mcp-core", code: "svc-d-luna-mcp", tag: "MCP",
+            { id: "mcp-core", name: "mcp-core", code: "svc-d-luna-mcp", tag: "MCP", role: "Core Intent & Execution Coordinator",
               desc: "Main MCP provider executing core intents and tools. Routes to downstream services and handles deterministic execution flows.",
               diagram: "diagrams/services/plane-04/mcp-core.png" }
         ]
@@ -666,10 +690,10 @@ const planes = [
         number: 5, name: "Stateful Intelligence", subtitle: "Generative AI & RAG Processing",
         color: "var(--p5)", users: "System-internal AI processing", entry: "Invoked by MCP Core",
         services: [
-            { id: "chatbot-ml-engine", name: "chatbot-ml-engine", code: "svc-d-chatbot-ml", tag: "Engine",
+            { id: "chatbot-ml-engine", name: "chatbot-ml-engine", code: "svc-d-chatbot-ml", tag: "Engine", role: "Conversational AI Processing Engine",
               desc: "FastAPI ML engine for intent detection, NLP processing, context assembly, and safety guardrail enforcement before response generation.",
               diagram: "diagrams/services/plane-05/chatbot-ml-engine.png" },
-            { id: "ml-model-server", name: "ml-model-server", code: "svc-d-mlmodels", tag: "Server",
+            { id: "ml-model-server", name: "ml-model-server", code: "svc-d-mlmodels", tag: "Server", role: "Model Server / Cross-Encoder Library",
               desc: "High-throughput model inference server. Handles Cross-Encoder routing, model versioning, and batch processing for optimal throughput.",
               diagram: "diagrams/services/plane-05/ml-model-server.png" }
         ]
@@ -678,13 +702,13 @@ const planes = [
         number: 6, name: "Observability & Governance", subtitle: "Monitoring, Compliance & Data Protection",
         color: "var(--p6)", users: "Ops / Compliance stakeholders", entry: "Async metrics ingestion",
         services: [
-            { id: "monitoring-service", name: "monitoring-service", code: "svc-d-luna-monitoring", tag: "Monitor",
+            { id: "monitoring-service", name: "monitoring-service", code: "svc-d-luna-monitoring", tag: "Monitor", role: "Metrics Collector",
               desc: "Metrics collector and operational telemetry aggregator. Streams metrics from all planes into MongoDB for real-time dashboard and alerting.",
               diagram: "diagrams/services/plane-06/monitoring-service.png" },
-            { id: "quality-drift-monitor", name: "quality-drift-monitor", code: "svc-d-luna-near-realtime-monitor", tag: "Monitor",
+            { id: "quality-drift-monitor", name: "quality-drift-monitor", code: "svc-d-luna-near-realtime-monitor", tag: "Monitor", role: "Quality & Drift Monitor",
               desc: "Near-real-time guardrail service monitoring response quality, detecting drift, and generating quality-gate alerts for stakeholders.",
               diagram: "diagrams/services/plane-06/quality-drift-monitor.png" },
-            { id: "pii-redaction", name: "pii-redaction-service", code: "svc-d-genai-pii-redaction", tag: "Filter",
+            { id: "pii-redaction", name: "pii-redaction-service", code: "svc-d-genai-pii-redaction", tag: "Filter", role: "PII Sanitization & Protection",
               desc: "Data protection filter detecting and redacting PII (email, phone, SSN, etc.) before logging. Ensures compliance and privacy guardrails.",
               diagram: "diagrams/services/plane-06/pii-redaction-service.png" }
         ]
@@ -693,13 +717,13 @@ const planes = [
         number: 7, name: "Evaluation & MLOps Pipeline", subtitle: "Quality Assurance & Model Training",
         color: "var(--p7)", users: "MLOps / QA engineers", entry: "Scheduled & feedback-triggered",
         services: [
-            { id: "eval-automation", name: "eval-automation-engine", code: "svc-d-gt-eval-automation", tag: "Engine",
+            { id: "eval-automation", name: "eval-automation-engine", code: "svc-d-gt-eval-automation", tag: "Engine", role: "QA & Evaluation Engine",
               desc: "Quality assurance service running automated model evaluations against ground truth. Calculates accuracy, latency, and safety metrics.",
               diagram: "diagrams/services/plane-07/eval-automation-engine.png" },
-            { id: "synthetic-data-gen", name: "synthetic-data-generator", code: "svc-d-sample-generation", tag: "Generator",
+            { id: "synthetic-data-gen", name: "synthetic-data-generator", code: "svc-d-sample-generation", tag: "Generator", role: "Synthetic Data Generator",
               desc: "Synthetic data factory using LLM calls to generate diverse evaluation scenarios. Creates test datasets for model tuning and coverage.",
               diagram: "diagrams/services/plane-07/synthetic-data-generator.png" },
-            { id: "telemetry-agentflow", name: "telemetry-agentflow", code: "svc-d-luna-agentflow", tag: "Telemetry",
+            { id: "telemetry-agentflow", name: "telemetry-agentflow", code: "svc-d-luna-agentflow", tag: "Telemetry", role: "Telemetry & Training Signals",
               desc: "Captures agent workflow signals and interaction logs. Transforms telemetry into training signals for continuous model improvement.",
               diagram: "diagrams/services/plane-07/telemetry-agentflow.png" }
         ]
@@ -708,10 +732,10 @@ const planes = [
         number: 8, name: "Maintenance & Lifecycle", subtitle: "Infrastructure Hygiene & CI/CD",
         color: "var(--p8)", users: "Platform / DevOps", entry: "Cron & CI/CD triggered",
         services: [
-            { id: "neo4j-dbsync", name: "neo4j-dbsync-service", code: "svc-c-chatbot-dbsync-ast-bs", tag: "Maintenance",
+            { id: "neo4j-dbsync", name: "neo4j-dbsync-service", code: "svc-c-chatbot-dbsync-ast-bs", tag: "Maintenance", role: "Graph DB Hygiene Engine",
               desc: "Cron-driven batch service for periodic Neo4j graph maintenance. Scans, detects, and purges expired session nodes to optimize graph performance.",
               diagram: "diagrams/services/plane-08/neo4j-dbsync-service.png" },
-            { id: "qa-automation", name: "qa-automation-service", code: "svc-d-luna-qa-automation", tag: "QA",
+            { id: "qa-automation", name: "qa-automation-service", code: "svc-d-luna-qa-automation", tag: "QA", role: "QA Automation & CI/CD",
               desc: "CI/CD testing gates and automated regression testing. Enforces quality standards before production deployment across all planes.",
               diagram: "diagrams/services/plane-08/qa-automation-service.png" }
         ]
@@ -720,12 +744,12 @@ const planes = [
 
 // ============ DATA: SHARED DATA STORES ============
 const dataStores = [
-    { name: "MongoDB", varColor: "var(--mongo)",
-      connections: { 1: "Templates, DAGs", 2: "Sessions, Transcripts", 4: "History & Audit", 5: "Conversational State", 6: "Metrics & Logs", 8: "Job Registry" } },
-    { name: "Neo4j", varColor: "var(--neo4j)",
-      connections: { 1: "Knowledge Graph", 2: "Session Graph", 4: "Customer Context", 5: "Workflow Relationships", 8: "Node Purging Target" } },
-    { name: "PostgreSQL + pgvector", varColor: "var(--postgres)",
-      connections: { 1: "Config & Vectors", 3: "Execution Records", 4: "FAQ & Embeddings", 5: "API Catalog & Vector", 7: "Summary Persistence" } }
+    { name: "MongoDB", varColor: "var(--mongo)", roles: "Session data, transcripts, audit logs, job registry",
+      connections: { 1: "Templates, DAGs", 2: "Sessions, Transcripts", 4: "History, Audit", 5: "State, Logs", 6: "Metrics, Logs", 8: "Jobs, Registry" } },
+    { name: "Neo4j", varColor: "var(--neo4j)", roles: "Knowledge graph, relationships, context",
+      connections: { 1: "Graph, Entities", 2: "Session Graph", 4: "Context, Relationships", 5: "Workflows", 8: "Node Purging" } },
+    { name: "PostgreSQL + pgvector", varColor: "var(--postgres)", roles: "Execution records, API catalog, embeddings",
+      connections: { 1: "Config, Vectors", 3: "Execution", 4: "FAQ, Embeddings", 5: "API, Vectors", 7: "Summaries" } }
 ];
 
 // ============ DATA: USER FLOWS ============
@@ -772,9 +796,13 @@ function serviceFlowScope(serviceId) {
 // ============ RENDER: FLOW SELECTOR ============
 function renderFlowSelector() {
     const el = document.getElementById("flowSelector");
-    el.innerHTML = Object.keys(flows).map(key => {
+    el.innerHTML = Object.keys(flows).map((key, idx) => {
         const f = flows[key];
-        return `<button class="flow-tab" data-flow="${key}" onclick="switchFlow('${key}')">${f.name}</button>`;
+        return `
+            <input type="radio" name="flow" id="flow-radio-${key}" value="${key}" ${idx === 0 ? "checked" : ""}
+                   onchange="switchFlow('${key}')">
+            <label class="flow-tab" data-flow="${key}" for="flow-radio-${key}">${f.name}</label>
+        `;
     }).join("");
 }
 
@@ -793,8 +821,10 @@ function renderPlanes() {
 
         const serviceHtml = plane.services.map(svc => `
             <div class="service-box" data-service-id="${svc.id}" data-plane="${plane.number}" data-flow-scope="${serviceFlowScope(svc.id)}"
-                 onclick="openModal('${svc.id}')"
-                 onmouseenter="showTooltip(event, '${svc.id}')" onmousemove="moveTooltip(event)" onmouseleave="hideTooltip()">
+                 tabindex="0" role="button" aria-label="${svc.name}: ${svc.role || svc.tag}. Open diagram."
+                 onclick="openModal('${svc.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal('${svc.id}');}"
+                 onmouseenter="showTooltip(event, '${svc.id}')" onmousemove="moveTooltip(event)" onmouseleave="hideTooltip()"
+                 onfocus="showTooltip(event, '${svc.id}')" onblur="hideTooltip()">
                 <span class="service-name">${svc.name}</span>
                 <span class="service-tag">${svc.tag}</span>
             </div>
@@ -846,8 +876,9 @@ function renderLegend() {
 function toggleLegend() {
     const panel = document.getElementById("legendPanel");
     const btn = document.getElementById("legendToggle");
-    panel.classList.toggle("open");
-    btn.textContent = panel.classList.contains("open") ? "Hide Legend" : "Show Legend";
+    const isOpen = panel.classList.toggle("open");
+    btn.textContent = isOpen ? "Hide Legend" : "Show Legend";
+    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
 }
 
 // ============ FLOW SWITCHING ============
@@ -874,6 +905,8 @@ function switchFlow(flowName) {
         const svcId = box.dataset.serviceId;
         const inFlow = flow.serviceIds === null || flow.serviceIds.includes(svcId);
         box.classList.toggle("dimmed", !inFlow);
+        box.setAttribute("tabindex", inFlow ? "0" : "-1");
+        box.setAttribute("aria-disabled", inFlow ? "false" : "true");
     });
 
     document.querySelectorAll(".flow-arrow").forEach(arrow => {
@@ -907,7 +940,7 @@ function showTooltip(evt, serviceId) {
     const tt = document.getElementById("tooltip");
     tt.innerHTML = `
         <span class="tt-title">${svc.name}</span>
-        <span class="tt-code">${svc.code} &middot; ${svc.tag}</span>
+        <span class="tt-code">${svc.code} &middot; ${svc.tag}${svc.role ? " &middot; " + svc.role : ""}</span>
         ${svc.desc}<br><br>
         <strong>Plane ${plane.number}</strong> data stores: ${stores}
     `;
@@ -918,10 +951,16 @@ function showTooltip(evt, serviceId) {
 function moveTooltip(evt) {
     const tt = document.getElementById("tooltip");
     const offset = 16;
-    let left = evt.clientX + offset;
-    let top = evt.clientY + offset;
-    if (left + 260 > window.innerWidth) left = evt.clientX - 260 - offset;
-    if (top + 140 > window.innerHeight) top = evt.clientY - 140 - offset;
+    let anchorX = evt.clientX, anchorY = evt.clientY;
+    if (!anchorX && !anchorY && evt.target && evt.target.getBoundingClientRect) {
+        const rect = evt.target.getBoundingClientRect();
+        anchorX = rect.right;
+        anchorY = rect.top;
+    }
+    let left = anchorX + offset;
+    let top = anchorY + offset;
+    if (left + 260 > window.innerWidth) left = anchorX - 260 - offset;
+    if (top + 140 > window.innerHeight) top = anchorY - 140 - offset;
     tt.style.left = left + "px";
     tt.style.top = top + "px";
 }
@@ -931,16 +970,21 @@ function hideTooltip() {
 }
 
 // ============ MODAL ============
+let lastFocusedElement = null;
+
 function openModal(serviceId) {
     const found = findService(serviceId);
     if (!found) return;
     const { svc, plane } = found;
+
+    lastFocusedElement = document.activeElement;
 
     document.getElementById("modalPlaneTag").textContent = `PLANE ${plane.number} — ${plane.name}`;
     document.getElementById("modalPlaneTag").style.background = plane.color.startsWith("var") ?
         getComputedStyle(document.documentElement).getPropertyValue(plane.color.slice(4, -1)).trim() : plane.color;
     document.getElementById("modalTitle").textContent = svc.name;
     document.getElementById("modalCode").textContent = `${svc.code} (${svc.tag})`;
+    document.getElementById("modalRole").textContent = svc.role || "";
     document.getElementById("modalDesc").textContent = svc.desc;
 
     const img = document.getElementById("modalImage");
@@ -952,10 +996,12 @@ function openModal(serviceId) {
     document.getElementById("modalStores").innerHTML = storesHtml;
 
     document.getElementById("serviceModal").classList.add("open");
+    document.getElementById("modalCloseBtn").focus();
 }
 
 function closeModal() {
     document.getElementById("serviceModal").classList.remove("open");
+    if (lastFocusedElement && lastFocusedElement.focus) lastFocusedElement.focus();
 }
 
 document.addEventListener("keydown", e => {
@@ -963,6 +1009,9 @@ document.addEventListener("keydown", e => {
 });
 document.getElementById("serviceModal").addEventListener("click", e => {
     if (e.target.id === "serviceModal") closeModal();
+});
+document.getElementById("modalCloseBtn").addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); closeModal(); }
 });
 
 // ============ INIT ============
