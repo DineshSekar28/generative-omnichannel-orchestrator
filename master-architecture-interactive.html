@@ -86,6 +86,22 @@
         margin-bottom: 12px;
     }
 
+    fieldset {
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    #flowFieldset legend {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-sub);
+        margin-bottom: 6px;
+        padding: 0;
+    }
+
     .flow-selector {
         display: flex;
         gap: 8px;
@@ -101,11 +117,13 @@
     }
 
     .flow-tab {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
         border: 2px solid var(--border);
         background: var(--bg-card);
         color: var(--text-main);
-        padding: 8px 16px;
+        padding: 10px 18px;
         border-radius: 999px;
         font-size: 0.85rem;
         font-weight: 600;
@@ -301,10 +319,11 @@
 
     .service-box {
         position: relative;
+        min-height: 44px;
         background: #ffffff;
         border: 1.5px solid var(--border);
         border-radius: 6px;
-        padding: 8px 10px 8px 14px;
+        padding: 10px 10px 10px 14px;
         cursor: pointer;
         transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.3s ease;
     }
@@ -472,14 +491,27 @@
 
     .modal-close {
         position: absolute;
-        top: 14px;
-        right: 18px;
+        top: 8px;
+        right: 10px;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 1.6rem;
+        font-family: inherit;
         color: var(--text-sub);
+        background: none;
+        border: none;
         cursor: pointer;
         line-height: 1;
+        border-radius: 6px;
     }
-    .modal-close:hover { color: var(--text-main); }
+    .modal-close:hover { color: var(--text-main); background: var(--bg-hover); }
+    .modal-close:focus-visible {
+        outline: 2px solid var(--accent-blue);
+        outline-offset: 2px;
+    }
 
     #modalPlaneTag {
         display: inline-block;
@@ -570,7 +602,10 @@
 </header>
 
 <div class="flow-toolbar">
-    <div class="flow-selector" id="flowSelector" role="radiogroup" aria-label="User flow filter"></div>
+    <fieldset id="flowFieldset" role="radiogroup" aria-label="User flow filter">
+        <legend>View Flow</legend>
+        <div class="flow-selector" id="flowSelector"></div>
+    </fieldset>
     <button class="legend-toggle" id="legendToggle" onclick="toggleLegend()" aria-expanded="false" aria-controls="legendPanel">Show Legend</button>
 </div>
 
@@ -608,7 +643,7 @@
 
 <div id="serviceModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-content">
-        <span class="modal-close" id="modalCloseBtn" onclick="closeModal()" tabindex="0" role="button" aria-label="Close dialog">&times;</span>
+        <button type="button" class="modal-close" id="modalCloseBtn" onclick="closeServiceModal()" aria-label="Close modal">&times;</button>
         <span id="modalPlaneTag"></span>
         <div id="modalTitle"></div>
         <div id="modalCode"></div>
@@ -793,6 +828,23 @@ function serviceFlowScope(serviceId) {
     return "both";
 }
 
+// ============ FLOW MEMBERSHIP (for data-flows attribute) ============
+function getServiceFlowKeys(serviceId) {
+    return Object.keys(flows).filter(key => {
+        const f = flows[key];
+        return f.serviceIds === null || f.serviceIds.includes(serviceId);
+    });
+}
+
+// ============ GET SERVICES FOR A FLOW ============
+function getFlowServices(flowName) {
+    const flow = flows[flowName];
+    if (!flow || flow.serviceIds === null) {
+        return planes.flatMap(p => p.services);
+    }
+    return flow.serviceIds.map(id => findService(id)?.svc).filter(Boolean);
+}
+
 // ============ RENDER: FLOW SELECTOR ============
 function renderFlowSelector() {
     const el = document.getElementById("flowSelector");
@@ -821,8 +873,9 @@ function renderPlanes() {
 
         const serviceHtml = plane.services.map(svc => `
             <div class="service-box" data-service-id="${svc.id}" data-plane="${plane.number}" data-flow-scope="${serviceFlowScope(svc.id)}"
-                 tabindex="0" role="button" aria-label="${svc.name}: ${svc.role || svc.tag}. Open diagram."
-                 onclick="openModal('${svc.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal('${svc.id}');}"
+                 data-flows="${getServiceFlowKeys(svc.id).join(',')}"
+                 tabindex="0" role="button" aria-label="${svc.code}: ${svc.role || svc.tag} (Plane ${plane.number})"
+                 onclick="openServiceModal('${svc.id}')" onkeydown="handleServiceKeydown(event, this)"
                  onmouseenter="showTooltip(event, '${svc.id}')" onmousemove="moveTooltip(event)" onmouseleave="hideTooltip()"
                  onfocus="showTooltip(event, '${svc.id}')" onblur="hideTooltip()">
                 <span class="service-name">${svc.name}</span>
@@ -901,13 +954,7 @@ function switchFlow(flowName) {
         col.classList.toggle("plane-dimmed", !flow.planes.includes(planeNum));
     });
 
-    document.querySelectorAll(".service-box").forEach(box => {
-        const svcId = box.dataset.serviceId;
-        const inFlow = flow.serviceIds === null || flow.serviceIds.includes(svcId);
-        box.classList.toggle("dimmed", !inFlow);
-        box.setAttribute("tabindex", inFlow ? "0" : "-1");
-        box.setAttribute("aria-disabled", inFlow ? "false" : "true");
-    });
+    updateServiceHighlighting(flow);
 
     document.querySelectorAll(".flow-arrow").forEach(arrow => {
         const afterPlane = parseInt(arrow.dataset.arrowAfter, 10);
@@ -917,6 +964,22 @@ function switchFlow(flowName) {
         arrow.style.color = (beforeInFlow && afterInFlow) ? flow.color : "";
     });
 
+    updateDataStoreHighlight(flow);
+}
+
+// ============ UPDATE SERVICE HIGHLIGHTING ============
+function updateServiceHighlighting(flow) {
+    document.querySelectorAll(".service-box").forEach(box => {
+        const svcId = box.dataset.serviceId;
+        const inFlow = flow.serviceIds === null || flow.serviceIds.includes(svcId);
+        box.classList.toggle("dimmed", !inFlow);
+        box.setAttribute("tabindex", inFlow ? "0" : "-1");
+        box.setAttribute("aria-disabled", inFlow ? "false" : "true");
+    });
+}
+
+// ============ UPDATE DATA STORE HIGHLIGHT ============
+function updateDataStoreHighlight(flow) {
     document.querySelectorAll(".datastore-box li").forEach(li => {
         const planeNum = parseInt(li.dataset.plane, 10);
         li.classList.toggle("dimmed", !flow.planes.includes(planeNum));
@@ -969,10 +1032,18 @@ function hideTooltip() {
     document.getElementById("tooltip").style.display = "none";
 }
 
+// ============ SERVICE BOX KEYBOARD HANDLER ============
+function handleServiceKeydown(event, element) {
+    if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openServiceModal(element.dataset.serviceId);
+    }
+}
+
 // ============ MODAL ============
 let lastFocusedElement = null;
 
-function openModal(serviceId) {
+function openServiceModal(serviceId) {
     const found = findService(serviceId);
     if (!found) return;
     const { svc, plane } = found;
@@ -999,27 +1070,63 @@ function openModal(serviceId) {
     document.getElementById("modalCloseBtn").focus();
 }
 
-function closeModal() {
+function closeServiceModal() {
     document.getElementById("serviceModal").classList.remove("open");
-    if (lastFocusedElement && lastFocusedElement.focus) lastFocusedElement.focus();
+    restoreFocus(lastFocusedElement);
 }
 
-document.addEventListener("keydown", e => {
-    if (e.key === "Escape") closeModal();
-});
-document.getElementById("serviceModal").addEventListener("click", e => {
-    if (e.target.id === "serviceModal") closeModal();
-});
-document.getElementById("modalCloseBtn").addEventListener("keydown", e => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); closeModal(); }
-});
+// ============ FOCUS MANAGEMENT ============
+function restoreFocus(element) {
+    if (element && typeof element.focus === "function") element.focus();
+}
+
+function focusTrap(e) {
+    if (e.key !== "Tab") return;
+    const modal = document.getElementById("serviceModal");
+    if (!modal.classList.contains("open")) return;
+
+    const focusable = Array.from(
+        modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    ).filter(el => el.offsetParent !== null);
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+    }
+}
+
+function attachGlobalListeners() {
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape") closeServiceModal();
+        focusTrap(e);
+    });
+    document.getElementById("serviceModal").addEventListener("click", e => {
+        if (e.target.id === "serviceModal") closeServiceModal();
+    });
+}
 
 // ============ INIT ============
-renderFlowSelector();
-renderPlanes();
-renderDataStores();
-renderLegend();
-switchFlow("full");
+function loadPlanes() {
+    renderFlowSelector();
+    renderPlanes();
+    renderDataStores();
+    renderLegend();
+    attachGlobalListeners();
+    switchFlow("full");
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadPlanes);
+} else {
+    loadPlanes();
+}
 </script>
 </body>
 </html>
