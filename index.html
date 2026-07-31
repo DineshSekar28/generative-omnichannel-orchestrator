@@ -540,24 +540,44 @@
     </header>
 
     <!-- ============ MASTER DIAGRAM ============ -->
-    <section class="section">
-        <div class="master-container">
-    <div class="diagram-placeholder" style="padding: 0; overflow: hidden; border: none; background: transparent;">
-        <iframe 
-            id="masterArchitectureFrame"
-            src="./master-architecture-interactive.html" 
-            style="width: 100%; height: 900px; border: 1px solid var(--border); border-radius: 6px; display: block;"
-            title="Interactive Master Architecture Diagram"
-            allowfullscreen>
-        </iframe>
-    </div>
-    <p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 16px;">
-        Interactive Master Architecture showing all 8 planes, 21 microservices, flow filtering (Design-Time, Agent Assist, IVR), and clickable service diagrams. 
-        <strong>Click services to view diagrams. Select flows to highlight specific paths.</strong>
-    </p>
-</div>
-    </section>
 
+    <!-- ============ MASTER DIAGRAM ============ -->
+    <section class="section">
+        <div class="section-title">
+            Master Architecture Overview
+        </div>
+        <div class="master-container">
+            <div class="diagram-placeholder" style="padding: 0; overflow: hidden; border: none; background: transparent; margin: 0;">
+                <iframe 
+                    id="masterArchitectureFrame"
+                    src="./master-architecture-interactive.html" 
+                    style="width: 100%; height: 900px; border: 1px solid var(--border); border-radius: 6px; display: block;"
+                    title="Interactive Master Architecture Diagram"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 16px;">
+                Interactive Master Architecture showing all 8 planes, 21 microservices, flow filtering (Design-Time, Agent Assist, IVR), and clickable service diagrams. 
+                <strong>Click services to view diagrams. Select flows to highlight specific paths.</strong>
+            </p>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const iframe = document.getElementById("masterArchitectureFrame");
+                console.log("✓ Master Architecture iframe element:", !!iframe);
+                if (!iframe) {
+                    console.error("❌ Master Architecture iframe not found");
+                    return;
+                }
+                iframe.onload = function() {
+                    console.log("✅ Master Architecture iframe loaded successfully");
+                };
+                iframe.onerror = function() {
+                    console.error("❌ Failed to load Master Architecture iframe");
+                };
+            });
+        </script>
+    </section>
     <!-- ============ VISUAL FLOW DIAGRAM ============ -->
     <section class="section">
         <div class="section-title">
