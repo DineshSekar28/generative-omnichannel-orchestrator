@@ -15,7 +15,7 @@
             --bg-dark: #ffffff;
             --bg-card: #f8fafc;
             --bg-hover: #e2e8f0;
-            --accent-blue: #0284c7;
+            --accent-blue: #003d82;
             --accent-green: #16a34a;
             --accent-purple: #9333ea;
             --accent-orange: #ea580c;
@@ -104,7 +104,7 @@
 
         .diagram-placeholder:hover {
             background: #e0f2fe;
-            border-color: #0284c7;
+            border-color: #003d82;
         }
 
         .diagram-placeholder img {
@@ -188,10 +188,6 @@
             background: linear-gradient(135deg, #bfdbfe, #bff4ed);
         }
 
-        .plane-header.expanded {
-            background: linear-gradient(135deg, #93c5fd, #7dd3c0);
-        }
-
         .plane-title-group {
             flex: 1;
         }
@@ -219,33 +215,14 @@
             color: var(--text-sub);
         }
 
-        .expand-icon {
-            font-size: 1.4rem;
-            color: var(--accent-blue);
-            transition: transform 0.3s ease;
-            width: 24px;
-            text-align: center;
-        }
-
-        .plane-header.expanded .expand-icon {
-            transform: rotate(180deg);
-        }
-
         /* ============ PLANE CONTENT ============ */
         .plane-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
+            display: block;
             background: #f5f9fc;
-        }
-
-        .plane-content.expanded {
-            max-height: 2000px;
-        }
-
-        .plane-content-inner {
             padding: 24px;
         }
+
+
 
         /* Plane Diagram */
         .plane-diagram-container {
@@ -343,7 +320,7 @@
         .service-codebase {
             font-family: monospace;
             font-size: 0.75rem;
-            color: #0284c7;
+            color: #003d82;
             background: #eff6ff;
             padding: 4px 8px;
             border-radius: 3px;
@@ -408,7 +385,7 @@
             top: 0;
             height: 4px;
             width: 100%;
-            background: linear-gradient(90deg, #0284c7, #9333ea);
+            background: linear-gradient(90deg, #003d82, #9333ea);
         }
 
         .datastore-icon {
@@ -538,7 +515,7 @@
         }
 
         footer a {
-            color: #0284c7;
+            color: #003d82;
             text-decoration: none;
             font-weight: 500;
         }
@@ -555,22 +532,21 @@
     <header>
         <h1>🏗️ Generative Omnichannel AI Orchestrator</h1>
         <p class="subtitle">
-            <span class="stat-badge">📊 8 Architectural Planes</span>
-            <span class="stat-badge">🔧 21 Microservices</span>
-            <span class="stat-badge">💾 3 Data Stores</span>
-            <span class="stat-badge">⚡ Enterprise-Scale</span>
+            <span class="stat-badge">8 Architectural Planes</span>
+            <span class="stat-badge">21 Microservices</span>
+            <span class="stat-badge">3 Data Stores</span>
+            <span class="stat-badge">Enterprise-Scale</span>
         </p>
     </header>
 
     <!-- ============ MASTER DIAGRAM ============ -->
     <section class="section">
         <div class="section-title">
-            <span class="section-icon">🎯</span>
             Master Architecture Overview
         </div>
         <div class="master-container">
             <div class="diagram-placeholder">
-                <img src="diagrams/master/master-architecture.png" alt="Master Architecture" onerror="this.innerHTML='📊 Master Diagram (Pending Upload)'">
+                <img src="diagrams/master/master-architecture.png" alt="Master Architecture" onerror="this.innerHTML='Master Diagram (Pending Upload)'">
             </div>
             <p style="color: var(--text-sub); font-size: 0.9rem;">Complete system architecture showing all 8 planes, external systems, and data persistence layer.</p>
         </div>
@@ -579,7 +555,6 @@
     <!-- ============ VISUAL FLOW DIAGRAM ============ -->
     <section class="section">
         <div class="section-title">
-            <span class="section-icon">🔄</span>
             Data & Control Flow
         </div>
         <div class="flow-diagram">
@@ -588,21 +563,21 @@
                 <rect width="1400" height="500" fill="#ffffff"/>
                 
                 <!-- Title -->
-                <text x="700" y="25" text-anchor="middle" font-size="16" fill="#0284c7" font-weight="bold">Correct Data & Control Flow Architecture (Click any plane to explore)</text>
+                <text x="700" y="25" text-anchor="middle" font-size="16" fill="#003d82" font-weight="bold">Correct Data & Control Flow Architecture (Click any plane to explore)</text>
                 
                 <!-- ============ DESIGN-TIME LAYER (Top) ============ -->
-                <text x="50" y="60" font-size="12" fill="#0284c7" font-weight="bold">DESIGN-TIME</text>
+                <text x="50" y="60" font-size="12" fill="#003d82" font-weight="bold">DESIGN-TIME</text>
                 <g class="plane-box" onclick="navigateToPlane(1)">
-                    <rect x="20" y="75" width="100" height="80" fill="#dbeafe" stroke="#0284c7" stroke-width="2" rx="4"/>
-                    <text x="70" y="100" text-anchor="middle" font-size="11" fill="#0284c7" font-weight="bold">Plane 1</text>
+                    <rect x="20" y="75" width="100" height="80" fill="#dbeafe" stroke="#003d82" stroke-width="2" rx="4"/>
+                    <text x="70" y="100" text-anchor="middle" font-size="11" fill="#003d82" font-weight="bold">Plane 1</text>
                     <text x="70" y="118" text-anchor="middle" font-size="9" fill="#64748b">Design-Time</text>
                     <text x="70" y="130" text-anchor="middle" font-size="9" fill="#64748b">Control</text>
                 </g>
                 
                 <!-- ============ DATA STORES (Center) ============ -->
                 <g>
-                    <rect x="570" y="40" width="260" height="120" fill="#f0f9ff" stroke="#0284c7" stroke-width="2" rx="4" stroke-dasharray="5,5"/>
-                    <text x="700" y="60" text-anchor="middle" font-size="12" fill="#0284c7" font-weight="bold">💾 DATA STORES</text>
+                    <rect x="570" y="40" width="260" height="120" fill="#f0f9ff" stroke="#003d82" stroke-width="2" rx="4" stroke-dasharray="5,5"/>
+                    <text x="700" y="60" text-anchor="middle" font-size="12" fill="#003d82" font-weight="bold">DATA STORES</text>
                     <text x="700" y="80" text-anchor="middle" font-size="9" fill="#64748b">Templates, Policies,</text>
                     <text x="700" y="93" text-anchor="middle" font-size="9" fill="#64748b">Session Context,</text>
                     <text x="700" y="106" text-anchor="middle" font-size="9" fill="#64748b">Metrics & Logs</text>
@@ -612,7 +587,7 @@
                 <!-- Arrow: Plane 1 → Data Stores -->
                 <defs>
                     <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                        <polygon points="0 0, 10 3, 0 6" fill="#0284c7"/>
+                        <polygon points="0 0, 10 3, 0 6" fill="#003d82"/>
                     </marker>
                     <marker id="arrowhead-orange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
                         <polygon points="0 0, 10 3, 0 6" fill="#ea580c"/>
@@ -622,16 +597,16 @@
                     </marker>
                 </defs>
                 
-                <line x1="120" y1="115" x2="570" y2="100" stroke="#0284c7" stroke-width="2" marker-end="url(#arrowhead)"/>
-                <text x="340" y="95" font-size="9" fill="#0284c7" font-weight="600">Stores templates/policies</text>
+                <line x1="120" y1="115" x2="570" y2="100" stroke="#003d82" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="340" y="95" font-size="9" fill="#003d82" font-weight="600">Stores templates/policies</text>
                 
                 <!-- ============ RUNTIME PIPELINE (Bottom) ============ -->
                 <text x="50" y="240" font-size="12" fill="#16a34a" font-weight="bold">RUNTIME EXECUTION</text>
                 
                 <!-- Customer Input -->
                 <g>
-                    <circle cx="100" cy="300" r="25" fill="#e0e7ff" stroke="#0284c7" stroke-width="2"/>
-                    <text x="100" y="305" text-anchor="middle" font-size="9" fill="#0284c7" font-weight="bold">User</text>
+                    <circle cx="100" cy="300" r="25" fill="#e0e7ff" stroke="#003d82" stroke-width="2"/>
+                    <text x="100" y="305" text-anchor="middle" font-size="9" fill="#003d82" font-weight="bold">User</text>
                 </g>
                 
                 <text x="100" y="340" text-anchor="middle" font-size="8" fill="#64748b">Customer</text>
@@ -745,7 +720,7 @@
                 <text x="750" y="323" font-size="9" fill="#9333ea" font-weight="600">Learning</text>
                 
                 <!-- ============ LEGEND ============ -->
-                <text x="50" y="460" font-size="11" fill="#0284c7" font-weight="bold">━━ Execution Flow</text>
+                <text x="50" y="460" font-size="11" fill="#003d82" font-weight="bold">━━ Execution Flow</text>
                 <text x="250" y="460" font-size="11" fill="#ea580c" font-weight="bold">╌╌ Metrics/Observability</text>
                 <text x="520" y="460" font-size="11" fill="#9333ea" font-weight="bold">╌ ╌ Feedback/Learning</text>
             </svg>
@@ -769,22 +744,18 @@
     <!-- ============ DATA STORES ============ -->
     <section class="section">
         <div class="section-title">
-            <span class="section-icon">💾</span>
             Data Persistence Layer
         </div>
         <div class="datastores-grid">
             <div class="datastore-card">
-                <div class="datastore-icon">📄</div>
                 <div class="datastore-name">MongoDB</div>
                 <div class="datastore-desc">Stores conversational history, session data, and event logs from all channels (Agent, IVR, SMS).</div>
             </div>
             <div class="datastore-card">
-                <div class="datastore-icon">🔗</div>
                 <div class="datastore-name">Neo4j</div>
                 <div class="datastore-desc">Graph-based session management, entity relationships, and context nodes for state continuity. Subject to periodic hygiene sweeps.</div>
             </div>
             <div class="datastore-card">
-                <div class="datastore-icon">🔍</div>
                 <div class="datastore-name">PostgreSQL + pgvector</div>
                 <div class="datastore-desc">Vector embeddings, semantic search indexes, and relational data for RAG and retrieval across the system.</div>
             </div>
@@ -817,7 +788,6 @@
             {
                 number: 1,
                 name: "Design-Time Control",
-                emoji: "🎨",
                 subtitle: "Workflow & Agent Template Authoring",
                 desc: "Where architects and data scientists author workflows, manage agent templates, and configure KYC operations. Primary interaction during editorial/design phase.",
                 planeDiagram: "diagrams/planes/plane-01-design-time-control.png",
@@ -851,7 +821,6 @@
             {
                 number: 2,
                 name: "Real-Time Streaming & Frontend",
-                emoji: "💬",
                 subtitle: "Agent Assistant, IVR, SMS Chat Handling",
                 desc: "Real-time multi-channel interface serving agents via live chat, call center systems, and SMS channels. Enables low-latency guidance streaming.",
                 planeDiagram: "diagrams/planes/plane-02-realtime-streaming.png",
@@ -885,7 +854,6 @@
             {
                 number: 3,
                 name: "Orchestration & Gateways",
-                emoji: "🔀",
                 subtitle: "Multi-Channel Request Routing & Control",
                 desc: "Central routing and orchestration hub that receives requests from all channels (IVR, SMS, Agent) and dispatches to execution layers.",
                 planeDiagram: "diagrams/planes/plane-03-orchestration-gateways.png",
@@ -911,7 +879,6 @@
             {
                 number: 4,
                 name: "MCP Capability Providers",
-                emoji: "🛠️",
                 subtitle: "Tool Execution & Context",
                 desc: "Model Context Protocol (MCP) servers providing standardized tool execution, context injection, and capability management across channels.",
                 planeDiagram: "diagrams/planes/plane-04-mcp-providers.png",
@@ -945,7 +912,6 @@
             {
                 number: 5,
                 name: "Stateful Intelligence",
-                emoji: "🧠",
                 subtitle: "Generative AI & RAG Processing",
                 desc: "AI processing layer handling intent classification, context retrieval (RAG), and generative response creation via LLM APIs.",
                 planeDiagram: "diagrams/planes/plane-05-stateful-intelligence.png",
@@ -971,7 +937,6 @@
             {
                 number: 6,
                 name: "Observability & Governance",
-                emoji: "📊",
                 subtitle: "Monitoring, Compliance & Data Protection",
                 desc: "Real-time monitoring, quality guardrails, and data protection layer ensuring system health, compliance, and PII safeguards.",
                 planeDiagram: "diagrams/planes/plane-06-observability-governance.png",
@@ -1005,7 +970,6 @@
             {
                 number: 7,
                 name: "Evaluation & MLOps Pipeline",
-                emoji: "📈",
                 subtitle: "Quality Assurance & Model Training",
                 desc: "Continuous evaluation, synthetic data generation, and feedback loop pipeline for model improvement and quality assurance.",
                 planeDiagram: "diagrams/planes/plane-07-evaluation-mlops.png",
@@ -1039,7 +1003,6 @@
             {
                 number: 8,
                 name: "Maintenance & Lifecycle",
-                emoji: "🔧",
                 subtitle: "Infrastructure Hygiene & CI/CD",
                 desc: "Maintenance and operational services handling database hygiene, consistency checks, and automated testing gates before production deployment.",
                 planeDiagram: "diagrams/planes/plane-08-maintenance-lifecycle.png",
@@ -1073,7 +1036,7 @@
                 planeEl.className = 'plane-section';
                 
                 planeEl.innerHTML = `
-                    <div class="plane-header" onclick="togglePlane(this)">
+                    <div class="plane-header">
                         <div class="plane-title-group">
                             <div class="plane-number">PLANE ${plane.number}</div>
                             <div style="display: flex; align-items: center; gap: 8px;">
@@ -1084,14 +1047,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="expand-icon">▼</div>
                     </div>
                     <div class="plane-content">
-                        <div class="plane-content-inner">
-                            <div class="plane-diagram-container">
-                                <div class="plane-diagram-label">📊 Plane Architecture Diagram</div>
+                        <div class="plane-diagram-container">
+                                <div class="plane-diagram-label">Plane Architecture Diagram</div>
                                 <div class="diagram-placeholder plane-diagram">
-                                    <img src="${plane.planeDiagram}" alt="Plane ${plane.number} Diagram" onerror="this.parentElement.innerHTML='📊 Plane Diagram (Pending Upload)'">
+                                    <img src="${plane.planeDiagram}" alt="Plane ${plane.number} Diagram" onerror="this.parentElement.innerHTML='Plane Diagram (Pending Upload)'">
                                 </div>
                                 <p style="color: var(--text-sub); font-size: 0.85rem; margin-top: 8px;">${plane.desc}</p>
                             </div>
@@ -1108,7 +1069,6 @@
                                     </div>
                                 `).join('')}
                             </div>
-                        </div>
                     </div>
                 `;
                 
@@ -1116,11 +1076,21 @@
             });
         }
 
-        // ============ TOGGLE PLANE EXPANSION ============
-        function togglePlane(header) {
-            header.classList.toggle('expanded');
-            const content = header.nextElementSibling;
-            content.classList.toggle('expanded');
+        // ============ SCROLL TO PLANE ============
+        function scrollToPlane(planeNumber) {
+            const planeSections = document.querySelectorAll('.plane-section');
+            if (planeSections[planeNumber - 1]) {
+                planeSections[planeNumber - 1].scrollIntoView({ behavior: 'smooth' });
+                // Highlight briefly
+                planeSections[planeNumber - 1].style.transition = 'all 0.3s';
+                planeSections[planeNumber - 1].style.borderColor = '#003d82';
+                planeSections[planeNumber - 1].style.boxShadow = '0 0 20px rgba(2, 132, 199, 0.3)';
+                
+                setTimeout(() => {
+                    planeSections[planeNumber - 1].style.borderColor = '';
+                    planeSections[planeNumber - 1].style.boxShadow = '';
+                }, 2000);
+            }
         }
 
         // ============ HASH ROUTING SYSTEM ============
@@ -1146,37 +1116,17 @@
             const planeName = planeNames[planeNumber - 1];
             updateHash(`plane-${planeNumber}-${planeName}`);
             
-            // Scroll to planes section
-            document.getElementById('planesContainer').scrollIntoView({ behavior: 'smooth' });
-            
-            // Wait for scroll to complete, then expand the plane
+            // Scroll directly to the plane
             setTimeout(() => {
-                expandPlaneByNumber(planeNumber);
-            }, 600);
+                scrollToPlane(planeNumber);
+            }, 300);
         }
 
-        // ============ EXPAND PLANE BY NUMBER ============
-        function expandPlaneByNumber(planeNumber) {
+        // ============ SCROLL TO PLANE ============
+        function scrollToPlaneByNumber(planeNumber) {
             const planeSections = document.querySelectorAll('.plane-section');
             if (planeSections[planeNumber - 1]) {
-                const planeHeader = planeSections[planeNumber - 1].querySelector('.plane-header');
-                const planeContent = planeSections[planeNumber - 1].querySelector('.plane-content');
-                
-                // Ensure plane is expanded
-                if (!planeHeader.classList.contains('expanded')) {
-                    planeHeader.classList.add('expanded');
-                    planeContent.classList.add('expanded');
-                }
-                
-                // Highlight the plane briefly
-                planeSections[planeNumber - 1].style.transition = 'all 0.3s';
-                planeSections[planeNumber - 1].style.borderColor = '#0284c7';
-                planeSections[planeNumber - 1].style.boxShadow = '0 0 20px rgba(2, 132, 199, 0.3)';
-                
-                setTimeout(() => {
-                    planeSections[planeNumber - 1].style.borderColor = '';
-                    planeSections[planeNumber - 1].style.boxShadow = '';
-                }, 2000);
+                scrollToPlane(planeNumber);
             }
         }
 
@@ -1228,29 +1178,15 @@
                 const planeMatch = hash.match(/plane-(\d+)/);
                 if (planeMatch) {
                     const planeNumber = parseInt(planeMatch[1]);
-                    document.getElementById('planesContainer').scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => {
-                        expandPlaneByNumber(planeNumber);
-                    }, 600);
+                    scrollToPlane(planeNumber);
                 }
             } else if (hash.startsWith('service-')) {
-                // Service hash - find and show service
+                // Service hash - find and scroll to service
                 const serviceId = hash.replace('service-', '');
                 const serviceCard = document.querySelector(`[data-service-id="${serviceId}"]`);
                 if (serviceCard) {
-                    // First, ensure parent plane is expanded
-                    const planeSection = serviceCard.closest('.plane-section');
-                    if (planeSection) {
-                        const planeHeader = planeSection.querySelector('.plane-header');
-                        const planeContent = planeSection.querySelector('.plane-content');
-                        if (!planeHeader.classList.contains('expanded')) {
-                            planeHeader.classList.add('expanded');
-                            planeContent.classList.add('expanded');
-                        }
-                    }
-                    // Then scroll to service
                     serviceCard.scrollIntoView({ behavior: 'smooth' });
-                    serviceCard.style.borderColor = '#0284c7';
+                    serviceCard.style.borderColor = '#003d82';
                     setTimeout(() => {
                         serviceCard.style.borderColor = '';
                     }, 1500);
