@@ -2,1164 +2,451 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LUNA AI System — Master Architecture</title>
+<title>Luna Platform — Master Flow Map</title>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-        --bg-dark: #ffffff;
-        --bg-card: #f8fafc;
-        --bg-hover: #e2e8f0;
-        --accent-blue: #003d82;
-        --accent-green: #16a34a;
-        --accent-purple: #9333ea;
-        --accent-orange: #ea580c;
-        --text-main: #0f172a;
-        --text-sub: #64748b;
-        --border: #cbd5e1;
-        --dimmed: #94a3b8;
-
-        --p1: #4c1d95;
-        --p2: #06b6d4;
-        --p3: #16a34a;
-        --p4: #15803d;
-        --p5: #0891b2;
-        --p6: #ea580c;
-        --p7: #9333ea;
-        --p8: #b45309;
-
-        --mongo: #16a34a;
-        --neo4j: #0284c7;
-        --postgres: #4c1d95;
-    }
-
-    html, body {
-        height: auto;
-    }
-
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background-color: var(--bg-dark);
-        color: var(--text-main);
-        padding: 16px;
-        line-height: 1.5;
-    }
-
-    header {
-        border-bottom: 2px solid var(--border);
-        padding-bottom: 16px;
-        margin-bottom: 16px;
-    }
-
-    h1 {
-        font-size: 1.6rem;
-        color: var(--accent-blue);
-        margin: 0 0 6px;
-    }
-
-    .subtitle {
-        color: var(--text-sub);
-        font-size: 0.95rem;
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .stat-badge {
-        background: rgba(0, 61, 130, 0.06);
-        border: 1px solid var(--accent-blue);
-        color: var(--accent-blue);
-        padding: 3px 10px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-
-    /* ============ FLOW SELECTOR ============ */
-    .flow-toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-
-    fieldset {
-        border: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    #flowFieldset legend {
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: var(--text-sub);
-        margin-bottom: 6px;
-        padding: 0;
-    }
-
-    .flow-selector {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .flow-selector input[type="radio"] {
-        position: absolute;
-        opacity: 0;
-        width: 1px;
-        height: 1px;
-        pointer-events: none;
-    }
-
-    .flow-tab {
-        display: inline-flex;
-        align-items: center;
-        min-height: 44px;
-        border: 2px solid var(--border);
-        background: var(--bg-card);
-        color: var(--text-main);
-        padding: 10px 18px;
-        border-radius: 999px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .flow-tab:hover { background: var(--bg-hover); }
-
-    .flow-selector input[type="radio"]:focus-visible + .flow-tab {
-        outline: 2px solid var(--accent-blue);
-        outline-offset: 2px;
-    }
-
-    .flow-tab.active {
-        color: #fff;
-        border-color: transparent;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-
-    .legend-toggle {
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-        color: var(--accent-blue);
-        padding: 8px 14px;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-    }
-    .legend-toggle:hover { background: var(--bg-hover); }
-
-    .flow-description {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-left: 4px solid var(--accent-blue);
-        border-radius: 6px;
-        padding: 10px 14px;
-        font-size: 0.85rem;
-        color: var(--text-sub);
-        margin-bottom: 16px;
-        transition: border-color 0.3s ease;
-    }
-    .flow-description strong { color: var(--text-main); }
-
-    /* ============ LEGEND ============ */
-    .legend-panel {
-        display: none;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 16px 20px;
-        margin-bottom: 20px;
-        gap: 24px;
-        flex-wrap: wrap;
-    }
-    .legend-panel.open { display: flex; }
-
-    .legend-group h4 {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: var(--text-sub);
-        margin-bottom: 8px;
-    }
-
-    .legend-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.8rem;
-        margin-bottom: 6px;
-    }
-
-    .legend-swatch {
-        width: 14px;
-        height: 14px;
-        border-radius: 4px;
-        flex-shrink: 0;
-        display: inline-block;
-    }
-
-    .legend-line {
-        width: 24px;
-        height: 0;
-        border-top: 2px solid var(--text-sub);
-        display: inline-block;
-    }
-    .legend-line.dashed { border-top-style: dashed; }
-
-    /* ============ MAIN DIAGRAM ============ */
-    .diagram-shell {
-        display: flex;
-        gap: 20px;
-        align-items: flex-start;
-    }
-
-    .planes-row {
-        display: flex;
-        gap: 14px;
-        overflow-x: auto;
-        padding: 6px 4px 16px;
-        flex: 1;
-    }
-
-    .flow-arrow {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 20px;
-        font-size: 1.3rem;
-        color: var(--accent-blue);
-        transition: color 0.25s ease, opacity 0.25s ease;
-        align-self: stretch;
-    }
-    .flow-arrow.dimmed { color: var(--dimmed); opacity: 0.5; }
-
-    .plane-column {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-top: 5px solid var(--plane-color, var(--accent-blue));
-        border-radius: 8px;
-        min-width: 200px;
-        max-width: 200px;
-        display: flex;
-        flex-direction: column;
-        transition: opacity 0.3s ease, filter 0.3s ease;
-    }
-
-    .plane-column.plane-dimmed {
-        opacity: 0.4;
-        filter: grayscale(0.6);
-    }
-
-    .plane-col-header {
-        padding: 12px 12px 10px;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .plane-col-num {
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        color: var(--plane-color, var(--accent-blue));
-    }
-
-    .plane-col-name {
-        font-size: 0.88rem;
-        font-weight: 700;
-        color: var(--text-main);
-        margin: 2px 0 2px;
-        line-height: 1.25;
-    }
-
-    .plane-col-subtitle {
-        font-size: 0.7rem;
-        color: var(--text-sub);
-        margin-bottom: 6px;
-    }
-
-    .plane-col-meta {
-        font-size: 0.65rem;
-        color: var(--text-sub);
-        font-style: italic;
-        margin-bottom: 8px;
-    }
-
-    .plane-col-stores {
-        display: flex;
-        gap: 5px;
-    }
-
-    .store-badge {
-        width: 18px;
-        height: 18px;
-        border-radius: 4px;
-        font-size: 0.6rem;
-        font-weight: 700;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: default;
-    }
-
-    .plane-col-services {
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        flex: 1;
-    }
-
-    .service-box {
-        position: relative;
-        min-height: 44px;
-        background: #ffffff;
-        border: 1.5px solid var(--border);
-        border-radius: 6px;
-        padding: 10px 10px 10px 14px;
-        cursor: pointer;
-        transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.3s ease;
-    }
-
-    .service-box::before {
-        content: "";
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 5px;
-        border-radius: 6px 0 0 6px;
-        background: var(--flow-dot, var(--accent-blue));
-    }
-
-    .service-box[data-flow-scope="design-time"] { --flow-dot: #4c1d95; }
-    .service-box[data-flow-scope="agent"] { --flow-dot: #06b6d4; }
-    .service-box[data-flow-scope="ivr"] { --flow-dot: #16a34a; }
-    .service-box[data-flow-scope="both"] { --flow-dot: linear-gradient(180deg, #06b6d4, #16a34a); }
-
-    .service-box:hover,
-    .service-box:focus-visible {
-        transform: scale(1.045);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-        border-color: var(--plane-color, var(--accent-blue));
-        z-index: 2;
-    }
-
-    .service-box:focus-visible {
-        outline: 2px solid var(--plane-color, var(--accent-blue));
-        outline-offset: 2px;
-    }
-
-    .service-box.dimmed {
-        opacity: 0.4;
-        cursor: not-allowed;
-        pointer-events: none;
-    }
-
-    .service-name {
-        font-family: "SFMono-Regular", Consolas, monospace;
-        font-size: 0.68rem;
-        font-weight: 700;
-        color: var(--text-main);
-        word-break: break-word;
-        display: block;
-    }
-
-    .service-tag {
-        display: inline-block;
-        margin-top: 4px;
-        font-size: 0.6rem;
-        font-weight: 700;
-        color: var(--accent-blue);
-        background: #eff6ff;
-        padding: 1px 6px;
-        border-radius: 3px;
-    }
-
-    /* ============ DATA STORE PANEL ============ */
-    .datastore-panel {
-        width: 230px;
-        flex-shrink: 0;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 14px;
-        position: sticky;
-        top: 24px;
-    }
-
-    .datastore-panel h3 {
-        font-size: 0.8rem;
-        color: var(--accent-blue);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin-bottom: 10px;
-    }
-
-    .datastore-box {
-        border: 1px solid var(--border);
-        border-left: 4px solid var(--store-color, var(--accent-blue));
-        border-radius: 6px;
-        padding: 8px 10px;
-        margin-bottom: 10px;
-        background: #ffffff;
-    }
-
-    .datastore-box h4 {
-        font-size: 0.78rem;
-        color: var(--text-main);
-        margin-bottom: 6px;
-    }
-
-    .datastore-box ul {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-    }
-
-    .datastore-box li {
-        font-size: 0.68rem;
-        color: var(--text-sub);
-        transition: opacity 0.3s ease;
-    }
-
-    .datastore-box li strong {
-        color: var(--text-main);
-        font-weight: 700;
-    }
-
-    .datastore-box li.dimmed { opacity: 0.35; }
-
-    /* ============ TOOLTIP ============ */
-    #tooltip {
-        position: fixed;
-        display: none;
-        max-width: 260px;
-        background: #0f172a;
-        color: #f1f5f9;
-        padding: 10px 12px;
-        border-radius: 6px;
-        font-size: 0.72rem;
-        line-height: 1.45;
-        z-index: 1000;
-        pointer-events: none;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    }
-    #tooltip .tt-title {
-        font-weight: 700;
-        font-family: monospace;
-        color: #67e8f9;
-        display: block;
-        margin-bottom: 4px;
-    }
-    #tooltip .tt-code {
-        display: block;
-        color: #94a3b8;
-        margin-bottom: 4px;
-        font-family: monospace;
-    }
-    #tooltip .tt-role {
-        display: block;
-        font-weight: 600;
-        color: #f1f5f9;
-        margin-bottom: 4px;
-    }
-    #tooltip .tt-desc {
-        display: block;
-        margin-bottom: 6px;
-    }
-    #tooltip .tt-stores {
-        display: block;
-        color: #94a3b8;
-        font-size: 0.68rem;
-    }
-    #tooltip .tt-stores strong {
-        color: #f1f5f9;
-    }
-
-    /* ============ MODAL ============ */
-    .modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.6);
-        z-index: 2000;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-    }
-    .modal.open { display: flex; }
-
-    .modal-content {
-        background: #fff;
-        border-radius: 10px;
-        max-width: 800px;
-        width: 100%;
-        max-height: 88vh;
-        overflow-y: auto;
-        padding: 24px;
-        position: relative;
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 8px;
-        right: 10px;
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.6rem;
-        font-family: inherit;
-        color: var(--text-sub);
-        background: none;
-        border: none;
-        cursor: pointer;
-        line-height: 1;
-        border-radius: 6px;
-    }
-    .modal-close:hover { color: var(--text-main); background: var(--bg-hover); }
-    .modal-close:focus-visible {
-        outline: 2px solid var(--accent-blue);
-        outline-offset: 2px;
-    }
-
-    #modalPlaneTag {
-        display: inline-block;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        padding: 3px 10px;
-        border-radius: 999px;
-        color: #fff;
-        margin-bottom: 10px;
-    }
-
-    #modalTitle {
-        font-family: monospace;
-        font-size: 1.15rem;
-        color: var(--text-main);
-        margin-bottom: 4px;
-    }
-
-    #modalCode {
-        font-family: monospace;
-        font-size: 0.8rem;
-        color: var(--accent-blue);
-        background: #eff6ff;
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 4px;
-        margin-bottom: 4px;
-    }
-
-    #modalRole {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-main);
-        margin-bottom: 10px;
-    }
-
-    #modalDesc {
-        font-size: 0.9rem;
-        color: var(--text-sub);
-        margin-bottom: 16px;
-    }
-
-    .modal-image-frame {
-        background: #f0f9ff;
-        border: 2px solid var(--accent-blue);
-        border-radius: 6px;
-        padding: 12px;
-        text-align: center;
-        margin-bottom: 14px;
-    }
-    .modal-image-frame img {
-        max-width: 100%;
-        border-radius: 4px;
-    }
-
-    #modalStores {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        font-size: 0.75rem;
-    }
-    #modalStores span {
-        border-radius: 999px;
-        padding: 3px 10px;
-        color: #fff;
-        font-weight: 600;
-    }
-
-    footer {
-        margin-top: 32px;
-        text-align: center;
-        color: var(--text-sub);
-        font-size: 0.8rem;
-    }
+  :root{
+    --cs:#111827; --ivr:#16a34a; --aa:#dc2626; --sup:#b45309;
+    --bg:#f4f5f7; --card:#ffffff; --ink:#1f2430; --muted:#8a8f9c; --line:#c7cad1;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,-apple-system,Segoe UI,Roboto,sans-serif;}
+  .mono{font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace;}
+
+  header{padding:22px 32px 10px;}
+  h1{margin:0 0 4px;font-size:22px;}
+  .subtitle{margin:0;color:var(--muted);font-size:13px;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    padding:12px 32px;position:sticky;top:0;background:var(--bg);z-index:5;
+    border-bottom:1px solid var(--line);}
+  .chip{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;
+    border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-size:12.5px;
+    font-weight:600;transition:all .15s ease;user-select:none;}
+  .chip:hover{border-color:#9aa0ab;}
+  .chip .dot{width:9px;height:9px;border-radius:50%;}
+  .chip[data-flow="cs"] .dot{background:var(--cs);}
+  .chip[data-flow="ivr"] .dot{background:var(--ivr);}
+  .chip[data-flow="aa"] .dot{background:var(--aa);}
+  .chip[data-flow="support"] .dot{background:var(--sup);}
+  .chip.active[data-flow="cs"]{background:var(--cs);color:#fff;border-color:var(--cs);}
+  .chip.active[data-flow="ivr"]{background:var(--ivr);color:#fff;border-color:var(--ivr);}
+  .chip.active[data-flow="aa"]{background:var(--aa);color:#fff;border-color:var(--aa);}
+  .chip.active[data-flow="support"]{background:var(--sup);color:#fff;border-color:var(--sup);}
+  #resetBtn{margin-left:auto;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);
+    background:var(--card);font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink);}
+  #resetBtn:hover{border-color:#9aa0ab;}
+  .hint{padding:6px 32px 0;color:var(--muted);font-size:12px;max-width:920px;}
+
+  .canvas-wrap{overflow:auto;padding:24px 32px 60px;}
+  #canvas{position:relative;width:2020px;height:1180px;}
+  svg#edges{position:absolute;left:0;top:0;pointer-events:none;}
+
+  .col-label{position:absolute;top:-26px;font-size:10.5px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.6px;color:var(--muted);}
+  .band-label{position:absolute;font-size:11px;font-weight:700;color:var(--sup);
+    text-transform:uppercase;letter-spacing:.6px;}
+  .band-line{position:absolute;border-top:1px dashed var(--line);}
+
+  .node{position:absolute;width:196px;background:var(--card);border-radius:10px;
+    border:1.5px solid var(--line);padding:9px 26px 8px 11px;cursor:pointer;
+    transition:opacity .2s ease, filter .2s ease, box-shadow .2s ease, transform .12s ease;
+    box-shadow:0 1px 2px rgba(0,0,0,.05);}
+  .node:hover{transform:translateY(-1px);}
+  .node .id{font-size:12px;font-weight:700;line-height:1.25;}
+  .node .sub{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.25;}
+  .node .bars{position:absolute;left:0;top:0;bottom:0;width:5px;border-radius:10px 0 0 10px;
+    overflow:hidden;display:flex;flex-direction:column;}
+  .node .bars span{flex:1;}
+
+  .node.user{border-radius:16px;text-align:center;width:150px;padding:14px 10px 10px;}
+  .node.user .icon{width:34px;height:34px;margin:0 auto 6px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;}
+  .node.user .icon svg{width:20px;height:20px;}
+  .node.external{border-style:dashed;}
+  .node.store{border-radius:8px;}
+  .node.support{border-color:#e9c193;}
+  .node.dim{opacity:.2;filter:grayscale(70%);}
+  .node.hit{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1), 0 0 0 8px var(--ring2);}
+  .node.hit.single{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1);}
+
+  .plane-tag{position:absolute;top:2px;right:26px;font-size:8.5px;color:var(--muted);font-weight:700;}
+  .view-btn{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:5px;
+    border:none;background:#eef0f3;color:#5b6472;font-size:11px;line-height:18px;text-align:center;
+    cursor:pointer;padding:0;}
+  .view-btn:hover{background:#dfe2e7;}
+
+  .footnote{padding:6px 32px 30px;color:var(--muted);font-size:11.5px;max-width:920px;}
+
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(15,17,21,.55);display:none;
+    align-items:center;justify-content:center;z-index:50;padding:30px;}
+  .overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:12px;max-width:min(1100px,92vw);max-height:88vh;
+    overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;}
+  .modal-head h3{margin:0;font-size:15px;}
+  .modal-head button{border:none;background:#f0f1f3;border-radius:8px;width:28px;height:28px;
+    cursor:pointer;font-size:14px;}
+  .modal-body{padding:18px;}
+  .modal-body img{width:100%;display:block;border-radius:8px;border:1px solid var(--line);}
+  .placeholder{padding:26px;border:1.5px dashed var(--line);border-radius:10px;color:var(--muted);
+    font-size:13.5px;line-height:1.6;background:#fafbfc;}
 </style>
 </head>
 <body>
 
 <header>
-    <h1>LUNA AI System — Master Architecture</h1>
-    <p class="subtitle">
-        <span class="stat-badge">8 Architectural Planes</span>
-        <span class="stat-badge">21 Microservices</span>
-        <span class="stat-badge">3 Data Stores</span>
-        <span class="stat-badge">3 User Flows</span>
-    </p>
+  <h1>Luna Platform — Master Flow Map</h1>
+  <p class="subtitle">Command Studio · IVR · Agent Assist · Supporting Services (Plane 6–8) — click a box to trace its flow, click ⤢ to view its diagram</p>
 </header>
 
-<div class="flow-toolbar">
-    <fieldset id="flowFieldset" role="radiogroup" aria-label="User flow filter">
-        <legend>View Flow</legend>
-        <div class="flow-selector" id="flowSelector"></div>
-    </fieldset>
-    <button class="legend-toggle" id="legendToggle" onclick="toggleLegend()" aria-expanded="false" aria-controls="legendPanel">Show Legend</button>
+<div class="legend">
+  <span class="chip" data-flow="cs"><span class="dot"></span>Command Studio</span>
+  <span class="chip" data-flow="ivr"><span class="dot"></span>IVR</span>
+  <span class="chip" data-flow="aa"><span class="dot"></span>Agent Assist</span>
+  <span class="chip" data-flow="support"><span class="dot"></span>Supporting Services</span>
+  <button id="resetBtn">Show all</button>
+</div>
+<p class="hint">Click a box once to trace its flow(s). Double-click a box — or click its ⤢ button — to open its diagram. Shared services (orchestration, GenAI engine, MCP core, ML/model layer, PII guardrails, data stores) light up for every active flow at once. The amber band at the bottom is <b>not part of any real-time request path</b> — it's observability, evaluation, and maintenance tooling that reads/writes the same data stores in the background.</p>
+
+<div class="canvas-wrap">
+  <div id="canvas">
+    <svg id="edges" width="2020" height="1180"></svg>
+  </div>
 </div>
 
-<div class="flow-description" id="flowDescription" role="status" aria-live="polite"></div>
+<p class="footnote">Diagram viewer is wired up but only the Agent Assist flow image is linked so far (the one you confirmed correct). Upload the finished IVR and Command Studio flow images and I'll wire those the same way — one line each, no rebuild needed. To embed this whole page in your GitHub Pages portal: drop this file (and the /images folder) into the repo root and point an iframe at it from index.html, same pattern as master-architecture-interactive.html. Send me that file if you'd rather I merge this directly into it.</p>
 
-<div class="legend-panel" id="legendPanel">
-    <div class="legend-group" id="legendPlanes">
-        <h4>Planes</h4>
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Diagram</h3>
+      <button id="modalClose">✕</button>
     </div>
-    <div class="legend-group" id="legendFlows">
-        <h4>User Flows</h4>
-    </div>
-    <div class="legend-group">
-        <h4>Data Stores</h4>
-        <div class="legend-row"><span class="legend-swatch" style="background:var(--mongo)"></span>MongoDB</div>
-        <div class="legend-row"><span class="legend-swatch" style="background:var(--neo4j)"></span>Neo4j</div>
-        <div class="legend-row"><span class="legend-swatch" style="background:var(--postgres)"></span>PostgreSQL + pgvector</div>
-    </div>
-    <div class="legend-group">
-        <h4>Connections</h4>
-        <div class="legend-row"><span class="legend-line"></span>Active flow</div>
-        <div class="legend-row"><span class="legend-line dashed"></span>Not in selected flow</div>
-    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
 </div>
-
-<div class="diagram-shell">
-    <div class="planes-row" id="planesRow"></div>
-    <div class="datastore-panel" id="datastorePanel">
-        <h3>Shared Data Stores</h3>
-        <div id="datastoreBoxes"></div>
-    </div>
-</div>
-
-<div id="tooltip" role="tooltip">
-    <div class="tt-title"></div>
-    <div class="tt-code"></div>
-    <div class="tt-role"></div>
-    <div class="tt-desc"></div>
-    <div class="tt-stores"></div>
-</div>
-
-<div id="serviceModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-content">
-        <button type="button" class="modal-close" id="modalCloseBtn" onclick="closeServiceModal()" aria-label="Close modal">&times;</button>
-        <span id="modalPlaneTag"></span>
-        <div id="modalTitle"></div>
-        <div id="modalCode"></div>
-        <div id="modalRole"></div>
-        <p id="modalDesc"></p>
-        <div class="modal-image-frame">
-            <img id="modalImage" alt="Service diagram">
-        </div>
-        <div id="modalStores"></div>
-    </div>
-</div>
-
-<footer>
-    Generative Omnichannel AI Orchestrator &mdash; Master Architecture (Interactive)
-</footer>
 
 <script>
-// ============ DATA: PLANES & SERVICES ============
-// Mirrors the authoritative plane/service list in index.html (21 services, 8 planes).
-const planes = [
-    {
-        number: 1, name: "Design-Time Control", subtitle: "Workflow & Agent Template Authoring",
-        color: "var(--p1)", users: "Business Users / Architects / KYC Analysts", entry: "Web Browser",
-        services: [
-            { id: "commandstudio-workflow-ui", name: "commandstudio-workflow-ui", code: "svc-v-commandstudio-workflow", tag: "UI", role: "Visual DAG Workflow Editor",
-              desc: "Visual, low-code studio for authoring Directed Acyclic Graphs (DAGs) with in-context testing and workflow design.",
-              diagram: "diagrams/services/plane-01/commandstudio-workflow-ui.png" },
-            { id: "kyc-datastudio-ui", name: "kyc-datastudio-ui", code: "svc-v-kyc-datastudio", tag: "UI", role: "KYC Operations Workspace",
-              desc: "Customer profile management UI for KYC data studio. Enables exploration, masking toggles, and compliance form filling.",
-              diagram: "diagrams/services/plane-01/kyc-datastudio-ui.png" },
-            { id: "commandstudio-domain", name: "commandstudio-domain", code: "svc-d-commandstudio", tag: "Domain", role: "Template & Workflow Lifecycle Manager",
-              desc: "Core domain service managing workflow/template lifecycles, policy validation, and safety guardrails. Handles persistence and versioning.",
-              diagram: "diagrams/services/plane-01/commandstudio-domain.png" }
-        ]
-    },
-    {
-        number: 2, name: "Real-Time Streaming & Frontend", subtitle: "Agent Assistant, IVR, SMS Chat Handling",
-        color: "var(--p2)", users: "Agents (AST) / Customers (IVR)", entry: "Agent Desktop / Telephony",
-        services: [
-            { id: "agentassist-ui", name: "agentassist-ui", code: "svc-v-chatbot-agentassist", tag: "UI", role: "Agent Copilot UI",
-              desc: "Angular-based Agent Assistant frontend embedded in CRM/dialer as iframe. Displays real-time guidance, transcripts, and suggested actions.",
-              diagram: "diagrams/services/plane-02/agentassist-ui.png" },
-            { id: "agentassist-gateway", name: "agentassist-gateway", code: "svc-d-chatbot-gateway-ast", tag: "Gateway", role: "LOB Request Aggregator Gateway",
-              desc: "FastAPI REST aggregator routing LOB-specific requests, persisting consolidated payloads to MongoDB, and coordinating downstream services.",
-              diagram: "diagrams/services/plane-02/agentassist-gateway.png" },
-            { id: "agentassist-livestream", name: "agentassist-livestream-engine", code: "svc-d-chatbot-ast-ls", tag: "WebSocket", role: "Real-Time Streaming Engine",
-              desc: "Real-time bi-directional WebSocket engine maintaining persistent connections, streaming guidance and transcripts to agent desktop.",
-              diagram: "diagrams/services/plane-02/agentassist-livestream-engine.png" }
-        ]
-    },
-    {
-        number: 3, name: "Orchestration & Gateways", subtitle: "Multi-Channel Request Routing & Control",
-        color: "var(--p3)", users: "System-internal routing", entry: "Runtime execution start",
-        services: [
-            { id: "ivr-gateway", name: "ivr-gateway", code: "svc-d-chatbot-gateway-ivr", tag: "Gateway", role: "Telephony IVR Gateway",
-              desc: "Deterministic router handling incoming IVR voice and SMS traffic. Routes by intent/keyword and normalizes responses into standard DTOs.",
-              diagram: "diagrams/services/plane-03/ivr-gateway.png" },
-            { id: "genai-orchestrator", name: "genai-workflow-orchestrator", code: "svc-c-genaiworkflow", tag: "Core", role: "Central GenAI Workflow Orchestrator",
-              desc: "Central orchestration control plane managing multi-step GenAI flows, context injection, and cross-channel workflow coordination.",
-              diagram: "diagrams/services/plane-03/genai-workflow-orchestrator.png" }
-        ]
-    },
-    {
-        number: 4, name: "MCP Capability Providers", subtitle: "Tool Execution & Context",
-        color: "var(--p4)", users: "System-internal tool execution", entry: "Invoked by Orchestrator",
-        services: [
-            { id: "mcp-agentassist", name: "mcp-agentassist", code: "svc-d-luna-aa-mcp", tag: "MCP", role: "Agent Assist Context Provider",
-              desc: "MCP context provider tailored for agent assistance. Supplies agent-specific context, suggestion generation, and workflow guidance.",
-              diagram: "diagrams/services/plane-04/mcp-agentassist.png" },
-            { id: "mcp-telephony", name: "mcp-telephony", code: "svc-d-luna-ivr-mcp", tag: "MCP", role: "Telephony Tool Provider",
-              desc: "MCP provider for triggering IVR voice/SMS actions. Handles tool execution for voice synthesis, SMS sending, and call routing.",
-              diagram: "diagrams/services/plane-04/mcp-telephony.png" },
-            { id: "mcp-core", name: "mcp-core", code: "svc-d-luna-mcp", tag: "MCP", role: "Core Intent & Execution Coordinator",
-              desc: "Main MCP provider executing core intents and tools. Routes to downstream services and handles deterministic execution flows.",
-              diagram: "diagrams/services/plane-04/mcp-core.png" }
-        ]
-    },
-    {
-        number: 5, name: "Stateful Intelligence", subtitle: "Generative AI & RAG Processing",
-        color: "var(--p5)", users: "System-internal AI processing", entry: "Invoked by MCP Core",
-        services: [
-            { id: "chatbot-ml-engine", name: "chatbot-ml-engine", code: "svc-d-chatbot-ml", tag: "Engine", role: "Conversational AI Processing Engine",
-              desc: "FastAPI ML engine for intent detection, NLP processing, context assembly, and safety guardrail enforcement before response generation.",
-              diagram: "diagrams/services/plane-05/chatbot-ml-engine.png" },
-            { id: "ml-model-server", name: "ml-model-server", code: "svc-d-mlmodels", tag: "Server", role: "Model Server / Cross-Encoder Library",
-              desc: "High-throughput model inference server. Handles Cross-Encoder routing, model versioning, and batch processing for optimal throughput.",
-              diagram: "diagrams/services/plane-05/ml-model-server.png" }
-        ]
-    },
-    {
-        number: 6, name: "Observability & Governance", subtitle: "Monitoring, Compliance & Data Protection",
-        color: "var(--p6)", users: "Ops / Compliance stakeholders", entry: "Async metrics ingestion",
-        services: [
-            { id: "monitoring-service", name: "monitoring-service", code: "svc-d-luna-monitoring", tag: "Monitor", role: "Metrics Collector",
-              desc: "Metrics collector and operational telemetry aggregator. Streams metrics from all planes into MongoDB for real-time dashboard and alerting.",
-              diagram: "diagrams/services/plane-06/monitoring-service.png" },
-            { id: "quality-drift-monitor", name: "quality-drift-monitor", code: "svc-d-luna-near-realtime-monitor", tag: "Monitor", role: "Quality & Drift Monitor",
-              desc: "Near-real-time guardrail service monitoring response quality, detecting drift, and generating quality-gate alerts for stakeholders.",
-              diagram: "diagrams/services/plane-06/quality-drift-monitor.png" },
-            { id: "pii-redaction", name: "pii-redaction-service", code: "svc-d-genai-pii-redaction", tag: "Filter", role: "PII Sanitization & Protection",
-              desc: "Data protection filter detecting and redacting PII (email, phone, SSN, etc.) before logging. Ensures compliance and privacy guardrails.",
-              diagram: "diagrams/services/plane-06/pii-redaction-service.png" }
-        ]
-    },
-    {
-        number: 7, name: "Evaluation & MLOps Pipeline", subtitle: "Quality Assurance & Model Training",
-        color: "var(--p7)", users: "MLOps / QA engineers", entry: "Scheduled & feedback-triggered",
-        services: [
-            { id: "eval-automation", name: "eval-automation-engine", code: "svc-d-gt-eval-automation", tag: "Engine", role: "QA & Evaluation Engine",
-              desc: "Quality assurance service running automated model evaluations against ground truth. Calculates accuracy, latency, and safety metrics.",
-              diagram: "diagrams/services/plane-07/eval-automation-engine.png" },
-            { id: "synthetic-data-gen", name: "synthetic-data-generator", code: "svc-d-sample-generation", tag: "Generator", role: "Synthetic Data Generator",
-              desc: "Synthetic data factory using LLM calls to generate diverse evaluation scenarios. Creates test datasets for model tuning and coverage.",
-              diagram: "diagrams/services/plane-07/synthetic-data-generator.png" },
-            { id: "telemetry-agentflow", name: "telemetry-agentflow", code: "svc-d-luna-agentflow", tag: "Telemetry", role: "Telemetry & Training Signals",
-              desc: "Captures agent workflow signals and interaction logs. Transforms telemetry into training signals for continuous model improvement.",
-              diagram: "diagrams/services/plane-07/telemetry-agentflow.png" }
-        ]
-    },
-    {
-        number: 8, name: "Maintenance & Lifecycle", subtitle: "Infrastructure Hygiene & CI/CD",
-        color: "var(--p8)", users: "Platform / DevOps", entry: "Cron & CI/CD triggered",
-        services: [
-            { id: "neo4j-dbsync", name: "neo4j-dbsync-service", code: "svc-c-chatbot-dbsync-ast-bs", tag: "Maintenance", role: "Graph DB Hygiene Engine",
-              desc: "Cron-driven batch service for periodic Neo4j graph maintenance. Scans, detects, and purges expired session nodes to optimize graph performance.",
-              diagram: "diagrams/services/plane-08/neo4j-dbsync-service.png" },
-            { id: "qa-automation", name: "qa-automation-service", code: "svc-d-luna-qa-automation", tag: "QA", role: "QA Automation & CI/CD",
-              desc: "CI/CD testing gates and automated regression testing. Enforces quality standards before production deployment across all planes.",
-              diagram: "diagrams/services/plane-08/qa-automation-service.png" }
-        ]
-    }
+const COLW = 232, ROWH = 70, MARGIN_L = 40, MARGIN_T = 40, BOXW = 196;
+
+const COLUMNS = [
+  "Users", "Frontend / Entry", "Gateway / Routing", "Decision & Orchestration",
+  "MCP / Context", "Intelligence & Guardrails", "Output / Background", "Data & Knowledge Stores"
 ];
 
-// ============ DATA: SHARED DATA STORES ============
-const dataStores = [
-    { name: "MongoDB", varColor: "var(--mongo)", roles: "Session data, transcripts, audit logs, job registry",
-      connections: { 1: "Templates, DAGs", 2: "Sessions, Transcripts", 4: "History, Audit", 5: "State, Logs", 6: "Metrics, Logs", 8: "Jobs, Registry" } },
-    { name: "Neo4j", varColor: "var(--neo4j)", roles: "Knowledge graph, relationships, context",
-      connections: { 1: "Graph, Entities", 2: "Session Graph", 4: "Context, Relationships", 5: "Workflows", 8: "Node Purging" } },
-    { name: "PostgreSQL + pgvector", varColor: "var(--postgres)", roles: "Execution records, API catalog, embeddings",
-      connections: { 1: "Config, Vectors", 3: "Execution", 4: "FAQ, Embeddings", 5: "API, Vectors", 7: "Summaries" } }
+const nodes = [
+  {id:"U-CS",  col:0, row:0,   flows:["cs"],  type:"user", label:"Solution Architect / KYC Analyst", sub:"User"},
+  {id:"U-IVR", col:0, row:3.5, flows:["ivr"], type:"user", label:"Customer", sub:"via Telephony"},
+  {id:"U-AA",  col:0, row:7,   flows:["aa"],  type:"user", label:"Contact Center Agent", sub:"User"},
+
+  {id:"CS-UI1",col:1, row:0,   flows:["cs"],  label:"svc-v-commandstudio-workflow", sub:"DAG Authoring UI", plane:"P1"},
+  {id:"CS-UI2",col:1, row:1,   flows:["cs"],  label:"svc-v-kyc-datastudio", sub:"KYC Data Studio UI", plane:"P1"},
+  {id:"IVR-EXT1",col:1,row:3.5,flows:["ivr"], type:"external", label:"Kore.ai / Telephony IVR", sub:"External System"},
+  {id:"IVR-EXT2",col:1,row:4.5,flows:["ivr"], type:"external", label:"Google STT / Whisper", sub:"Speech-to-Text"},
+  {id:"AA-UI", col:1, row:7,   flows:["aa"],  label:"svc-v-chatbot-agentassist", sub:"Agent Copilot UI", plane:"P2"},
+  {id:"AA-WS", col:1, row:8,   flows:["aa"],  label:"svc-d-chatbot-ast-ls", sub:"Real-Time Streaming", plane:"P2"},
+
+  {id:"CS-BE", col:2, row:0.5, flows:["cs"],  label:"svc-d-commandstudio", sub:"Lifecycle Backend", plane:"P1"},
+  {id:"IVR-GW",col:2, row:4,   flows:["ivr"], label:"svc-d-chatbot-gateway-ivr", sub:"IVR Deterministic Router", plane:"P3"},
+  {id:"AA-GW", col:2, row:7.5, flows:["aa"],  label:"svc-d-chatbot-gateway-ast", sub:"Agent Assist Gateway", plane:"P2"},
+
+  {id:"ORCH",  col:3, row:5,   flows:["ivr","aa"], label:"svc-d-orchestration", sub:"Decision Layer — API Mapper", plane:"P3"},
+  {id:"GENAI", col:3, row:6,   flows:["ivr","aa"], label:"svc-c-genaiworkflow", sub:"GenAI Workflow Engine", plane:"P3"},
+
+  {id:"MCP-CORE",col:4,row:5.5,flows:["ivr","aa"], label:"svc-d-luna-mcp", sub:"Core MCP Orchestrator", plane:"P4"},
+  {id:"MCP-IVR",col:4,row:4,   flows:["ivr"], label:"svc-d-luna-ivr-mcp", sub:"IVR Tool Execution", plane:"P4"},
+  {id:"MCP-AA", col:4,row:7.5, flows:["aa"],  label:"svc-d-luna-aa-mcp", sub:"Agent Context Provider", plane:"P4"},
+
+  {id:"ML",     col:5,row:5,   flows:["ivr","aa"], label:"svc-d-chatbot-ml", sub:"Conversational AI Engine", plane:"P5"},
+  {id:"MODELS", col:5,row:6,   flows:["ivr","aa"], label:"svc-d-mlmodels", sub:"Model Server Library", plane:"P5"},
+  {id:"PII",    col:5,row:7,   flows:["ivr","aa"], label:"svc-d-genai-pii-redaction", sub:"PII Guardrails", plane:"P6"},
+
+  {id:"TTS",    col:6,row:3.5, flows:["ivr"], type:"external", label:"TTS Engine", sub:"External Service"},
+  {id:"DBSYNC", col:6,row:8.5, flows:["aa"],  type:"external", label:"svc-c-chatbot-dbsync-ast-bs", sub:"Background DB Sync", plane:"P8"},
+
+  {id:"MONGO",  col:7,row:1,   flows:["cs","ivr","aa"], type:"store", label:"MongoDB", sub:"Sessions, Templates, Logs"},
+  {id:"NEO4J",  col:7,row:2,   flows:["cs","ivr","aa"], type:"store", label:"Neo4j", sub:"Knowledge Graph"},
+  {id:"PG",     col:7,row:3,   flows:["cs","ivr","aa"], type:"store", label:"PostgreSQL + pgvector", sub:"Vector Store"},
+
+  // Supporting services band — Plane 6-8, not part of the real-time request path
+  {id:"MON",     col:2, row:10,   flows:["support"], type:"support", label:"svc-d-luna-monitoring", sub:"Real-Time Analytics & Logging", plane:"P6"},
+  {id:"NEARRT",  col:3, row:10,   flows:["support"], type:"support", label:"svc-d-luna-near-realtime-monitor", sub:"Guardrail & Drift Adjudication", plane:"P6"},
+  {id:"EVAL",    col:4, row:10,   flows:["support"], type:"support", label:"svc-d-gt-eval-automation", sub:"Ground Truth Quality Engine", plane:"P7"},
+  {id:"SAMPLEGEN",col:5,row:10,   flows:["support"], type:"support", label:"svc-d-sample-generation", sub:"Synthetic Eval Datasets", plane:"P7"},
+  {id:"AGENTFLOW",col:6,row:10,   flows:["support"], type:"support", label:"svc-d-luna-agentflow", sub:"Telemetry Transformation", plane:"P7"},
+  {id:"DBSYNCADT",col:2,row:11.3, flows:["support"], type:"support", label:"svc-c-chatbot-dbsync-adt-bs", sub:"Neo4j Graph Hygiene & DB Sync", plane:"P8"},
+  {id:"QAAUTO",   col:3,row:11.3, flows:["support"], type:"support", label:"svc-d-luna-qa-automation", sub:"Build-Time CI/CD Governance", plane:"P8"},
 ];
 
-// ============ DATA: USER FLOWS ============
-const flows = {
-    full: {
-        name: "Full System View", color: "#003d82", planes: [1,2,3,4,5,6,7,8], serviceIds: null,
-        description: "All 8 planes, all 21 services, and every data-store connection shown at full color."
-    },
-    "design-time": {
-        name: "Design-Time Control", color: "#4c1d95", planes: [1],
-        serviceIds: ["commandstudio-workflow-ui", "kyc-datastudio-ui", "commandstudio-domain"],
-        description: "<strong>Architects / KYC Analysts</strong> author workflows and templates in Plane 1, persisting directly to Data Stores. No runtime planes are touched."
-    },
-    agent: {
-        name: "Agent Assist Flow", color: "#06b6d4", planes: [2,3,4,5,6,7,8],
-        serviceIds: ["agentassist-ui","agentassist-gateway","agentassist-livestream","genai-orchestrator","mcp-agentassist","mcp-core",
-                     "chatbot-ml-engine","ml-model-server","monitoring-service","quality-drift-monitor","pii-redaction",
-                     "eval-automation","synthetic-data-gen","telemetry-agentflow","neo4j-dbsync","qa-automation"],
-        description: "<strong>Agents</strong>: Agent Desktop (WebSocket) &rarr; Orchestrator &rarr; Agent-context MCP &rarr; Intelligence &rarr; Observability / MLOps. IVR-only services are dimmed."
-    },
-    ivr: {
-        name: "IVR Customer Flow", color: "#16a34a", planes: [2,3,4,5,6,7,8],
-        serviceIds: ["ivr-gateway","genai-orchestrator","mcp-telephony","mcp-core",
-                     "chatbot-ml-engine","ml-model-server","monitoring-service","quality-drift-monitor","pii-redaction",
-                     "eval-automation","synthetic-data-gen","telemetry-agentflow","neo4j-dbsync","qa-automation"],
-        description: "<strong>Customers</strong>: Kore.ai IVR (Voice/SMS) &rarr; Orchestrator &rarr; Telephony MCP &rarr; Intelligence &rarr; Observability / MLOps. Agent-only services are dimmed."
-    }
+const edges = [
+  ["U-CS","CS-UI1",["cs"]], ["U-CS","CS-UI2",["cs"]],
+  ["CS-UI1","CS-BE",["cs"]], ["CS-UI2","CS-BE",["cs"]],
+  ["CS-BE","MONGO",["cs"]], ["CS-BE","NEO4J",["cs"]], ["CS-BE","PG",["cs"]],
+
+  ["U-IVR","IVR-EXT1",["ivr"]], ["IVR-EXT1","IVR-EXT2",["ivr"]], ["IVR-EXT2","IVR-GW",["ivr"]],
+  ["IVR-GW","ORCH",["ivr"]], ["ORCH","GENAI",["ivr"]], ["GENAI","MCP-CORE",["ivr"]],
+  ["MCP-CORE","MCP-IVR",["ivr"]], ["MCP-IVR","ML",["ivr"]],
+  ["ML","MODELS",["ivr"]], ["ML","PII",["ivr"]],
+  ["MODELS","MONGO",["ivr"]], ["MODELS","NEO4J",["ivr"]], ["MODELS","PG",["ivr"]],
+  ["PII","TTS",["ivr"]], ["TTS","IVR-EXT1",["ivr"]], ["IVR-EXT1","U-IVR",["ivr"]],
+
+  ["U-AA","AA-UI",["aa"]], ["AA-UI","AA-WS",["aa"]], ["AA-WS","AA-GW",["aa"]],
+  ["AA-GW","ORCH",["aa"]], ["ORCH","GENAI",["aa"]], ["GENAI","MCP-CORE",["aa"]],
+  ["MCP-CORE","MCP-AA",["aa"]], ["MCP-AA","ML",["aa"]],
+  ["ML","MODELS",["aa"]], ["ML","PII",["aa"]],
+  ["MODELS","MONGO",["aa"]], ["MODELS","NEO4J",["aa"]], ["MODELS","PG",["aa"]],
+  ["AA-WS","DBSYNC",["aa"]], ["DBSYNC","MONGO",["aa"]],
+  ["PII","AA-WS",["aa"]], ["AA-WS","AA-UI",["aa"]], ["AA-UI","U-AA",["aa"]],
+
+  // Supporting services — dashed telemetry / background paths
+  ["GENAI","MON",["support"]], ["ML","MON",["support"]], ["MCP-CORE","MON",["support"]],
+  ["MODELS","NEARRT",["support"]], ["PII","NEARRT",["support"]],
+  ["EVAL","PG",["support"]], ["SAMPLEGEN","MONGO",["support"]], ["AGENTFLOW","NEO4J",["support"]],
+  ["DBSYNCADT","NEO4J",["support"]], ["QAAUTO","MONGO",["support"]],
+  ["MON","MONGO",["support"]], ["NEARRT","MONGO",["support"]],
+];
+
+const FLOWCOLOR = {cs:"#111827", ivr:"#16a34a", aa:"#dc2626", support:"#b45309"};
+
+// Diagram viewer — full flow images, one per group
+const DIAGRAMS = {
+  cs:      {title:"Command Studio Setup & Governance Flow", img:null,
+            note:"Not linked yet — upload the finished Command Studio flow PNG and I'll wire it here."},
+  ivr:     {title:"IVR Telephony Call Flow", img:null,
+            note:"Not linked yet — upload the finished IVR flow PNG and I'll wire it here."},
+  aa:      {title:"Agent Assist Live Feedback Flow", img:"images/agent-assist-flow.png", note:null},
+  shared:  {title:"Multiple Flows", img:null,
+            note:"This service appears in more than one flow. Use the legend chips above to isolate a single flow, then reopen this box to see that flow's diagram."},
+  support: {title:"Supporting / Governance Service", img:null,
+            note:"Part of the observability, evaluation, or maintenance layer (Plane 6–8) rather than a single real-time flow — no dedicated flow diagram, shown here for its data-store connectivity."}
 };
-
-let activeFlow = "full";
-
-// ============ SERVICE FLOW SCOPE (for the left color-dot on each box) ============
-function serviceFlowScope(serviceId) {
-    const inAgent = flows.agent.serviceIds.includes(serviceId);
-    const inIvr = flows.ivr.serviceIds.includes(serviceId);
-    const inDesign = flows["design-time"].serviceIds.includes(serviceId);
-    if (inDesign) return "design-time";
-    if (inAgent && inIvr) return "both";
-    if (inAgent) return "agent";
-    if (inIvr) return "ivr";
-    return "both";
+function diagramGroupFor(n){
+  if(n.type==="support") return "support";
+  if(n.flows.length===1) return n.flows[0]==="cs"||n.flows[0]==="ivr"||n.flows[0]==="aa" ? n.flows[0] : "shared";
+  if(n.flows.length===3) return "shared";
+  return "shared";
 }
 
-// ============ FLOW MEMBERSHIP (for data-flows attribute) ============
-function getServiceFlowKeys(serviceId) {
-    return Object.keys(flows).filter(key => {
-        const f = flows[key];
-        return f.serviceIds === null || f.serviceIds.includes(serviceId);
+const canvas = document.getElementById("canvas");
+const svg = document.getElementById("edges");
+
+function pos(n){
+  const left = MARGIN_L + n.col*COLW;
+  const top  = MARGIN_T + n.row*ROWH;
+  return {left, top, cx:left+BOXW/2, cy:top + (n.type==="user"?34:32)};
+}
+const posMap = {};
+nodes.forEach(n=>posMap[n.id]=pos(n));
+
+COLUMNS.forEach((name,i)=>{
+  const d = document.createElement("div");
+  d.className = "col-label";
+  d.style.left = (MARGIN_L + i*COLW) + "px";
+  d.textContent = name;
+  canvas.appendChild(d);
+});
+
+// band divider + label above supporting services
+const bandLine = document.createElement("div");
+bandLine.className = "band-line";
+bandLine.style.left = MARGIN_L+"px";
+bandLine.style.top = (MARGIN_T + 9.3*ROWH) + "px";
+bandLine.style.width = (COLW*7) + "px";
+canvas.appendChild(bandLine);
+const bandLabel = document.createElement("div");
+bandLabel.className = "band-label";
+bandLabel.style.left = MARGIN_L+"px";
+bandLabel.style.top = (MARGIN_T + 9.3*ROWH - 18) + "px";
+bandLabel.textContent = "Supporting Services — Plane 6–8 (Observability · Evaluation · Maintenance) — outside the real-time request path";
+canvas.appendChild(bandLabel);
+
+nodes.forEach(n=>{
+  const p = posMap[n.id];
+  const el = document.createElement("div");
+  el.className = "node" + (n.type==="user"?" user":"") + (n.type==="external"?" external":"") +
+                  (n.type==="store"?" store":"") + (n.type==="support"?" support":"");
+  el.style.left = p.left+"px";
+  el.style.top = p.top+"px";
+  if(n.type==="user") el.style.width="150px";
+  el.dataset.id = n.id;
+  el.dataset.flows = n.flows.join(",");
+
+  const bars = document.createElement("div");
+  bars.className = "bars";
+  n.flows.forEach(f=>{
+    const s = document.createElement("span");
+    s.style.background = FLOWCOLOR[f];
+    bars.appendChild(s);
+  });
+  el.appendChild(bars);
+
+  if(n.plane){
+    const tag = document.createElement("div");
+    tag.className = "plane-tag";
+    tag.textContent = n.plane;
+    el.appendChild(tag);
+  }
+
+  if(n.type!=="user"){
+    const btn = document.createElement("button");
+    btn.className = "view-btn";
+    btn.title = "View diagram";
+    btn.textContent = "⤢";
+    btn.addEventListener("click",(e)=>{ e.stopPropagation(); openModal(n); });
+    el.appendChild(btn);
+  }
+
+  if(n.type==="user"){
+    const iconWrap = document.createElement("div");
+    iconWrap.className = "icon";
+    const c = FLOWCOLOR[n.flows[0]];
+    iconWrap.style.background = c + "1a"; // light tint of flow color
+    iconWrap.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+      '<circle cx="12" cy="8" r="3.6" stroke="'+c+'" stroke-width="1.8"/>' +
+      '<path d="M4.5 19.5c1.4-3.6 4.4-5.5 7.5-5.5s6.1 1.9 7.5 5.5" stroke="'+c+'" stroke-width="1.8" stroke-linecap="round"/>' +
+      '</svg>';
+    el.appendChild(iconWrap);
+  }
+
+  const id = document.createElement("div");
+  id.className = "id" + (n.type!=="user" ? " mono" : "");
+  id.textContent = n.label;
+  el.appendChild(id);
+
+  const sub = document.createElement("div");
+  sub.className = "sub";
+  sub.textContent = n.sub;
+  el.appendChild(sub);
+
+  el.addEventListener("click", ()=>onNodeClick(n));
+  el.addEventListener("dblclick", (e)=>{ e.preventDefault(); openModal(n); });
+  canvas.appendChild(el);
+});
+
+function drawEdges(){
+  svg.innerHTML = "";
+  const defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
+  Object.entries(FLOWCOLOR).forEach(([f,c])=>{
+    const marker = document.createElementNS("http://www.w3.org/2000/svg","marker");
+    marker.setAttribute("id","arrow-"+f);
+    marker.setAttribute("markerWidth","8"); marker.setAttribute("markerHeight","8");
+    marker.setAttribute("refX","7"); marker.setAttribute("refY","4");
+    marker.setAttribute("orient","auto");
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d","M0,0 L8,4 L0,8 z");
+    path.setAttribute("fill",c);
+    marker.appendChild(path);
+    defs.appendChild(marker);
+  });
+  svg.appendChild(defs);
+
+  edges.forEach(([from,to,flows])=>{
+    const a = posMap[from], b = posMap[to];
+    flows.forEach((f,i)=>{
+      const n = flows.length;
+      const offset = (i - (n-1)/2) * 6;
+      const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+      const x1=a.cx, y1=a.cy+offset, x2=b.cx, y2=b.cy+offset;
+      const mx=(x1+x2)/2;
+      const d = "M"+x1+","+y1+" C"+mx+","+y1+" "+mx+","+y2+" "+x2+","+y2;
+      path.setAttribute("d", d);
+      path.setAttribute("fill","none");
+      path.setAttribute("stroke", FLOWCOLOR[f]);
+      path.setAttribute("stroke-width", f==="support" ? "1.3" : "1.6");
+      path.setAttribute("opacity", f==="support" ? "0.4" : "0.55");
+      if(f==="support") path.setAttribute("stroke-dasharray","4,3");
+      path.setAttribute("marker-end","url(#arrow-"+f+")");
+      path.dataset.flows = f;
+      svg.appendChild(path);
     });
+  });
 }
+drawEdges();
 
-// ============ GET SERVICES FOR A FLOW ============
-function getFlowServices(flowName) {
-    const flow = flows[flowName];
-    if (!flow || flow.serviceIds === null) {
-        return planes.flatMap(p => p.services);
+let activeFlows = new Set();
+let selectedNode = null;
+
+function render(){
+  canvas.querySelectorAll(".node").forEach(el=>{
+    const flows = el.dataset.flows.split(",");
+    const hitFlows = flows.filter(f=>activeFlows.has(f));
+    el.classList.remove("dim","hit","single");
+    el.style.removeProperty("--ring1"); el.style.removeProperty("--ring2");
+    if(activeFlows.size===0){ return; }
+    if(hitFlows.length===0){ el.classList.add("dim"); return; }
+    el.classList.add("hit");
+    el.style.setProperty("--ring1", FLOWCOLOR[hitFlows[0]]);
+    if(hitFlows.length>1){ el.style.setProperty("--ring2", FLOWCOLOR[hitFlows[1]]); }
+    else { el.classList.add("single"); }
+  });
+
+  svg.querySelectorAll("path").forEach(p=>{
+    const f = p.dataset.flows;
+    if(activeFlows.size===0){
+      p.setAttribute("opacity", f==="support" ? "0.4" : "0.55");
+      p.setAttribute("stroke-width", f==="support" ? "1.3" : "1.6");
+      return;
     }
-    return flow.serviceIds.map(id => findService(id)?.svc).filter(Boolean);
+    if(activeFlows.has(f)){ p.setAttribute("opacity","0.95"); p.setAttribute("stroke-width","2.6"); }
+    else { p.setAttribute("opacity","0.06"); p.setAttribute("stroke-width","1"); }
+  });
+
+  document.querySelectorAll(".chip").forEach(c=>{
+    c.classList.toggle("active", activeFlows.has(c.dataset.flow));
+  });
 }
 
-// ============ RENDER: FLOW SELECTOR ============
-function renderFlowSelector() {
-    const el = document.getElementById("flowSelector");
-    el.innerHTML = Object.keys(flows).map((key, idx) => {
-        const f = flows[key];
-        return `
-            <input type="radio" name="flow" id="flow-radio-${key}" value="${key}" ${idx === 0 ? "checked" : ""}
-                   onchange="switchFlow('${key}')">
-            <label class="flow-tab" data-flow="${key}" for="flow-radio-${key}">${f.name}</label>
-        `;
-    }).join("");
+function onNodeClick(n){
+  const same = selectedNode===n.id &&
+    n.flows.length===activeFlows.size && n.flows.every(f=>activeFlows.has(f));
+  if(same){ activeFlows = new Set(); selectedNode = null; }
+  else { activeFlows = new Set(n.flows); selectedNode = n.id; }
+  render();
 }
 
-// ============ RENDER: PLANE COLUMNS ============
-function renderPlanes() {
-    const row = document.getElementById("planesRow");
-    let html = "";
-    planes.forEach((plane, idx) => {
-        if (idx > 0) {
-            html += `<div class="flow-arrow" data-arrow-after="${planes[idx-1].number}">&rarr;</div>`;
-        }
-        const storeBadges = dataStores.filter(ds => ds.connections[plane.number]).map(ds => {
-            const label = ds.name === "MongoDB" ? "M" : ds.name === "Neo4j" ? "N" : "P";
-            return `<span class="store-badge" style="background:${ds.varColor}" title="${ds.name}: ${ds.connections[plane.number]}">${label}</span>`;
-        }).join("");
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("click", ()=>{
+    selectedNode = null;
+    const f = chip.dataset.flow;
+    if(activeFlows.has(f)) activeFlows.delete(f); else activeFlows.add(f);
+    render();
+  });
+});
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  activeFlows = new Set(); selectedNode = null; render();
+});
 
-        const serviceHtml = plane.services.map(svc => `
-            <div class="service-box" data-service-id="${svc.id}" data-plane="${plane.number}" data-flow-scope="${serviceFlowScope(svc.id)}"
-                 data-flows="${getServiceFlowKeys(svc.id).join(',')}"
-                 tabindex="0" role="button" aria-label="${svc.code}: ${svc.role || svc.tag} (Plane ${plane.number})"
-                 onclick="openServiceModal('${svc.id}')" onkeydown="handleServiceKeydown(event, this)"
-                 onmouseenter="showTooltip(event, '${svc.id}')" onmousemove="moveTooltip(event)" onmouseleave="hideTooltip()"
-                 onfocus="showTooltip(event, '${svc.id}')" onblur="hideTooltip()">
-                <span class="service-name">${svc.name}</span>
-                <span class="service-tag">${svc.tag}</span>
-            </div>
-        `).join("");
-
-        html += `
-            <div class="plane-column" data-plane="${plane.number}" style="--plane-color: ${plane.color}">
-                <div class="plane-col-header">
-                    <div class="plane-col-num">PLANE ${plane.number}</div>
-                    <div class="plane-col-name">${plane.name}</div>
-                    <div class="plane-col-subtitle">${plane.subtitle}</div>
-                    <div class="plane-col-meta">${plane.users} &middot; ${plane.entry}</div>
-                    <div class="plane-col-stores">${storeBadges}</div>
-                </div>
-                <div class="plane-col-services">${serviceHtml}</div>
-            </div>
-        `;
-    });
-    row.innerHTML = html;
+// modal
+const overlay = document.getElementById("overlay");
+const modalTitle = document.getElementById("modalTitle");
+const modalBody = document.getElementById("modalBody");
+function openModal(n){
+  const group = diagramGroupFor(n);
+  const d = DIAGRAMS[group];
+  modalTitle.textContent = d.title + " — " + n.label;
+  modalBody.innerHTML = "";
+  if(d.img){
+    const img = document.createElement("img");
+    img.src = d.img;
+    img.alt = d.title;
+    modalBody.appendChild(img);
+  } else {
+    const ph = document.createElement("div");
+    ph.className = "placeholder";
+    ph.textContent = d.note;
+    modalBody.appendChild(ph);
+  }
+  overlay.classList.add("open");
 }
+document.getElementById("modalClose").addEventListener("click", ()=>overlay.classList.remove("open"));
+overlay.addEventListener("click",(e)=>{ if(e.target===overlay) overlay.classList.remove("open"); });
+document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") overlay.classList.remove("open"); });
 
-// ============ RENDER: DATA STORE PANEL ============
-function renderDataStores() {
-    const el = document.getElementById("datastoreBoxes");
-    el.innerHTML = dataStores.map(ds => `
-        <div class="datastore-box" style="--store-color: ${ds.varColor}">
-            <h4>${ds.name}</h4>
-            <ul>
-                ${Object.keys(ds.connections).map(planeNum => `
-                    <li data-plane="${planeNum}"><strong>Plane ${planeNum}:</strong> ${ds.connections[planeNum]}</li>
-                `).join("")}
-            </ul>
-        </div>
-    `).join("");
-}
-
-// ============ RENDER: LEGEND ============
-function renderLegend() {
-    const planeLegend = document.getElementById("legendPlanes");
-    planes.forEach(p => {
-        planeLegend.innerHTML += `<div class="legend-row"><span class="legend-swatch" style="background:${p.color}"></span>Plane ${p.number}: ${p.name}</div>`;
-    });
-    const flowLegend = document.getElementById("legendFlows");
-    Object.values(flows).forEach(f => {
-        flowLegend.innerHTML += `<div class="legend-row"><span class="legend-swatch" style="background:${f.color}"></span>${f.name}</div>`;
-    });
-}
-
-function toggleLegend() {
-    const panel = document.getElementById("legendPanel");
-    const btn = document.getElementById("legendToggle");
-    const isOpen = panel.classList.toggle("open");
-    btn.textContent = isOpen ? "Hide Legend" : "Show Legend";
-    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-}
-
-// ============ FLOW SWITCHING ============
-function switchFlow(flowName) {
-    activeFlow = flowName;
-    const flow = flows[flowName];
-
-    document.querySelectorAll(".flow-tab").forEach(tab => {
-        const isActive = tab.dataset.flow === flowName;
-        tab.classList.toggle("active", isActive);
-        tab.style.background = isActive ? flows[tab.dataset.flow].color : "";
-        tab.style.borderColor = isActive ? flows[tab.dataset.flow].color : "";
-    });
-
-    document.getElementById("flowDescription").innerHTML = flow.description;
-    document.getElementById("flowDescription").style.borderLeftColor = flow.color;
-
-    document.querySelectorAll(".plane-column").forEach(col => {
-        const planeNum = parseInt(col.dataset.plane, 10);
-        col.classList.toggle("plane-dimmed", !flow.planes.includes(planeNum));
-    });
-
-    updateServiceHighlighting(flow);
-
-    document.querySelectorAll(".flow-arrow").forEach(arrow => {
-        const afterPlane = parseInt(arrow.dataset.arrowAfter, 10);
-        const beforeInFlow = flow.planes.includes(afterPlane);
-        const afterInFlow = flow.planes.includes(afterPlane + 1);
-        arrow.classList.toggle("dimmed", !(beforeInFlow && afterInFlow));
-        arrow.style.color = (beforeInFlow && afterInFlow) ? flow.color : "";
-    });
-
-    updateDataStoreHighlight(flow);
-}
-
-// ============ UPDATE SERVICE HIGHLIGHTING ============
-function updateServiceHighlighting(flow) {
-    document.querySelectorAll(".service-box").forEach(box => {
-        const svcId = box.dataset.serviceId;
-        const inFlow = flow.serviceIds === null || flow.serviceIds.includes(svcId);
-        box.classList.toggle("dimmed", !inFlow);
-        box.setAttribute("tabindex", inFlow ? "0" : "-1");
-        box.setAttribute("aria-disabled", inFlow ? "false" : "true");
-    });
-}
-
-// ============ UPDATE DATA STORE HIGHLIGHT ============
-function updateDataStoreHighlight(flow) {
-    document.querySelectorAll(".datastore-box li").forEach(li => {
-        const planeNum = parseInt(li.dataset.plane, 10);
-        li.classList.toggle("dimmed", !flow.planes.includes(planeNum));
-    });
-}
-
-// ============ TOOLTIP ============
-function findService(serviceId) {
-    for (const plane of planes) {
-        const svc = plane.services.find(s => s.id === serviceId);
-        if (svc) return { svc, plane };
-    }
-    return null;
-}
-
-function showTooltip(evt, serviceId) {
-    const tt = document.getElementById("tooltip");
-    if (!tt) return;
-    const found = findService(serviceId);
-    if (!found) return;
-    const { svc, plane } = found;
-    const stores = dataStores.filter(ds => ds.connections[plane.number]).map(ds => ds.name).join(", ") || "None";
-
-    tt.querySelector(".tt-title").textContent = svc.name;
-    tt.querySelector(".tt-code").textContent = `${svc.code} · ${svc.tag}`;
-    tt.querySelector(".tt-role").textContent = svc.role || "";
-    tt.querySelector(".tt-desc").textContent = svc.desc;
-    tt.querySelector(".tt-stores").textContent = `Plane ${plane.number} data stores: ${stores}`;
-
-    tt.style.display = "block";
-    moveTooltip(evt);
-}
-
-function moveTooltip(evt) {
-    const tt = document.getElementById("tooltip");
-    const offset = 16;
-    let anchorX = evt.clientX, anchorY = evt.clientY;
-    if (!anchorX && !anchorY && evt.target && evt.target.getBoundingClientRect) {
-        const rect = evt.target.getBoundingClientRect();
-        anchorX = rect.right;
-        anchorY = rect.top;
-    }
-    let left = anchorX + offset;
-    let top = anchorY + offset;
-    if (left + 260 > window.innerWidth) left = anchorX - 260 - offset;
-    if (top + 140 > window.innerHeight) top = anchorY - 140 - offset;
-    tt.style.left = left + "px";
-    tt.style.top = top + "px";
-}
-
-function hideTooltip() {
-    document.getElementById("tooltip").style.display = "none";
-}
-
-// ============ SERVICE BOX KEYBOARD HANDLER ============
-function handleServiceKeydown(event, element) {
-    if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openServiceModal(element.dataset.serviceId);
-    }
-}
-
-// ============ MODAL ============
-let lastFocusedElement = null;
-
-function openServiceModal(serviceId) {
-    const found = findService(serviceId);
-    if (!found) return;
-    const { svc, plane } = found;
-
-    lastFocusedElement = document.activeElement;
-
-    document.getElementById("modalPlaneTag").textContent = `PLANE ${plane.number} — ${plane.name}`;
-    document.getElementById("modalPlaneTag").style.background = plane.color.startsWith("var") ?
-        getComputedStyle(document.documentElement).getPropertyValue(plane.color.slice(4, -1)).trim() : plane.color;
-    document.getElementById("modalTitle").textContent = svc.name;
-    document.getElementById("modalCode").textContent = `${svc.code} (${svc.tag})`;
-    document.getElementById("modalRole").textContent = svc.role || "";
-    document.getElementById("modalDesc").textContent = svc.desc;
-
-    const img = document.getElementById("modalImage");
-    img.parentElement.innerHTML = `<img id="modalImage" src="${svc.diagram}" alt="${svc.name} diagram" onerror="this.parentElement.innerHTML='Diagram (Pending Upload)'">`;
-
-    const storesHtml = dataStores.filter(ds => ds.connections[plane.number]).map(ds =>
-        `<span style="background:${ds.varColor}">${ds.name}: ${ds.connections[plane.number]}</span>`
-    ).join("");
-    document.getElementById("modalStores").innerHTML = storesHtml;
-
-    document.getElementById("serviceModal").classList.add("open");
-    document.getElementById("modalCloseBtn").focus();
-}
-
-function closeServiceModal() {
-    document.getElementById("serviceModal").classList.remove("open");
-    restoreFocus(lastFocusedElement);
-}
-
-// ============ FOCUS MANAGEMENT ============
-function restoreFocus(element) {
-    if (element && typeof element.focus === "function") element.focus();
-}
-
-function focusTrap(e) {
-    if (e.key !== "Tab") return;
-    const modal = document.getElementById("serviceModal");
-    if (!modal.classList.contains("open")) return;
-
-    const focusable = Array.from(
-        modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
-    ).filter(el => el.offsetParent !== null);
-    if (focusable.length === 0) return;
-
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-
-    if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-    }
-}
-
-function attachGlobalListeners() {
-    document.addEventListener("keydown", e => {
-        if (e.key === "Escape") closeServiceModal();
-        focusTrap(e);
-    });
-    document.getElementById("serviceModal").addEventListener("click", e => {
-        if (e.target.id === "serviceModal") closeServiceModal();
-    });
-}
-
-// ============ INIT ============
-function loadPlanes() {
-    const requiredIds = ["flowSelector", "planesRow", "datastoreBoxes", "legendPlanes", "legendFlows", "tooltip", "serviceModal"];
-    const missing = requiredIds.filter(id => !document.getElementById(id));
-    if (missing.length) {
-        console.error("master-architecture-interactive: required elements missing:", missing);
-        return;
-    }
-
-    renderFlowSelector();
-    renderPlanes();
-    renderDataStores();
-    renderLegend();
-    attachGlobalListeners();
-    switchFlow("full");
-}
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadPlanes);
-} else {
-    loadPlanes();
-}
+render();
 </script>
 </body>
 </html>
