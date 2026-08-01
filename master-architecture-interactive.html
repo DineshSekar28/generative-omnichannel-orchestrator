@@ -66,9 +66,6 @@
   .node.external{border-style:dashed;}
   .node.store{border-radius:8px;}
   .node.support{border-color:#e9c193;}
-  .chip[data-plane]{border-color:#e0e1ff;}
-  .chip[data-plane] .dot{background:#4f46e5;}
-  .chip.plane-active{background:#4f46e5;color:#fff;border-color:#4f46e5;}
   .node.dim{opacity:.2;filter:grayscale(70%);}
   .node.plane-hit{box-shadow:0 0 0 2px #fff, 0 0 0 5px #4f46e5;}
   .node.hit{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1), 0 0 0 8px var(--ring2);}
@@ -80,6 +77,19 @@
     cursor:pointer;padding:0;}
   .view-btn:hover{background:#dfe2e7;}
 
+  .plane-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+    padding:14px 32px 4px;max-width:1120px;}
+  .plane-tile{position:relative;display:flex;flex-direction:column;gap:2px;
+    background:var(--card);border:1.5px solid var(--line);border-left-width:6px;
+    border-radius:8px;padding:10px 14px;cursor:pointer;text-align:left;
+    transition:transform .12s ease, box-shadow .15s ease, opacity .2s ease, filter .2s ease;
+    box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .plane-tile:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.1);}
+  .plane-tile .ptile-id{font-size:12.5px;font-weight:800;letter-spacing:.3px;}
+  .plane-tile .ptile-label{font-size:11px;color:var(--muted);line-height:1.3;}
+  .plane-tile.plane-tile-active{box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--tile-color, #4f46e5);}
+  .plane-tile.plane-tile-dim{opacity:.35;filter:grayscale(50%);}
+  .plane-hint{padding:0 32px;color:var(--muted);font-size:11.5px;margin:2px 0 0;}
   .footnote{padding:6px 32px 30px;color:var(--muted);font-size:11.5px;max-width:920px;}
 
   /* modal */
@@ -113,8 +123,10 @@
   <span class="chip" data-flow="support"><span class="dot"></span>Supporting Services</span>
   <button id="resetBtn">Show all</button>
 </div>
-<div class="legend" id="planeLegend" style="border-top:none;padding-top:0;"></div>
-<p class="hint">Click a box once to trace its flow(s). Double-click a box — or click its ⤢ button — to open its diagram. Every box is permanently tinted by its plane; click a <b>P1–P8</b> badge to highlight that plane across the whole diagram <b>and</b> open its plane-level overview diagram — then click any individual box inside it for that service's own diagram. Shared services (orchestration, GenAI engine, MCP core, ML/model layer, PII guardrails, data stores) light up for every active flow at once. The amber band at the bottom is <b>not part of any real-time request path</b> — it's observability, evaluation, and maintenance tooling that reads/writes the same data stores in the background.</p>
+<p class="hint">Click a box once to trace its flow(s). Double-click a box — or click its ⤢ button — to open its diagram. Shared services (orchestration, GenAI engine, MCP core, ML/model layer, PII guardrails, data stores) light up for every active flow at once. The amber band at the bottom is <b>not part of any real-time request path</b> — it's observability, evaluation, and maintenance tooling that reads/writes the same data stores in the background.</p>
+
+<div class="plane-grid" id="planeLegend"></div>
+<p class="plane-hint">Click any plane tile above to open its overview diagram and highlight that plane across the whole map.</p>
 
 <div class="canvas-wrap">
   <div id="canvas">
@@ -388,11 +400,15 @@ let selectedNode = null;
 
 const planeLegend = document.getElementById("planeLegend");
 PLANES.forEach(p=>{
-  const chip = document.createElement("span");
-  chip.className = "chip";
-  chip.dataset.plane = p.id;
-  chip.innerHTML = '<span class="dot" style="background:'+p.color+'"></span>' + p.id + ' — ' + p.label;
-  planeLegend.appendChild(chip);
+  const tile = document.createElement("button");
+  tile.type = "button";
+  tile.className = "plane-tile";
+  tile.dataset.plane = p.id;
+  tile.style.borderLeftColor = p.color;
+  tile.style.setProperty("--tile-color", p.color);
+  tile.innerHTML = '<span class="ptile-id" style="color:'+p.color+'">'+p.id+'</span>' +
+                    '<span class="ptile-label">'+p.label+'</span>';
+  planeLegend.appendChild(tile);
 });
 
 function render(){
@@ -435,8 +451,10 @@ function render(){
   document.querySelectorAll(".chip[data-flow]").forEach(c=>{
     c.classList.toggle("active", activeFlows.has(c.dataset.flow));
   });
-  document.querySelectorAll(".chip[data-plane]").forEach(c=>{
-    c.classList.toggle("plane-active", activePlanes.has(c.dataset.plane));
+  document.querySelectorAll(".plane-tile").forEach(t=>{
+    const isActive = activePlanes.has(t.dataset.plane);
+    t.classList.toggle("plane-tile-active", isActive);
+    t.classList.toggle("plane-tile-dim", activePlanes.size>0 && !isActive);
   });
 }
 
@@ -458,11 +476,11 @@ document.querySelectorAll(".chip[data-flow]").forEach(chip=>{
     render();
   });
 });
-document.querySelectorAll(".chip[data-plane]").forEach(chip=>{
-  chip.addEventListener("click", ()=>{
+document.querySelectorAll(".plane-tile").forEach(tile=>{
+  tile.addEventListener("click", ()=>{
     selectedNode = null;
     activeFlows = new Set();
-    const p = chip.dataset.plane;
+    const p = tile.dataset.plane;
     const wasActive = activePlanes.has(p);
     if(wasActive) activePlanes.delete(p); else activePlanes.add(p);
     render();
