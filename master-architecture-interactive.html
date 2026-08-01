@@ -117,7 +117,7 @@
   </div>
 </div>
 
-<p class="footnote">Diagrams are pulled from <code>diagrams/services/plane-0X/</code> in your repo — 25 of ~26 services are wired to their real image. <code>svc-d-orchestration</code> has no diagram file yet (none was found in plane-03), and data stores/external systems intentionally have no service diagram. This file should sit at your repo root as <code>master-architecture-interactive.html</code>, alongside the existing <code>diagrams/</code> folder — no changes needed to that folder's structure.</p>
+<p class="footnote">Diagrams are pulled from <code>diagrams/services/plane-0X/</code> in your repo — every internal service now has its real diagram linked. Data stores and external systems intentionally have no service diagram. This file should sit at your repo root as <code>master-architecture-interactive.html</code>, alongside the existing <code>diagrams/</code> folder — no changes needed to that folder's structure.</p>
 
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -153,7 +153,7 @@ const nodes = [
   {id:"IVR-GW",col:2, row:4,   flows:["ivr"], label:"svc-d-chatbot-gateway-ivr", sub:"IVR Deterministic Router", plane:"P3", diagram:"diagrams/services/plane-03/ivr-gateway.png"},
   {id:"AA-GW", col:2, row:7.5, flows:["aa"],  label:"svc-d-chatbot-gateway-ast", sub:"Agent Assist Gateway", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-gateway.png"},
 
-  {id:"ORCH",  col:3, row:5,   flows:["ivr","aa"], label:"svc-d-orchestration", sub:"Decision Layer — API Mapper", plane:"P3", diagram:null},
+  {id:"ORCH",  col:3, row:5,   flows:["ivr","aa"], label:"svc-d-orchestration", sub:"Decision Layer — API Mapper", plane:"P3", diagram:"diagrams/services/plane-03/orchestration-semantic-mapper.png"},
   {id:"GENAI", col:3, row:6,   flows:["ivr","aa"], label:"svc-c-genaiworkflow", sub:"GenAI Workflow Engine", plane:"P3", diagram:"diagrams/services/plane-03/genai-workflow-orchestrator.png"},
 
   {id:"MCP-CORE",col:4,row:5.5,flows:["ivr","aa"], label:"svc-d-luna-mcp", sub:"Core MCP Orchestrator", plane:"P4", diagram:"diagrams/services/plane-04/mcp-core.png"},
