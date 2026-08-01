@@ -66,7 +66,11 @@
   .node.external{border-style:dashed;}
   .node.store{border-radius:8px;}
   .node.support{border-color:#e9c193;}
+  .chip[data-plane]{border-color:#e0e1ff;}
+  .chip[data-plane] .dot{background:#4f46e5;}
+  .chip.plane-active{background:#4f46e5;color:#fff;border-color:#4f46e5;}
   .node.dim{opacity:.2;filter:grayscale(70%);}
+  .node.plane-hit{box-shadow:0 0 0 2px #fff, 0 0 0 5px #4f46e5;}
   .node.hit{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1), 0 0 0 8px var(--ring2);}
   .node.hit.single{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1);}
 
@@ -109,7 +113,8 @@
   <span class="chip" data-flow="support"><span class="dot"></span>Supporting Services</span>
   <button id="resetBtn">Show all</button>
 </div>
-<p class="hint">Click a box once to trace its flow(s). Double-click a box — or click its ⤢ button — to open its diagram. Shared services (orchestration, GenAI engine, MCP core, ML/model layer, PII guardrails, data stores) light up for every active flow at once. The amber band at the bottom is <b>not part of any real-time request path</b> — it's observability, evaluation, and maintenance tooling that reads/writes the same data stores in the background.</p>
+<div class="legend" id="planeLegend" style="border-top:none;padding-top:0;"></div>
+<p class="hint">Click a box once to trace its flow(s). Double-click a box — or click its ⤢ button — to open its diagram. Click a <b>P1–P8</b> badge below to highlight everything in that plane instead. Shared services (orchestration, GenAI engine, MCP core, ML/model layer, PII guardrails, data stores) light up for every active flow at once. The amber band at the bottom is <b>not part of any real-time request path</b> — it's observability, evaluation, and maintenance tooling that reads/writes the same data stores in the background.</p>
 
 <div class="canvas-wrap">
   <div id="canvas">
@@ -213,6 +218,17 @@ const edges = [
 ];
 
 const FLOWCOLOR = {cs:"#111827", ivr:"#16a34a", aa:"#dc2626", support:"#b45309"};
+const PLANECOLOR = "#4f46e5";
+const PLANES = [
+  {id:"P1", label:"Design-Time Control"},
+  {id:"P2", label:"Streaming & Frontend"},
+  {id:"P3", label:"Orchestration & Gateways"},
+  {id:"P4", label:"MCP Providers"},
+  {id:"P5", label:"Stateful Intelligence"},
+  {id:"P6", label:"Observability & Governance"},
+  {id:"P7", label:"Evaluation & MLOps"},
+  {id:"P8", label:"Maintenance & Lifecycle"},
+];
 
 // Diagram viewer — one image per service, sourced from diagrams/services/plane-0X/
 function diagramInfoFor(n){
@@ -266,6 +282,7 @@ nodes.forEach(n=>{
   if(n.type==="user") el.style.width="150px";
   el.dataset.id = n.id;
   el.dataset.flows = n.flows.join(",");
+  if(n.plane) el.dataset.plane = n.plane;
 
   const bars = document.createElement("div");
   bars.className = "bars";
@@ -361,14 +378,32 @@ function drawEdges(){
 drawEdges();
 
 let activeFlows = new Set();
+let activePlanes = new Set();
 let selectedNode = null;
+
+const planeLegend = document.getElementById("planeLegend");
+PLANES.forEach(p=>{
+  const chip = document.createElement("span");
+  chip.className = "chip";
+  chip.dataset.plane = p.id;
+  chip.innerHTML = '<span class="dot"></span>' + p.id + ' — ' + p.label;
+  planeLegend.appendChild(chip);
+});
 
 function render(){
   canvas.querySelectorAll(".node").forEach(el=>{
+    el.classList.remove("dim","hit","single","plane-hit");
+    el.style.removeProperty("--ring1"); el.style.removeProperty("--ring2");
+
+    if(activePlanes.size>0){
+      const p = el.dataset.plane;
+      if(p && activePlanes.has(p)){ el.classList.add("plane-hit"); }
+      else { el.classList.add("dim"); }
+      return;
+    }
+
     const flows = el.dataset.flows.split(",");
     const hitFlows = flows.filter(f=>activeFlows.has(f));
-    el.classList.remove("dim","hit","single");
-    el.style.removeProperty("--ring1"); el.style.removeProperty("--ring2");
     if(activeFlows.size===0){ return; }
     if(hitFlows.length===0){ el.classList.add("dim"); return; }
     el.classList.add("hit");
@@ -379,6 +414,10 @@ function render(){
 
   svg.querySelectorAll("path").forEach(p=>{
     const f = p.dataset.flows;
+    if(activePlanes.size>0){
+      p.setAttribute("opacity","0.06"); p.setAttribute("stroke-width","1");
+      return;
+    }
     if(activeFlows.size===0){
       p.setAttribute("opacity", f==="support" ? "0.4" : "0.55");
       p.setAttribute("stroke-width", f==="support" ? "1.3" : "1.6");
@@ -388,12 +427,16 @@ function render(){
     else { p.setAttribute("opacity","0.06"); p.setAttribute("stroke-width","1"); }
   });
 
-  document.querySelectorAll(".chip").forEach(c=>{
+  document.querySelectorAll(".chip[data-flow]").forEach(c=>{
     c.classList.toggle("active", activeFlows.has(c.dataset.flow));
+  });
+  document.querySelectorAll(".chip[data-plane]").forEach(c=>{
+    c.classList.toggle("plane-active", activePlanes.has(c.dataset.plane));
   });
 }
 
 function onNodeClick(n){
+  activePlanes = new Set();
   const same = selectedNode===n.id &&
     n.flows.length===activeFlows.size && n.flows.every(f=>activeFlows.has(f));
   if(same){ activeFlows = new Set(); selectedNode = null; }
@@ -401,16 +444,26 @@ function onNodeClick(n){
   render();
 }
 
-document.querySelectorAll(".chip").forEach(chip=>{
+document.querySelectorAll(".chip[data-flow]").forEach(chip=>{
   chip.addEventListener("click", ()=>{
     selectedNode = null;
+    activePlanes = new Set();
     const f = chip.dataset.flow;
     if(activeFlows.has(f)) activeFlows.delete(f); else activeFlows.add(f);
     render();
   });
 });
+document.querySelectorAll(".chip[data-plane]").forEach(chip=>{
+  chip.addEventListener("click", ()=>{
+    selectedNode = null;
+    activeFlows = new Set();
+    const p = chip.dataset.plane;
+    if(activePlanes.has(p)) activePlanes.delete(p); else activePlanes.add(p);
+    render();
+  });
+});
 document.getElementById("resetBtn").addEventListener("click", ()=>{
-  activeFlows = new Set(); selectedNode = null; render();
+  activeFlows = new Set(); activePlanes = new Set(); selectedNode = null; render();
 });
 
 // modal
