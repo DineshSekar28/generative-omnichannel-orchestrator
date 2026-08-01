@@ -47,21 +47,47 @@
         }
  
         .subtitle {
-            color: var(--text-sub);
-            font-size: 1rem;
             display: flex;
-            gap: 16px;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
             flex-wrap: wrap;
+            margin-top: 10px;
         }
  
         .stat-badge {
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid var(--accent-blue);
+            position: relative;
+            padding: 0 22px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            letter-spacing: .2px;
+        }
+ 
+        .stat-badge strong {
             color: var(--accent-blue);
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 1.25em;
+            font-weight: 800;
+            margin-right: 5px;
+        }
+ 
+        .stat-badge:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+        }
+ 
+        .stat-badge-tag {
+            color: var(--accent-blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: .8px;
         }
  
         /* ============ MASTER DIAGRAM SECTION ============ */
@@ -533,10 +559,10 @@
     <header>
         <h1>🏗️ Generative Omnichannel AI Orchestrator</h1>
         <p class="subtitle">
-            <span class="stat-badge">8 Architectural Planes</span>
-            <span class="stat-badge">21 Microservices</span>
-            <span class="stat-badge">3 Data Stores</span>
-            <span class="stat-badge">Enterprise-Scale</span>
+            <span class="stat-badge stat-badge-tag">Enterprise-Scale</span>
+            <span class="stat-badge"><strong>8</strong>Architectural Planes</span>
+            <span class="stat-badge"><strong>21</strong>Microservices</span>
+            <span class="stat-badge"><strong>3</strong>Data Stores</span>
         </p>
     </header>
  
