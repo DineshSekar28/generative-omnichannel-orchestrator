@@ -190,6 +190,8 @@ const edges = [
   ["IVR-GW","ORCH",["ivr"]], ["ORCH","GENAI",["ivr"]], ["ORCH","MCP-CORE",["ivr"]],
   ["MCP-CORE","MCP-IVR",["ivr"]], ["MCP-IVR","ML",["ivr"]],
   ["ML","MODELS",["ivr"]], ["ML","PII",["ivr"]],
+  ["ML","NEO4J",["ivr"]], ["ML","MONGO",["ivr"]],
+  ["MCP-CORE","NEO4J",["ivr"]], ["MCP-CORE","MONGO",["ivr"]],
   ["MODELS","MONGO",["ivr"]], ["MODELS","NEO4J",["ivr"]], ["MODELS","PG",["ivr"]],
   ["PII","TTS",["ivr"]], ["TTS","IVR-EXT1",["ivr"]], ["IVR-EXT1","U-IVR",["ivr"]],
 
@@ -197,6 +199,8 @@ const edges = [
   ["AA-GW","ORCH",["aa"]], ["ORCH","GENAI",["aa"]], ["ORCH","MCP-CORE",["aa"]],
   ["MCP-CORE","MCP-AA",["aa"]], ["MCP-AA","ML",["aa"]],
   ["ML","MODELS",["aa"]], ["ML","PII",["aa"]],
+  ["ML","NEO4J",["aa"]], ["ML","MONGO",["aa"]],
+  ["MCP-CORE","NEO4J",["aa"]], ["MCP-CORE","MONGO",["aa"]],
   ["MODELS","MONGO",["aa"]], ["MODELS","NEO4J",["aa"]], ["MODELS","PG",["aa"]],
   ["AA-WS","DBSYNC",["aa"]], ["DBSYNC","MONGO",["aa"]],
   ["PII","AA-WS",["aa"]], ["AA-WS","AA-UI",["aa"]], ["AA-UI","U-AA",["aa"]],
@@ -431,8 +435,16 @@ function openModal(n){
   modalBody.innerHTML = "";
   if(d.img){
     const img = document.createElement("img");
-    img.src = d.img;
     img.alt = d.title;
+    img.onerror = function(){
+      modalBody.innerHTML = "";
+      const ph = document.createElement("div");
+      ph.className = "placeholder";
+      ph.textContent = "⚠️ Image failed to load. Expected path: " + d.img +
+        " — check that the /images folder sits next to this HTML file.";
+      modalBody.appendChild(ph);
+    };
+    img.src = d.img;
     modalBody.appendChild(img);
   } else {
     const ph = document.createElement("div");
