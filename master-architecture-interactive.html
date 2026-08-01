@@ -117,7 +117,7 @@
   </div>
 </div>
 
-<p class="footnote">Diagram viewer is wired up but only the Agent Assist flow image is linked so far (the one you confirmed correct). Upload the finished IVR and Command Studio flow images and I'll wire those the same way — one line each, no rebuild needed. To embed this whole page in your GitHub Pages portal: drop this file (and the /images folder) into the repo root and point an iframe at it from index.html, same pattern as master-architecture-interactive.html. Send me that file if you'd rather I merge this directly into it.</p>
+<p class="footnote">Diagrams are pulled from <code>diagrams/services/plane-0X/</code> in your repo — 25 of ~26 services are wired to their real image. <code>svc-d-orchestration</code> has no diagram file yet (none was found in plane-03), and data stores/external systems intentionally have no service diagram. This file should sit at your repo root as <code>master-architecture-interactive.html</code>, alongside the existing <code>diagrams/</code> folder — no changes needed to that folder's structure.</p>
 
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -142,43 +142,42 @@ const nodes = [
   {id:"U-IVR", col:0, row:3.5, flows:["ivr"], type:"user", label:"Customer", sub:"via Telephony"},
   {id:"U-AA",  col:0, row:7,   flows:["aa"],  type:"user", label:"Contact Center Agent", sub:"User"},
 
-  {id:"CS-UI1",col:1, row:0,   flows:["cs"],  label:"svc-v-commandstudio-workflow", sub:"DAG Authoring UI", plane:"P1"},
-  {id:"CS-UI2",col:1, row:1,   flows:["cs"],  label:"svc-v-kyc-datastudio", sub:"KYC Data Studio UI", plane:"P1"},
+  {id:"CS-UI1",col:1, row:0,   flows:["cs"],  label:"svc-v-commandstudio-workflow", sub:"DAG Authoring UI", plane:"P1", diagram:"diagrams/services/plane-01/commandstudio-workflow-ui.png"},
+  {id:"CS-UI2",col:1, row:1,   flows:["cs"],  label:"svc-v-kyc-datastudio", sub:"KYC Data Studio UI", plane:"P1", diagram:"diagrams/services/plane-01/kyc-datastudio-ui.png"},
   {id:"IVR-EXT1",col:1,row:3.5,flows:["ivr"], type:"external", label:"Kore.ai / Telephony IVR", sub:"External System"},
   {id:"IVR-EXT2",col:1,row:4.5,flows:["ivr"], type:"external", label:"Google STT / Whisper", sub:"Speech-to-Text"},
-  {id:"AA-UI", col:1, row:7,   flows:["aa"],  label:"svc-v-chatbot-agentassist", sub:"Agent Copilot UI", plane:"P2"},
-  {id:"AA-WS", col:1, row:8,   flows:["aa"],  label:"svc-d-chatbot-ast-ls", sub:"Real-Time Streaming", plane:"P2"},
+  {id:"AA-UI", col:1, row:7,   flows:["aa"],  label:"svc-v-chatbot-agentassist", sub:"Agent Copilot UI", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-ui.png"},
+  {id:"AA-WS", col:1, row:8,   flows:["aa"],  label:"svc-d-chatbot-ast-ls", sub:"Real-Time Streaming", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-livestream-engine.png"},
 
-  {id:"CS-BE", col:2, row:0.5, flows:["cs"],  label:"svc-d-commandstudio", sub:"Lifecycle Backend", plane:"P1"},
-  {id:"IVR-GW",col:2, row:4,   flows:["ivr"], label:"svc-d-chatbot-gateway-ivr", sub:"IVR Deterministic Router", plane:"P3"},
-  {id:"AA-GW", col:2, row:7.5, flows:["aa"],  label:"svc-d-chatbot-gateway-ast", sub:"Agent Assist Gateway", plane:"P2"},
+  {id:"CS-BE", col:2, row:0.5, flows:["cs"],  label:"svc-d-commandstudio", sub:"Lifecycle Backend", plane:"P1", diagram:"diagrams/services/plane-01/commandstudio-domain.png"},
+  {id:"IVR-GW",col:2, row:4,   flows:["ivr"], label:"svc-d-chatbot-gateway-ivr", sub:"IVR Deterministic Router", plane:"P3", diagram:"diagrams/services/plane-03/ivr-gateway.png"},
+  {id:"AA-GW", col:2, row:7.5, flows:["aa"],  label:"svc-d-chatbot-gateway-ast", sub:"Agent Assist Gateway", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-gateway.png"},
 
-  {id:"ORCH",  col:3, row:5,   flows:["ivr","aa"], label:"svc-d-orchestration", sub:"Decision Layer — API Mapper", plane:"P3"},
-  {id:"GENAI", col:3, row:6,   flows:["ivr","aa"], label:"svc-c-genaiworkflow", sub:"GenAI Workflow Engine", plane:"P3"},
+  {id:"ORCH",  col:3, row:5,   flows:["ivr","aa"], label:"svc-d-orchestration", sub:"Decision Layer — API Mapper", plane:"P3", diagram:null},
+  {id:"GENAI", col:3, row:6,   flows:["ivr","aa"], label:"svc-c-genaiworkflow", sub:"GenAI Workflow Engine", plane:"P3", diagram:"diagrams/services/plane-03/genai-workflow-orchestrator.png"},
 
-  {id:"MCP-CORE",col:4,row:5.5,flows:["ivr","aa"], label:"svc-d-luna-mcp", sub:"Core MCP Orchestrator", plane:"P4"},
-  {id:"MCP-IVR",col:4,row:4,   flows:["ivr"], label:"svc-d-luna-ivr-mcp", sub:"IVR Tool Execution", plane:"P4"},
-  {id:"MCP-AA", col:4,row:7.5, flows:["aa"],  label:"svc-d-luna-aa-mcp", sub:"Agent Context Provider", plane:"P4"},
+  {id:"MCP-CORE",col:4,row:5.5,flows:["ivr","aa"], label:"svc-d-luna-mcp", sub:"Core MCP Orchestrator", plane:"P4", diagram:"diagrams/services/plane-04/mcp-core.png"},
+  {id:"MCP-IVR",col:4,row:4,   flows:["ivr"], label:"svc-d-luna-ivr-mcp", sub:"IVR Tool Execution", plane:"P4", diagram:"diagrams/services/plane-04/mcp-telephony.png"},
+  {id:"MCP-AA", col:4,row:7.5, flows:["aa"],  label:"svc-d-luna-aa-mcp", sub:"Agent Context Provider", plane:"P4", diagram:"diagrams/services/plane-04/mcp-agentassist.png"},
 
-  {id:"ML",     col:5,row:5,   flows:["ivr","aa"], label:"svc-d-chatbot-ml", sub:"Conversational AI Engine", plane:"P5"},
-  {id:"MODELS", col:5,row:6,   flows:["ivr","aa"], label:"svc-d-mlmodels", sub:"Model Server Library", plane:"P5"},
-  {id:"PII",    col:5,row:7,   flows:["ivr","aa"], label:"svc-d-genai-pii-redaction", sub:"PII Guardrails", plane:"P6"},
+  {id:"ML",     col:5,row:5,   flows:["ivr","aa"], label:"svc-d-chatbot-ml", sub:"Conversational AI Engine", plane:"P5", diagram:"diagrams/services/plane-05/chatbot-ml-engine.png"},
+  {id:"MODELS", col:5,row:6,   flows:["ivr","aa"], label:"svc-d-mlmodels", sub:"Model Server Library", plane:"P5", diagram:"diagrams/services/plane-05/ml-model-server.png"},
+  {id:"PII",    col:5,row:7,   flows:["ivr","aa"], label:"svc-d-genai-pii-redaction", sub:"PII Guardrails", plane:"P6", diagram:"diagrams/services/plane-06/pii-redaction-service.png"},
 
   {id:"TTS",    col:6,row:3.5, flows:["ivr"], type:"external", label:"TTS Engine", sub:"External Service"},
-  {id:"DBSYNC", col:6,row:8.5, flows:["aa"],  type:"external", label:"svc-c-chatbot-dbsync-ast-bs", sub:"Background DB Sync", plane:"P8"},
+  {id:"DBSYNC", col:6,row:8.5, flows:["aa","support"], type:"support", label:"svc-c-chatbot-dbsync-ast-bs", sub:"Neo4j Graph Hygiene & Background DB Sync", plane:"P8", diagram:"diagrams/services/plane-08/neo4j-dbsync-service.png"},
 
-  {id:"MONGO",  col:7,row:1,   flows:["cs","ivr","aa"], type:"store", label:"MongoDB", sub:"Sessions, Templates, Logs"},
-  {id:"NEO4J",  col:7,row:2,   flows:["cs","ivr","aa"], type:"store", label:"Neo4j", sub:"Knowledge Graph"},
-  {id:"PG",     col:7,row:3,   flows:["cs","ivr","aa"], type:"store", label:"PostgreSQL + pgvector", sub:"Vector Store"},
+  {id:"MONGO",  col:7,row:1,   flows:["cs","ivr","aa"], type:"store", label:"MongoDB", sub:"Sessions, Templates, Logs", diagram:null},
+  {id:"NEO4J",  col:7,row:2,   flows:["cs","ivr","aa"], type:"store", label:"Neo4j", sub:"Knowledge Graph", diagram:null},
+  {id:"PG",     col:7,row:3,   flows:["cs","ivr","aa"], type:"store", label:"PostgreSQL + pgvector", sub:"Vector Store", diagram:null},
 
   // Supporting services band — Plane 6-8, not part of the real-time request path
-  {id:"MON",     col:2, row:10,   flows:["support"], type:"support", label:"svc-d-luna-monitoring", sub:"Real-Time Analytics & Logging", plane:"P6"},
-  {id:"NEARRT",  col:3, row:10,   flows:["support"], type:"support", label:"svc-d-luna-near-realtime-monitor", sub:"Guardrail & Drift Adjudication", plane:"P6"},
-  {id:"EVAL",    col:4, row:10,   flows:["support"], type:"support", label:"svc-d-gt-eval-automation", sub:"Ground Truth Quality Engine", plane:"P7"},
-  {id:"SAMPLEGEN",col:5,row:10,   flows:["support"], type:"support", label:"svc-d-sample-generation", sub:"Synthetic Eval Datasets", plane:"P7"},
-  {id:"AGENTFLOW",col:6,row:10,   flows:["support"], type:"support", label:"svc-d-luna-agentflow", sub:"Telemetry Transformation", plane:"P7"},
-  {id:"DBSYNCADT",col:2,row:11.3, flows:["support"], type:"support", label:"svc-c-chatbot-dbsync-adt-bs", sub:"Neo4j Graph Hygiene & DB Sync", plane:"P8"},
-  {id:"QAAUTO",   col:3,row:11.3, flows:["support"], type:"support", label:"svc-d-luna-qa-automation", sub:"Build-Time CI/CD Governance", plane:"P8"},
+  {id:"MON",     col:2, row:10,   flows:["support"], type:"support", label:"svc-d-luna-monitoring", sub:"Real-Time Analytics & Logging", plane:"P6", diagram:"diagrams/services/plane-06/monitoring-service.png"},
+  {id:"NEARRT",  col:3, row:10,   flows:["support"], type:"support", label:"svc-d-luna-near-realtime-monitor", sub:"Guardrail & Drift Adjudication", plane:"P6", diagram:"diagrams/services/plane-06/quality-drift-monitor.png"},
+  {id:"EVAL",    col:4, row:10,   flows:["support"], type:"support", label:"svc-d-gt-eval-automation", sub:"Ground Truth Quality Engine", plane:"P7", diagram:"diagrams/services/plane-07/eval-automation-engine.png"},
+  {id:"SAMPLEGEN",col:5,row:10,   flows:["support"], type:"support", label:"svc-d-sample-generation", sub:"Synthetic Eval Datasets", plane:"P7", diagram:"diagrams/services/plane-07/synthetic-data-generator.png"},
+  {id:"AGENTFLOW",col:6,row:10,   flows:["support"], type:"support", label:"svc-d-luna-agentflow", sub:"Telemetry Transformation", plane:"P7", diagram:"diagrams/services/plane-07/telemetry-agentflow.png"},
+  {id:"QAAUTO",   col:2,row:11.3, flows:["support"], type:"support", label:"svc-d-luna-qa-automation", sub:"Build-Time CI/CD Governance", plane:"P8", diagram:"diagrams/services/plane-08/qa-automation-service.png"},
 ];
 
 const edges = [
@@ -209,33 +208,23 @@ const edges = [
   ["GENAI","MON",["support"]], ["ML","MON",["support"]], ["MCP-CORE","MON",["support"]],
   ["MODELS","NEARRT",["support"]], ["PII","NEARRT",["support"]],
   ["EVAL","PG",["support"]], ["SAMPLEGEN","MONGO",["support"]], ["AGENTFLOW","NEO4J",["support"]],
-  ["DBSYNCADT","NEO4J",["support"]], ["QAAUTO","MONGO",["support"]],
+  ["DBSYNC","NEO4J",["support"]], ["QAAUTO","MONGO",["support"]],
   ["MON","MONGO",["support"]], ["NEARRT","MONGO",["support"]],
 ];
 
 const FLOWCOLOR = {cs:"#111827", ivr:"#16a34a", aa:"#dc2626", support:"#b45309"};
 
-// Diagram viewer — full flow images, one per group
-const DIAGRAMS = {
-  cs:      {title:"Command Studio Setup & Governance Flow", img:null,
-            note:"Not linked yet — upload the finished Command Studio flow PNG and I'll wire it here."},
-  ivr:     {title:"IVR Telephony Call Flow", img:null,
-            note:"Not linked yet — upload the finished IVR flow PNG and I'll wire it here."},
-  aa:      {title:"Agent Assist Live Feedback Flow", img:"images/agent-assist-flow.png", note:null},
-  shared:  {title:"Multiple Flows", img:null,
-            note:"This service appears in more than one flow. Use the legend chips above to isolate a single flow, then reopen this box to see that flow's diagram."},
-  support: {title:"Supporting / Governance Service", img:null,
-            note:"Part of the observability, evaluation, or maintenance layer (Plane 6–8) rather than a single real-time flow — no dedicated flow diagram, shown here for its data-store connectivity."}
-};
-function diagramGroupFor(n){
-  if(n.type==="support") return "support";
-  if(n.flows.length===1) return n.flows[0]==="cs"||n.flows[0]==="ivr"||n.flows[0]==="aa" ? n.flows[0] : "shared";
-  if(n.flows.length===3) return "shared";
-  return "shared";
+// Diagram viewer — one image per service, sourced from diagrams/services/plane-0X/
+function diagramInfoFor(n){
+  if(n.diagram) return {img:n.diagram, note:null};
+  if(n.type==="external") return {img:null, note:"External system — not one of our services, no internal architecture diagram."};
+  if(n.type==="store") return {img:null, note:"Shared data store — no dedicated service diagram."};
+  return {img:null, note:"Diagram not yet available for this service."};
 }
 
 const canvas = document.getElementById("canvas");
 const svg = document.getElementById("edges");
+
 
 function pos(n){
   const left = MARGIN_L + n.col*COLW;
@@ -429,19 +418,18 @@ const overlay = document.getElementById("overlay");
 const modalTitle = document.getElementById("modalTitle");
 const modalBody = document.getElementById("modalBody");
 function openModal(n){
-  const group = diagramGroupFor(n);
-  const d = DIAGRAMS[group];
-  modalTitle.textContent = d.title + " — " + n.label;
+  const d = diagramInfoFor(n);
+  modalTitle.textContent = n.label + (n.sub ? " — " + n.sub : "");
   modalBody.innerHTML = "";
   if(d.img){
     const img = document.createElement("img");
-    img.alt = d.title;
+    img.alt = n.label;
     img.onerror = function(){
       modalBody.innerHTML = "";
       const ph = document.createElement("div");
       ph.className = "placeholder";
       ph.textContent = "⚠️ Image failed to load. Expected path: " + d.img +
-        " — check that the /images folder sits next to this HTML file.";
+        " — check that the /diagrams folder sits next to this HTML file with that exact path.";
       modalBody.appendChild(ph);
     };
     img.src = d.img;
