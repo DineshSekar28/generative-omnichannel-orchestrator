@@ -114,7 +114,7 @@
   <button id="resetBtn">Show all</button>
 </div>
 <div class="legend" id="planeLegend" style="border-top:none;padding-top:0;"></div>
-<p class="hint">Click a box once to trace its flow(s). Double-click a box — or click its ⤢ button — to open its diagram. Click a <b>P1–P8</b> badge below to highlight everything in that plane instead. Shared services (orchestration, GenAI engine, MCP core, ML/model layer, PII guardrails, data stores) light up for every active flow at once. The amber band at the bottom is <b>not part of any real-time request path</b> — it's observability, evaluation, and maintenance tooling that reads/writes the same data stores in the background.</p>
+<p class="hint">Click a box once to trace its flow(s). Double-click a box — or click its ⤢ button — to open its diagram. Every box is permanently tinted by its plane; click a <b>P1–P8</b> badge to highlight that plane across the whole diagram <b>and</b> open its plane-level overview diagram — then click any individual box inside it for that service's own diagram. Shared services (orchestration, GenAI engine, MCP core, ML/model layer, PII guardrails, data stores) light up for every active flow at once. The amber band at the bottom is <b>not part of any real-time request path</b> — it's observability, evaluation, and maintenance tooling that reads/writes the same data stores in the background.</p>
 
 <div class="canvas-wrap">
   <div id="canvas">
@@ -220,15 +220,16 @@ const edges = [
 const FLOWCOLOR = {cs:"#111827", ivr:"#16a34a", aa:"#dc2626", support:"#b45309"};
 const PLANECOLOR = "#4f46e5";
 const PLANES = [
-  {id:"P1", label:"Design-Time Control"},
-  {id:"P2", label:"Streaming & Frontend"},
-  {id:"P3", label:"Orchestration & Gateways"},
-  {id:"P4", label:"MCP Providers"},
-  {id:"P5", label:"Stateful Intelligence"},
-  {id:"P6", label:"Observability & Governance"},
-  {id:"P7", label:"Evaluation & MLOps"},
-  {id:"P8", label:"Maintenance & Lifecycle"},
+  {id:"P1", label:"Design-Time Control", color:"#d97706", diagram:"diagrams/planes/plane-01-design-time-control.png"},
+  {id:"P2", label:"Streaming & Frontend", color:"#0891b2", diagram:"diagrams/planes/plane-02-realtime-streaming.png"},
+  {id:"P3", label:"Orchestration & Gateways", color:"#7c3aed", diagram:"diagrams/planes/plane-03-orchestration-gateways.png"},
+  {id:"P4", label:"MCP Providers", color:"#0d9488", diagram:"diagrams/planes/plane-04-mcp-providers.png"},
+  {id:"P5", label:"Stateful Intelligence", color:"#2563eb", diagram:"diagrams/planes/plane-05-stateful-intelligence.png"},
+  {id:"P6", label:"Observability & Governance", color:"#db2777", diagram:"diagrams/planes/plane-06-observability-governance.png"},
+  {id:"P7", label:"Evaluation & MLOps", color:"#65a30d", diagram:"diagrams/planes/plane-07-evaluation-mlops.png"},
+  {id:"P8", label:"Maintenance & Lifecycle", color:"#475569", diagram:"diagrams/planes/plane-08-maintenance-lifecycle.png"},
 ];
+const PLANEBYID = Object.fromEntries(PLANES.map(p=>[p.id,p]));
 
 // Diagram viewer — one image per service, sourced from diagrams/services/plane-0X/
 function diagramInfoFor(n){
@@ -283,6 +284,10 @@ nodes.forEach(n=>{
   el.dataset.id = n.id;
   el.dataset.flows = n.flows.join(",");
   if(n.plane) el.dataset.plane = n.plane;
+  if(n.plane && PLANEBYID[n.plane]){
+    el.style.background = PLANEBYID[n.plane].color + "14"; // ~8% opacity wash
+    el.style.borderColor = PLANEBYID[n.plane].color + "55";
+  }
 
   const bars = document.createElement("div");
   bars.className = "bars";
@@ -386,7 +391,7 @@ PLANES.forEach(p=>{
   const chip = document.createElement("span");
   chip.className = "chip";
   chip.dataset.plane = p.id;
-  chip.innerHTML = '<span class="dot"></span>' + p.id + ' — ' + p.label;
+  chip.innerHTML = '<span class="dot" style="background:'+p.color+'"></span>' + p.id + ' — ' + p.label;
   planeLegend.appendChild(chip);
 });
 
@@ -458,8 +463,10 @@ document.querySelectorAll(".chip[data-plane]").forEach(chip=>{
     selectedNode = null;
     activeFlows = new Set();
     const p = chip.dataset.plane;
-    if(activePlanes.has(p)) activePlanes.delete(p); else activePlanes.add(p);
+    const wasActive = activePlanes.has(p);
+    if(wasActive) activePlanes.delete(p); else activePlanes.add(p);
     render();
+    if(!wasActive) openPlaneModal(PLANEBYID[p]);
   });
 });
 document.getElementById("resetBtn").addEventListener("click", ()=>{
@@ -470,6 +477,24 @@ document.getElementById("resetBtn").addEventListener("click", ()=>{
 const overlay = document.getElementById("overlay");
 const modalTitle = document.getElementById("modalTitle");
 const modalBody = document.getElementById("modalBody");
+function openPlaneModal(plane){
+  modalTitle.textContent = plane.id + " — " + plane.label + " (Plane Overview)";
+  modalBody.innerHTML = "";
+  const img = document.createElement("img");
+  img.alt = plane.label;
+  img.onerror = function(){
+    modalBody.innerHTML = "";
+    const ph = document.createElement("div");
+    ph.className = "placeholder";
+    ph.textContent = "⚠️ Plane overview image failed to load. Expected path: " + plane.diagram +
+      " — check that /diagrams/planes/ has this exact file.";
+    modalBody.appendChild(ph);
+  };
+  img.src = plane.diagram;
+  modalBody.appendChild(img);
+  overlay.classList.add("open");
+}
+
 function openModal(n){
   const d = diagramInfoFor(n);
   modalTitle.textContent = n.label + (n.sub ? " — " + n.sub : "");
