@@ -71,6 +71,12 @@
   .node.dim{opacity:.2;filter:grayscale(70%);}
   .node.plane-hit{box-shadow:0 0 0 2px #fff, 0 0 0 5px #4f46e5;}
   .node.hit{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1), 0 0 0 8px var(--ring2);}
+  @keyframes spotlightPulse{
+    0%{box-shadow:0 0 0 0 rgba(79,70,229,.55);}
+    70%{box-shadow:0 0 0 16px rgba(79,70,229,0);}
+    100%{box-shadow:0 0 0 0 rgba(79,70,229,0);}
+  }
+  .node.spotlight{animation:spotlightPulse 1.1s ease-out 3;}
   .node.hit.single{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1);}
 
   .view-btn{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:5px;
@@ -320,7 +326,7 @@ nodes.forEach(n=>{
     btn.className = "view-btn";
     btn.title = "View diagram";
     btn.textContent = "⤢";
-    btn.addEventListener("click",(e)=>{ e.stopPropagation(); openModal(n); });
+    btn.addEventListener("click",(e)=>{ e.stopPropagation(); cancelAutoplay(); openModal(n); });
     el.appendChild(btn);
   }
 
@@ -539,6 +545,7 @@ function render(){
 }
 
 function onNodeClick(n){
+  cancelAutoplay();
   activePlanes = new Set();
   const same = selectedNode===n.id &&
     n.flows.length===activeFlows.size && n.flows.every(f=>activeFlows.has(f));
@@ -549,6 +556,7 @@ function onNodeClick(n){
 
 document.querySelectorAll(".chip[data-flow]").forEach(chip=>{
   chip.addEventListener("click", ()=>{
+    cancelAutoplay();
     selectedNode = null;
     activePlanes = new Set();
     const f = chip.dataset.flow;
@@ -558,6 +566,7 @@ document.querySelectorAll(".chip[data-flow]").forEach(chip=>{
 });
 document.querySelectorAll(".plane-tile").forEach(tile=>{
   tile.addEventListener("click", ()=>{
+    cancelAutoplay();
     selectedNode = null;
     activeFlows = new Set();
     const p = tile.dataset.plane;
@@ -568,6 +577,7 @@ document.querySelectorAll(".plane-tile").forEach(tile=>{
   });
 });
 document.getElementById("resetBtn").addEventListener("click", ()=>{
+  cancelAutoplay();
   activeFlows = new Set(); activePlanes = new Set(); selectedNode = null; render();
 });
 
@@ -620,6 +630,7 @@ function openModal(n){
   overlay.classList.add("open");
 }
 function closeModalAndReset(){
+  cancelAutoplay();
   overlay.classList.remove("open");
   activeFlows = new Set();
   activePlanes = new Set();
@@ -629,6 +640,45 @@ function closeModalAndReset(){
 document.getElementById("modalClose").addEventListener("click", closeModalAndReset);
 overlay.addEventListener("click",(e)=>{ if(e.target===overlay) closeModalAndReset(); });
 document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeModalAndReset(); });
+
+// ---- One-time intro sequence: cycle the three flows once, then spotlight one node ----
+let autoplayCancelled = false;
+let autoplayTimers = [];
+function cancelAutoplay(){
+  if(autoplayCancelled) return;
+  autoplayCancelled = true;
+  autoplayTimers.forEach(t=>clearTimeout(t));
+  autoplayTimers = [];
+  document.querySelectorAll(".node.spotlight").forEach(el=>el.classList.remove("spotlight"));
+}
+function spotlightNode(nodeId){
+  if(autoplayCancelled) return;
+  const el = document.querySelector('.node[data-id="'+nodeId+'"]');
+  if(!el) return;
+  el.classList.add("spotlight");
+  autoplayTimers.push(setTimeout(()=>{ el.classList.remove("spotlight"); }, 3400));
+}
+function runIntroSequence(){
+  const seq = ["cs","ivr","aa"];
+  let i = 0;
+  function step(){
+    if(autoplayCancelled) return;
+    if(i < seq.length){
+      selectedNode = null;
+      activePlanes = new Set();
+      activeFlows = new Set([seq[i]]);
+      render();
+      i++;
+      autoplayTimers.push(setTimeout(step, 1800));
+    } else {
+      activeFlows = new Set();
+      render();
+      autoplayTimers.push(setTimeout(()=>spotlightNode("GENAI"), 500));
+    }
+  }
+  autoplayTimers.push(setTimeout(step, 900)); // brief pause so the page settles before the demo starts
+}
+runIntroSequence();
 
 render();
 </script>
