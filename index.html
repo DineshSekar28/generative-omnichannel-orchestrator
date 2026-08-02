@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generative Omnichannel AI Orchestrator - Architecture Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <meta name="description" content="Production-grade enterprise architecture for a multi-channel generative AI platform — 8 architectural planes, 22 microservices, spanning IVR, live agent assist, and design-time workflow authoring.">
 
@@ -108,6 +111,15 @@
             text-transform: uppercase;
             font-size: 0.8rem;
             letter-spacing: .8px;
+        }
+ 
+        .usage-hint {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent-orange);
+            margin-top: 14px;
         }
  
         /* ============ MASTER DIAGRAM SECTION ============ */
@@ -584,6 +596,7 @@
             <span class="stat-badge"><strong>21</strong>Services</span>
             <span class="stat-badge"><strong>3</strong>Types of Data Stores</span>
         </p>
+        <p class="usage-hint">Click services to view diagrams. Select flows to highlight specific paths.</p>
     </header>
  
     <!-- ============ MASTER DIAGRAM ============ -->
@@ -599,10 +612,6 @@
                     scrolling="yes">
                 </iframe>
             </div>
-            <p style="color: #64748b; font-size: 0.9rem; margin-top: 16px; padding: 0 20px;">
-                Interactive Master Architecture showing all 8 planes, 21 microservices, flow filtering (Design-Time, Agent Assist, IVR), and clickable service diagrams. 
-                <strong>Click services to view diagrams. Select flows to highlight specific paths.</strong>
-            </p>
         </div>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
