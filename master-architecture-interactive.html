@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Luna Platform — Master Flow Map</title>
+<title>End-to-End Interactive Flow Map</title>
 <style>
   :root{
     --cs:#111827; --ivr:#16a34a; --aa:#dc2626; --sup:#b45309;
@@ -13,9 +13,21 @@
     font-family:Inter,-apple-system,Segoe UI,Roboto,sans-serif;}
   .mono{font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace;}
 
-  header{padding:22px 32px 10px;}
-  h1{margin:0 0 4px;font-size:22px;}
+  header{padding:22px 32px 14px;}
+  h1{margin:0 0 10px;font-size:22px;}
   .subtitle{margin:0;color:var(--muted);font-size:13px;}
+  .cta-line{margin:0;display:inline-flex;align-items:center;gap:6px;
+    background:linear-gradient(90deg,#4f46e5,#7c3aed,#db2777);
+    background-size:200% 100%;
+    color:#fff;font-size:13.5px;font-weight:600;
+    padding:9px 20px;border-radius:999px;
+    box-shadow:0 4px 16px rgba(124,58,237,.35);
+    animation:ctaGlow 3s ease-in-out infinite;}
+  .cta-line strong{font-weight:800;}
+  @keyframes ctaGlow{
+    0%,100%{background-position:0% 50%;box-shadow:0 4px 16px rgba(124,58,237,.35);transform:scale(1);}
+    50%{background-position:100% 50%;box-shadow:0 6px 22px rgba(124,58,237,.55);transform:scale(1.02);}
+  }
 
   .legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
     padding:12px 32px;position:sticky;top:0;background:var(--bg);z-index:5;
@@ -71,7 +83,6 @@
   .node.hit{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1), 0 0 0 8px var(--ring2);}
   .node.hit.single{box-shadow:0 0 0 2px #fff, 0 0 0 5px var(--ring1);}
 
-  .plane-tag{position:absolute;top:2px;right:26px;font-size:8.5px;color:var(--muted);font-weight:700;}
   .view-btn{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:5px;
     border:none;background:#eef0f3;color:#5b6472;font-size:11px;line-height:18px;text-align:center;
     cursor:pointer;padding:0;}
@@ -111,8 +122,8 @@
 <body>
 
 <header>
-  <h1>Luna Platform — Master Flow Map</h1>
-  <p class="subtitle">Command Studio · IVR · Agent Assist · Supporting Services (Plane 6–8) — click a box to trace its flow, click ⤢ to view its diagram</p>
+  <h1>End-to-End Interactive Flow Map</h1>
+  <p class="cta-line">Double-click any block to view interactive details about each node</p>
 </header>
 
 <div class="legend">
@@ -313,13 +324,6 @@ nodes.forEach(n=>{
     bars.appendChild(s);
   });
   el.appendChild(bars);
-
-  if(n.plane){
-    const tag = document.createElement("div");
-    tag.className = "plane-tag";
-    tag.textContent = n.plane;
-    el.appendChild(tag);
-  }
 
   if(n.type!=="user"){
     const btn = document.createElement("button");
@@ -625,9 +629,16 @@ function openModal(n){
   }
   overlay.classList.add("open");
 }
-document.getElementById("modalClose").addEventListener("click", ()=>overlay.classList.remove("open"));
-overlay.addEventListener("click",(e)=>{ if(e.target===overlay) overlay.classList.remove("open"); });
-document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") overlay.classList.remove("open"); });
+function closeModalAndReset(){
+  overlay.classList.remove("open");
+  activeFlows = new Set();
+  activePlanes = new Set();
+  selectedNode = null;
+  render();
+}
+document.getElementById("modalClose").addEventListener("click", closeModalAndReset);
+overlay.addEventListener("click",(e)=>{ if(e.target===overlay) closeModalAndReset(); });
+document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeModalAndReset(); });
 
 render();
 </script>
