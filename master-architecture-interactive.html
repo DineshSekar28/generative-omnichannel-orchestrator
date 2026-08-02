@@ -260,6 +260,7 @@ function pos(n){
 }
 const posMap = {};
 nodes.forEach(n=>posMap[n.id]=pos(n));
+const nodeById = Object.fromEntries(nodes.map(n=>[n.id,n]));
 
 COLUMNS.forEach((name,i)=>{
   const d = document.createElement("div");
@@ -369,15 +370,54 @@ function drawEdges(){
   });
   svg.appendChild(defs);
 
+  const COLGAP = COLW - BOXW; // empty corridor between columns — never occupied by a box
+  const LASTCOL = 7;
+  function gapAfter(col){ return MARGIN_L + col*COLW + BOXW + COLGAP/2; }
+  function gapBefore(col){ return gapAfter(col-1); }
+  function sideGap(col){ return col < LASTCOL ? gapAfter(col) : gapBefore(col); }
+  const LONG_LANE_BASE = 940; // clear of every node, including the supporting-services band
+  let longLaneIndex = 0;
+
   edges.forEach(([from,to,flows])=>{
+    const srcNode = nodeById[from], tgtNode = nodeById[to];
+    const colDiff = Math.abs(tgtNode.col - srcNode.col);
+    const rowDiff = Math.abs(tgtNode.row - srcNode.row);
+    const nearHorizontal = rowDiff < 0.3 || (rowDiff < 0.8 && colDiff <= 2);   // safe as a plain curve
+    const nearColumn = colDiff <= 1;         // shares one always-empty corridor — no detour needed
+    const needsElbow = !nearHorizontal;
+
     const a = posMap[from], b = posMap[to];
+    if(needsElbow && !nearColumn) longLaneIndex++;
+    const laneY = LONG_LANE_BASE + (longLaneIndex % 14) * 6;
+
     flows.forEach((f,i)=>{
       const n = flows.length;
       const offset = (i - (n-1)/2) * 6;
       const path = document.createElementNS("http://www.w3.org/2000/svg","path");
-      const x1=a.cx, y1=a.cy+offset, x2=b.cx, y2=b.cy+offset;
-      const mx=(x1+x2)/2;
-      const d = "M"+x1+","+y1+" C"+mx+","+y1+" "+mx+","+y2+" "+x2+","+y2;
+      let d;
+
+      if(needsElbow && nearColumn){
+        const gapX = gapAfter(Math.min(srcNode.col, tgtNode.col)) + offset;
+        const x1=a.cx, y1=a.cy, x2=b.cx, y2=b.cy;
+        d = "M"+x1+","+y1+" L"+gapX+","+y1+" L"+gapX+","+y2+" L"+x2+","+y2;
+      } else if(needsElbow){
+        const rightward = tgtNode.col >= srcNode.col;
+        const gapX1 = rightward ? gapAfter(srcNode.col) : gapBefore(srcNode.col);
+        const gapX2 = rightward ? gapBefore(tgtNode.col) : gapAfter(tgtNode.col);
+        const ly = laneY + offset;
+        const x1=a.cx, y1=a.cy, x2=b.cx, y2=b.cy;
+        d = "M"+x1+","+y1+
+            " L"+gapX1+","+y1+
+            " L"+gapX1+","+ly+
+            " L"+gapX2+","+ly+
+            " L"+gapX2+","+y2+
+            " L"+x2+","+y2;
+      } else {
+        const x1=a.cx, y1=a.cy+offset, x2=b.cx, y2=b.cy+offset;
+        const mx=(x1+x2)/2;
+        d = "M"+x1+","+y1+" C"+mx+","+y1+" "+mx+","+y2+" "+x2+","+y2;
+      }
+
       path.setAttribute("d", d);
       path.setAttribute("fill","none");
       path.setAttribute("stroke", FLOWCOLOR[f]);
