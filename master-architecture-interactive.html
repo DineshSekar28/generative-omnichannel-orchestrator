@@ -13,21 +13,11 @@
     font-family:Inter,-apple-system,Segoe UI,Roboto,sans-serif;}
   .mono{font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace;}
 
-  header{padding:22px 32px 14px;}
+  header{padding:22px 32px 14px;text-align:center;}
   h1{margin:0 0 10px;font-size:22px;}
   .subtitle{margin:0;color:var(--muted);font-size:13px;}
-  .cta-line{margin:0;display:inline-flex;align-items:center;gap:6px;
-    background:linear-gradient(90deg,#4f46e5,#7c3aed,#db2777);
-    background-size:200% 100%;
-    color:#fff;font-size:13.5px;font-weight:600;
-    padding:9px 20px;border-radius:999px;
-    box-shadow:0 4px 16px rgba(124,58,237,.35);
-    animation:ctaGlow 3s ease-in-out infinite;}
-  .cta-line strong{font-weight:800;}
-  @keyframes ctaGlow{
-    0%,100%{background-position:0% 50%;box-shadow:0 4px 16px rgba(124,58,237,.35);transform:scale(1);}
-    50%{background-position:100% 50%;box-shadow:0 6px 22px rgba(124,58,237,.55);transform:scale(1.02);}
-  }
+  .cta-line{margin:0;color:var(--ink);font-size:14px;font-weight:600;}
+  .cta-line strong{color:#4f46e5;font-weight:800;}
 
   .legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
     padding:12px 32px;position:sticky;top:0;background:var(--bg);z-index:5;
@@ -125,7 +115,6 @@
   <h1>End-to-End Interactive Flow Map</h1>
   <p class="cta-line">Double-click any block to view interactive details about each node</p>
 </header>
-
 
 <div class="legend">
   <span class="chip" data-flow="cs"><span class="dot"></span>Command Studio</span>
