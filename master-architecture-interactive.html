@@ -126,7 +126,7 @@
   <span class="chip" data-flow="cs"><span class="dot"></span>Command Studio</span>
   <span class="chip" data-flow="ivr"><span class="dot"></span>IVR</span>
   <span class="chip" data-flow="aa"><span class="dot"></span>Agent Assist</span>
-  <span class="chip" data-flow="support"><span class="dot"></span>Supporting Services</span>
+  <span class="chip" data-flow="support"><span class="dot"></span>Monitoring Services</span>
   <button id="resetBtn">Show all</button>
 </div>
 
@@ -292,8 +292,8 @@ canvas.appendChild(bandLine);
 const bandLabel = document.createElement("div");
 bandLabel.className = "band-label";
 bandLabel.style.left = MARGIN_L+"px";
-bandLabel.style.top = (MARGIN_T + 9.3*ROWH - 18) + "px";
-bandLabel.textContent = "Supporting Services — Plane 6–8 (Observability · Evaluation · Maintenance) — outside the real-time request path";
+bandLabel.style.top = (MARGIN_T + 9.3*ROWH + 16) + "px";
+bandLabel.textContent = "Monitoring Services (Observability · Evaluation · Maintenance)";
 canvas.appendChild(bandLabel);
 
 nodes.forEach(n=>{
@@ -673,12 +673,22 @@ function runIntroSequence(){
     } else {
       activeFlows = new Set();
       render();
-      autoplayTimers.push(setTimeout(()=>spotlightNode("GENAI"), 500));
+      autoplayTimers.push(setTimeout(()=>{
+        spotlightNode("GENAI");
+        autoplayTimers.push(setTimeout(()=>{
+          if(autoplayCancelled) return;
+          i = 0;
+          step(); // loop back to the start of the cycle
+        }, 3800)); // wait out the spotlight pulse, then a short pause before looping
+      }, 500));
     }
   }
   autoplayTimers.push(setTimeout(step, 900)); // brief pause so the page settles before the demo starts
 }
 runIntroSequence();
+
+// Any click anywhere in the diagram — not just on a specific control — stops the loop for good.
+document.addEventListener("click", cancelAutoplay, {capture:true});
 
 render();
 </script>
