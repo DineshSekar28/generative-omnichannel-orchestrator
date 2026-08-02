@@ -153,46 +153,46 @@ const COLUMNS = [
 ];
 
 const nodes = [
-  {id:"U-CS",  col:0, row:0,   flows:["cs"],  type:"user", label:"Solution Architect / KYC Analyst", sub:"User"},
-  {id:"U-IVR", col:0, row:3.5, flows:["ivr"], type:"user", label:"Customer", sub:"via Telephony"},
-  {id:"U-AA",  col:0, row:7,   flows:["aa"],  type:"user", label:"Contact Center Agent", sub:"User"},
+  {id:"U-CS",  col:0, row:0,   flows:["cs"],  type:"user", label:"Solution Architect / KYC Analyst", sub:"Command Studio Stakeholders"},
+  {id:"U-IVR", col:0, row:3.5, flows:["ivr"], type:"user", label:"Customer", sub:"via Telephone voice call"},
+  {id:"U-AA",  col:0, row:7,   flows:["aa"],  type:"user", label:"Contact Center Agent", sub:"Live Agent"},
 
-  {id:"CS-UI1",col:1, row:0,   flows:["cs"],  label:"svc-v-commandstudio-workflow", sub:"DAG Authoring UI", plane:"P1", diagram:"diagrams/services/plane-01/commandstudio-workflow-ui.png"},
-  {id:"CS-UI2",col:1, row:1,   flows:["cs"],  label:"svc-v-kyc-datastudio", sub:"KYC Data Studio UI", plane:"P1", diagram:"diagrams/services/plane-01/kyc-datastudio-ui.png"},
-  {id:"IVR-EXT1",col:1,row:3.5,flows:["ivr"], type:"external", label:"Kore.ai / Telephony IVR", sub:"External System"},
-  {id:"IVR-EXT2",col:1,row:4.5,flows:["ivr"], type:"external", label:"Google STT / Whisper", sub:"Speech-to-Text"},
-  {id:"AA-UI", col:1, row:7,   flows:["aa"],  label:"svc-v-chatbot-agentassist", sub:"Agent Copilot UI", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-ui.png"},
-  {id:"AA-WS", col:1, row:8,   flows:["aa"],  label:"svc-d-chatbot-ast-ls", sub:"Real-Time Streaming", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-livestream-engine.png"},
+  {id:"CS-UI1",col:1, row:0,   flows:["cs"],  label:"svc-v-commandstudio-workflow", pseudo:"Command Studio UI", sub:"Interactive DAG Workflow Builder", plane:"P1", diagram:"diagrams/services/plane-01/commandstudio-workflow-ui.png"},
+  {id:"CS-UI2",col:1, row:1,   flows:["cs"],  label:"svc-v-kyc-datastudio", pseudo:"KYC Data Studio UI", sub:"Compliance Review Workspace", plane:"P1", diagram:"diagrams/services/plane-01/kyc-datastudio-ui.png"},
+  {id:"IVR-EXT1",col:1,row:3.5,flows:["ivr"], type:"external", label:"AI Internal SDK / Telephony IVR", sub:"Onboarded On-Premises"},
+  {id:"IVR-EXT2",col:1,row:4.5,flows:["ivr"], type:"external", label:"STT Engine", sub:"Speech-to-Text"},
+  {id:"AA-UI", col:1, row:7,   flows:["aa"],  label:"svc-v-chatbot-agentassist", pseudo:"Agent Copilot UI", sub:"Real-Time Agent Desktop Panel", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-ui.png"},
+  {id:"AA-WS", col:1, row:8,   flows:["aa"],  label:"svc-d-chatbot-ast-ls", pseudo:"Agent Real-Time Live Streaming", sub:"WebSocket Session Streaming Engine", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-livestream-engine.png"},
 
-  {id:"CS-BE", col:2, row:0.5, flows:["cs"],  label:"svc-d-commandstudio", sub:"Lifecycle Backend", plane:"P1", diagram:"diagrams/services/plane-01/commandstudio-domain.png"},
-  {id:"IVR-GW",col:2, row:4,   flows:["ivr"], label:"svc-d-chatbot-gateway-ivr", sub:"IVR Deterministic Router", plane:"P3", diagram:"diagrams/services/plane-03/ivr-gateway.png"},
-  {id:"AA-GW", col:2, row:7.5, flows:["aa"],  label:"svc-d-chatbot-gateway-ast", sub:"Agent Assist Gateway", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-gateway.png"},
+  {id:"CS-BE", col:2, row:0.5, flows:["cs"],  label:"svc-d-commandstudio", pseudo:"Command Studio", sub:"Template & Guardrail Lifecycle Backend", plane:"P1", diagram:"diagrams/services/plane-01/commandstudio-domain.png"},
+  {id:"IVR-GW",col:2, row:4,   flows:["ivr"], label:"svc-d-chatbot-gateway-ivr", pseudo:"IVR Deterministic Router", sub:"Telephony Request Ingress & Routing", plane:"P3", diagram:"diagrams/services/plane-03/ivr-gateway.png"},
+  {id:"AA-GW", col:2, row:7.5, flows:["aa"],  label:"svc-d-chatbot-gateway-ast", pseudo:"Agent Assist Gateway", sub:"Agent Session Ingress & Auth", plane:"P2", diagram:"diagrams/services/plane-02/agentassist-gateway.png"},
 
-  {id:"ORCH",  col:3, row:5,   flows:["ivr","aa"], label:"svc-d-orchestration", sub:"Decision Layer — API Mapper", plane:"P3", diagram:"diagrams/services/plane-03/orchestration-semantic-mapper.png"},
-  {id:"GENAI", col:3, row:6,   flows:["ivr","aa"], label:"svc-c-genaiworkflow", sub:"GenAI Workflow Engine", plane:"P3", diagram:"diagrams/services/plane-03/genai-workflow-orchestrator.png"},
+  {id:"ORCH",  col:3, row:5,   flows:["ivr","aa"], label:"svc-d-orchestration", pseudo:"Semantic Orchestration Mapper", sub:"Intent-to-API Resolution Engine", plane:"P3", diagram:"diagrams/services/plane-03/orchestration-semantic-mapper.png"},
+  {id:"GENAI", col:3, row:6,   flows:["ivr","aa"], label:"svc-c-genaiworkflow", pseudo:"GenAI Workflow Engine", sub:"Deterministic Multi-Step AI Execution", plane:"P3", diagram:"diagrams/services/plane-03/genai-workflow-orchestrator.png"},
 
-  {id:"MCP-CORE",col:4,row:5.5,flows:["ivr","aa"], label:"svc-d-luna-mcp", sub:"Core MCP Orchestrator", plane:"P4", diagram:"diagrams/services/plane-04/mcp-core.png"},
-  {id:"MCP-IVR",col:4,row:4,   flows:["ivr"], label:"svc-d-luna-ivr-mcp", sub:"IVR Tool Execution", plane:"P4", diagram:"diagrams/services/plane-04/mcp-telephony.png"},
-  {id:"MCP-AA", col:4,row:7.5, flows:["aa"],  label:"svc-d-luna-aa-mcp", sub:"Agent Context Provider", plane:"P4", diagram:"diagrams/services/plane-04/mcp-agentassist.png"},
+  {id:"MCP-CORE",col:4,row:5.5,flows:["ivr","aa"], label:"svc-d-luna-mcp", pseudo:"Core MCP Orchestrator", sub:"Central Context & Tool Coordinator", plane:"P4", diagram:"diagrams/services/plane-04/mcp-core.png"},
+  {id:"MCP-IVR",col:4,row:4,   flows:["ivr"], label:"svc-d-luna-ivr-mcp", pseudo:"IVR Tool Execution MCP", sub:"Telephony Action Execution Layer", plane:"P4", diagram:"diagrams/services/plane-04/mcp-telephony.png"},
+  {id:"MCP-AA", col:4,row:7.5, flows:["aa"],  label:"svc-d-luna-aa-mcp", pseudo:"Agent Context Provider MCP", sub:"Agent Knowledge & Context Retrieval", plane:"P4", diagram:"diagrams/services/plane-04/mcp-agentassist.png"},
 
-  {id:"ML",     col:5,row:5,   flows:["ivr","aa"], label:"svc-d-chatbot-ml", sub:"Conversational AI Engine", plane:"P5", diagram:"diagrams/services/plane-05/chatbot-ml-engine.png"},
-  {id:"MODELS", col:5,row:6,   flows:["ivr","aa"], label:"svc-d-mlmodels", sub:"Model Server Library", plane:"P5", diagram:"diagrams/services/plane-05/ml-model-server.png"},
-  {id:"PII",    col:5,row:7,   flows:["ivr","aa"], label:"svc-d-genai-pii-redaction", sub:"PII Guardrails", plane:"P6", diagram:"diagrams/services/plane-06/pii-redaction-service.png"},
+  {id:"ML",     col:5,row:5,   flows:["ivr","aa"], label:"svc-d-chatbot-ml", pseudo:"Conversational AI Engine", sub:"Stateful Dialogue Intelligence", plane:"P5", diagram:"diagrams/services/plane-05/chatbot-ml-engine.png"},
+  {id:"MODELS", col:5,row:6,   flows:["ivr","aa"], label:"svc-d-mlmodels", pseudo:"Model Server Library", sub:"Embedding & Inference Serving Layer", plane:"P5", diagram:"diagrams/services/plane-05/ml-model-server.png"},
+  {id:"PII",    col:5,row:7,   flows:["ivr","aa"], label:"svc-d-genai-pii-redaction", pseudo:"PII Guardrails", sub:"Sensitive Data Detection & Redaction", plane:"P6", diagram:"diagrams/services/plane-06/pii-redaction-service.png"},
 
-  {id:"TTS",    col:6,row:3.5, flows:["ivr"], type:"external", label:"TTS Engine", sub:"External Service"},
-  {id:"DBSYNC", col:6,row:8.5, flows:["aa","support"], type:"support", label:"svc-c-chatbot-dbsync-ast-bs", sub:"Neo4j Graph Hygiene & Background DB Sync", plane:"P8", diagram:"diagrams/services/plane-08/neo4j-dbsync-service.png"},
+  {id:"TTS",    col:6,row:3.5, flows:["ivr"], type:"external", label:"TTS Engine", sub:"Text-to-Speech"},
+  {id:"DBSYNC", col:6,row:8.5, flows:["aa","support"], type:"support", label:"svc-c-chatbot-dbsync-ast-bs", pseudo:"Neo4j Graph Hygiene & DB Sync", sub:"Background Graph Cleanup & Sync", plane:"P8", diagram:"diagrams/services/plane-08/neo4j-dbsync-service.png"},
 
   {id:"MONGO",  col:7,row:1,   flows:["cs","ivr","aa"], type:"store", label:"MongoDB", sub:"Sessions, Templates, Logs", diagram:null},
   {id:"NEO4J",  col:7,row:2,   flows:["cs","ivr","aa"], type:"store", label:"Neo4j", sub:"Knowledge Graph", diagram:null},
   {id:"PG",     col:7,row:3,   flows:["cs","ivr","aa"], type:"store", label:"PostgreSQL + pgvector", sub:"Vector Store", diagram:null},
 
   // Supporting services band — Plane 6-8, not part of the real-time request path
-  {id:"MON",     col:2, row:10,   flows:["support"], type:"support", label:"svc-d-luna-monitoring", sub:"Real-Time Analytics & Logging", plane:"P6", diagram:"diagrams/services/plane-06/monitoring-service.png"},
-  {id:"NEARRT",  col:3, row:10,   flows:["support"], type:"support", label:"svc-d-luna-near-realtime-monitor", sub:"Guardrail & Drift Adjudication", plane:"P6", diagram:"diagrams/services/plane-06/quality-drift-monitor.png"},
-  {id:"EVAL",    col:4, row:10,   flows:["support"], type:"support", label:"svc-d-gt-eval-automation", sub:"Ground Truth Quality Engine", plane:"P7", diagram:"diagrams/services/plane-07/eval-automation-engine.png"},
-  {id:"SAMPLEGEN",col:5,row:10,   flows:["support"], type:"support", label:"svc-d-sample-generation", sub:"Synthetic Eval Datasets", plane:"P7", diagram:"diagrams/services/plane-07/synthetic-data-generator.png"},
-  {id:"AGENTFLOW",col:6,row:10,   flows:["support"], type:"support", label:"svc-d-luna-agentflow", sub:"Telemetry Transformation", plane:"P7", diagram:"diagrams/services/plane-07/telemetry-agentflow.png"},
-  {id:"QAAUTO",   col:2,row:11.3, flows:["support"], type:"support", label:"svc-d-luna-qa-automation", sub:"Build-Time CI/CD Governance", plane:"P8", diagram:"diagrams/services/plane-08/qa-automation-service.png"},
+  {id:"MON",     col:2, row:10,   flows:["support"], type:"support", label:"svc-d-luna-monitoring", pseudo:"Real-Time Analytics & Logging", sub:"Operational Dashboards & Usage Metrics", plane:"P6", diagram:"diagrams/services/plane-06/monitoring-service.png"},
+  {id:"NEARRT",  col:3, row:10,   flows:["support"], type:"support", label:"svc-d-luna-near-realtime-monitor", pseudo:"Guardrail & Drift Adjudication", sub:"Automated Quality & Safety Review", plane:"P6", diagram:"diagrams/services/plane-06/quality-drift-monitor.png"},
+  {id:"EVAL",    col:4, row:10,   flows:["support"], type:"support", label:"svc-d-gt-eval-automation", pseudo:"Ground Truth Quality Engine", sub:"Automated Evaluation-as-a-Service", plane:"P7", diagram:"diagrams/services/plane-07/eval-automation-engine.png"},
+  {id:"SAMPLEGEN",col:5,row:10,   flows:["support"], type:"support", label:"svc-d-sample-generation", pseudo:"Synthetic Eval Datasets", sub:"Test Data & Adversarial Case Generator", plane:"P7", diagram:"diagrams/services/plane-07/synthetic-data-generator.png"},
+  {id:"AGENTFLOW",col:6,row:10,   flows:["support"], type:"support", label:"svc-d-luna-agentflow", pseudo:"Telemetry Transformation", sub:"Telemetry-to-Annotation Pipeline", plane:"P7", diagram:"diagrams/services/plane-07/telemetry-agentflow.png"},
+  {id:"QAAUTO",   col:2,row:11.3, flows:["support"], type:"support", label:"svc-d-luna-qa-automation", pseudo:"QA Automation", sub:"Build-Time CI/CD Governance Gate", plane:"P8", diagram:"diagrams/services/plane-08/qa-automation-service.png"},
 ];
 
 const edges = [
@@ -229,6 +229,11 @@ const edges = [
 
 const FLOWCOLOR = {cs:"#111827", ivr:"#16a34a", aa:"#dc2626", support:"#b45309"};
 const PLANECOLOR = "#4f46e5";
+function mixWithWhite(hex, ratio){
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  const mix = (c) => Math.round(c*ratio + 255*(1-ratio));
+  return "rgb("+mix(r)+","+mix(g)+","+mix(b)+")";
+}
 const PLANES = [
   {id:"P1", label:"Design-Time Control Plane", color:"#d97706", diagram:"diagrams/planes/plane-01-design-time-control.png"},
   {id:"P2", label:"Streaming & Frontend Plane", color:"#0891b2", diagram:"diagrams/planes/plane-02-realtime-streaming.png"},
@@ -296,7 +301,7 @@ nodes.forEach(n=>{
   el.dataset.flows = n.flows.join(",");
   if(n.plane) el.dataset.plane = n.plane;
   if(n.plane && PLANEBYID[n.plane]){
-    el.style.background = PLANEBYID[n.plane].color + "14"; // ~8% opacity wash
+    el.style.backgroundColor = mixWithWhite(PLANEBYID[n.plane].color, 0.07); // fully opaque, subtle tint
     el.style.borderColor = PLANEBYID[n.plane].color + "55";
   }
 
@@ -338,19 +343,30 @@ nodes.forEach(n=>{
     el.appendChild(iconWrap);
   }
 
+  const hasPseudo = !!n.pseudo;
   const id = document.createElement("div");
-  id.className = "id" + (n.type!=="user" ? " mono" : "");
-  id.textContent = n.label;
+  id.className = "id";
+  id.textContent = hasPseudo ? n.pseudo : n.label;
   el.appendChild(id);
 
-  const sub = document.createElement("div");
-  sub.className = "sub";
-  sub.textContent = n.sub;
-  el.appendChild(sub);
+  if(n.sub){
+    const sub = document.createElement("div");
+    sub.className = "sub";
+    sub.textContent = n.sub;
+    el.appendChild(sub);
+  }
 
   el.addEventListener("click", ()=>onNodeClick(n));
   el.addEventListener("dblclick", (e)=>{ e.preventDefault(); openModal(n); });
   canvas.appendChild(el);
+});
+
+const nodeRect = {};
+document.querySelectorAll(".node").forEach(el=>{
+  nodeRect[el.dataset.id] = {
+    x1: el.offsetLeft, y1: el.offsetTop,
+    x2: el.offsetLeft + el.offsetWidth, y2: el.offsetTop + el.offsetHeight
+  };
 });
 
 function drawEdges(){
@@ -370,25 +386,64 @@ function drawEdges(){
   });
   svg.appendChild(defs);
 
-  const COLGAP = COLW - BOXW; // empty corridor between columns — never occupied by a box
+  const COLGAP = COLW - BOXW;
   const LASTCOL = 7;
   function gapAfter(col){ return MARGIN_L + col*COLW + BOXW + COLGAP/2; }
   function gapBefore(col){ return gapAfter(col-1); }
-  function sideGap(col){ return col < LASTCOL ? gapAfter(col) : gapBefore(col); }
-  const LONG_LANE_BASE = 940; // clear of every node, including the supporting-services band
-  let longLaneIndex = 0;
+
+  function cubicPoints(x1,y1,x2,y2,steps){
+    const mx=(x1+x2)/2, pts=[];
+    for(let i=0;i<=steps;i++){
+      const t=i/steps, mt=1-t;
+      pts.push([
+        mt*mt*mt*x1 + 3*mt*mt*t*mx + 3*mt*t*t*mx + t*t*t*x2,
+        mt*mt*mt*y1 + 3*mt*mt*t*y1 + 3*mt*t*t*y2 + t*t*t*y2
+      ]);
+    }
+    return pts;
+  }
+  function pointInBox(px,py,box){
+    return px>=box.x1 && px<=box.x2 && py>=box.y1 && py<=box.y2;
+  }
+  function curveHitsAnyBox(x1,y1,x2,y2,skipIds){
+    const pts = cubicPoints(x1,y1,x2,y2,40);
+    for(const id in nodeRect){
+      if(skipIds.has(id)) continue;
+      const box = nodeRect[id];
+      for(const [px,py] of pts){
+        if(pointInBox(px,py,box)) return true;
+      }
+    }
+    return false;
+  }
+
+  function roundedPath(pts, r){
+    if(pts.length < 2) return "";
+    let d = "M"+pts[0][0]+","+pts[0][1];
+    for(let i=1;i<pts.length-1;i++){
+      const [x0,y0]=pts[i-1], [x1,y1]=pts[i], [x2,y2]=pts[i+1];
+      const d1 = Math.hypot(x1-x0,y1-y0), d2 = Math.hypot(x2-x1,y2-y1);
+      const rr = Math.min(r, d1/2, d2/2);
+      const p1x = x1 - (x1-x0)/(d1||1)*rr, p1y = y1 - (y1-y0)/(d1||1)*rr;
+      const p2x = x1 + (x2-x1)/(d2||1)*rr, p2y = y1 + (y2-y1)/(d2||1)*rr;
+      d += " L"+p1x+","+p1y+" Q"+x1+","+y1+" "+p2x+","+p2y;
+    }
+    const last = pts[pts.length-1];
+    d += " L"+last[0]+","+last[1];
+    return d;
+  }
 
   edges.forEach(([from,to,flows])=>{
     const srcNode = nodeById[from], tgtNode = nodeById[to];
-    const colDiff = Math.abs(tgtNode.col - srcNode.col);
-    const rowDiff = Math.abs(tgtNode.row - srcNode.row);
-    const nearHorizontal = rowDiff < 0.3 || (rowDiff < 0.8 && colDiff <= 2);   // safe as a plain curve
-    const nearColumn = colDiff <= 1;         // shares one always-empty corridor — no detour needed
-    const needsElbow = !nearHorizontal;
-
     const a = posMap[from], b = posMap[to];
-    if(needsElbow && !nearColumn) longLaneIndex++;
-    const laneY = LONG_LANE_BASE + (longLaneIndex % 14) * 6;
+    const skipIds = new Set([from,to]);
+
+    // Test the plain curve against real box measurements; only reroute same-column
+    // collisions locally — multi-column collisions keep the plain curve rather than
+    // detouring through the bottom lane.
+    const collides = curveHitsAnyBox(a.cx, a.cy, b.cx, b.cy, skipIds);
+    const sameColumn = srcNode.col === tgtNode.col;
+    const mode = (collides && sameColumn) ? "singleCorridor" : "plain";
 
     flows.forEach((f,i)=>{
       const n = flows.length;
@@ -396,22 +451,10 @@ function drawEdges(){
       const path = document.createElementNS("http://www.w3.org/2000/svg","path");
       let d;
 
-      if(needsElbow && nearColumn){
-        const gapX = gapAfter(Math.min(srcNode.col, tgtNode.col)) + offset;
+      if(mode === "singleCorridor"){
+        const bowX = (srcNode.col < LASTCOL ? gapAfter(srcNode.col) : gapBefore(srcNode.col)) + offset;
         const x1=a.cx, y1=a.cy, x2=b.cx, y2=b.cy;
-        d = "M"+x1+","+y1+" L"+gapX+","+y1+" L"+gapX+","+y2+" L"+x2+","+y2;
-      } else if(needsElbow){
-        const rightward = tgtNode.col >= srcNode.col;
-        const gapX1 = rightward ? gapAfter(srcNode.col) : gapBefore(srcNode.col);
-        const gapX2 = rightward ? gapBefore(tgtNode.col) : gapAfter(tgtNode.col);
-        const ly = laneY + offset;
-        const x1=a.cx, y1=a.cy, x2=b.cx, y2=b.cy;
-        d = "M"+x1+","+y1+
-            " L"+gapX1+","+y1+
-            " L"+gapX1+","+ly+
-            " L"+gapX2+","+ly+
-            " L"+gapX2+","+y2+
-            " L"+x2+","+y2;
+        d = roundedPath([[x1,y1],[bowX,y1],[bowX,y2],[x2,y2]], 16);
       } else {
         const x1=a.cx, y1=a.cy+offset, x2=b.cx, y2=b.cy+offset;
         const mx=(x1+x2)/2;
@@ -558,7 +601,8 @@ function openPlaneModal(plane){
 
 function openModal(n){
   const d = diagramInfoFor(n);
-  modalTitle.textContent = n.label + (n.sub ? " — " + n.sub : "");
+  const titleName = n.pseudo ? n.pseudo : n.label;
+  modalTitle.textContent = titleName + (n.sub ? " — " + n.sub : "");
   modalBody.innerHTML = "";
   if(d.img){
     const img = document.createElement("img");
