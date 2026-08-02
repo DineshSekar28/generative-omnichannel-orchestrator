@@ -77,16 +77,15 @@
     cursor:pointer;padding:0;}
   .view-btn:hover{background:#dfe2e7;}
 
-  .plane-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
-    padding:14px 32px 4px;max-width:1120px;}
-  .plane-tile{position:relative;display:flex;flex-direction:column;gap:2px;
+  .plane-rows{padding:14px 32px 4px;}
+  .plane-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .plane-tile{position:relative;display:flex;align-items:center;width:200px;flex:0 0 auto;
     background:var(--card);border:1.5px solid var(--line);border-left-width:6px;
-    border-radius:8px;padding:10px 14px;cursor:pointer;text-align:left;
+    border-radius:8px;padding:13px 14px;cursor:pointer;text-align:left;
     transition:transform .12s ease, box-shadow .15s ease, opacity .2s ease, filter .2s ease;
     box-shadow:0 1px 2px rgba(0,0,0,.04);}
   .plane-tile:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.1);}
-  .plane-tile .ptile-id{font-size:12.5px;font-weight:800;letter-spacing:.3px;}
-  .plane-tile .ptile-label{font-size:11px;color:var(--muted);line-height:1.3;}
+  .plane-tile .ptile-label{font-size:13px;font-weight:700;line-height:1.3;}
   .plane-tile.plane-tile-active{box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--tile-color, #4f46e5);}
   .plane-tile.plane-tile-dim{opacity:.35;filter:grayscale(50%);}
   .plane-hint{padding:0 32px;color:var(--muted);font-size:11.5px;margin:2px 0 0;}
@@ -123,9 +122,8 @@
   <span class="chip" data-flow="support"><span class="dot"></span>Supporting Services</span>
   <button id="resetBtn">Show all</button>
 </div>
-<p class="hint">Click a box once to trace its flow(s). Double-click a box — or click its ⤢ button — to open its diagram. Shared services (orchestration, GenAI engine, MCP core, ML/model layer, PII guardrails, data stores) light up for every active flow at once. The amber band at the bottom is <b>not part of any real-time request path</b> — it's observability, evaluation, and maintenance tooling that reads/writes the same data stores in the background.</p>
 
-<div class="plane-grid" id="planeLegend"></div>
+<div class="plane-rows" id="planeLegend"></div>
 <p class="plane-hint">Click any plane tile above to open its overview diagram and highlight that plane across the whole map.</p>
 
 <div class="canvas-wrap">
@@ -232,14 +230,14 @@ const edges = [
 const FLOWCOLOR = {cs:"#111827", ivr:"#16a34a", aa:"#dc2626", support:"#b45309"};
 const PLANECOLOR = "#4f46e5";
 const PLANES = [
-  {id:"P1", label:"Design-Time Control", color:"#d97706", diagram:"diagrams/planes/plane-01-design-time-control.png"},
-  {id:"P2", label:"Streaming & Frontend", color:"#0891b2", diagram:"diagrams/planes/plane-02-realtime-streaming.png"},
-  {id:"P3", label:"Orchestration & Gateways", color:"#7c3aed", diagram:"diagrams/planes/plane-03-orchestration-gateways.png"},
-  {id:"P4", label:"MCP Providers", color:"#0d9488", diagram:"diagrams/planes/plane-04-mcp-providers.png"},
-  {id:"P5", label:"Stateful Intelligence", color:"#2563eb", diagram:"diagrams/planes/plane-05-stateful-intelligence.png"},
-  {id:"P6", label:"Observability & Governance", color:"#db2777", diagram:"diagrams/planes/plane-06-observability-governance.png"},
-  {id:"P7", label:"Evaluation & MLOps", color:"#65a30d", diagram:"diagrams/planes/plane-07-evaluation-mlops.png"},
-  {id:"P8", label:"Maintenance & Lifecycle", color:"#475569", diagram:"diagrams/planes/plane-08-maintenance-lifecycle.png"},
+  {id:"P1", label:"Design-Time Control Plane", color:"#d97706", diagram:"diagrams/planes/plane-01-design-time-control.png"},
+  {id:"P2", label:"Streaming & Frontend Plane", color:"#0891b2", diagram:"diagrams/planes/plane-02-realtime-streaming.png"},
+  {id:"P3", label:"Orchestration & Gateways Plane", color:"#7c3aed", diagram:"diagrams/planes/plane-03-orchestration-gateways.png"},
+  {id:"P4", label:"MCP Providers Plane", color:"#0d9488", diagram:"diagrams/planes/plane-04-mcp-providers.png"},
+  {id:"P5", label:"Stateful Intelligence Plane", color:"#2563eb", diagram:"diagrams/planes/plane-05-stateful-intelligence.png"},
+  {id:"P6", label:"Observability & Governance Plane", color:"#db2777", diagram:"diagrams/planes/plane-06-observability-governance.png"},
+  {id:"P7", label:"Evaluation & MLOps Plane", color:"#65a30d", diagram:"diagrams/planes/plane-07-evaluation-mlops.png"},
+  {id:"P8", label:"Maintenance & Lifecycle Plane", color:"#475569", diagram:"diagrams/planes/plane-08-maintenance-lifecycle.png"},
 ];
 const PLANEBYID = Object.fromEntries(PLANES.map(p=>[p.id,p]));
 
@@ -399,16 +397,21 @@ let activePlanes = new Set();
 let selectedNode = null;
 
 const planeLegend = document.getElementById("planeLegend");
-PLANES.forEach(p=>{
+const planeRow1 = document.createElement("div");
+planeRow1.className = "plane-row";
+const planeRow2 = document.createElement("div");
+planeRow2.className = "plane-row";
+planeLegend.appendChild(planeRow1);
+planeLegend.appendChild(planeRow2);
+PLANES.forEach((p,i)=>{
   const tile = document.createElement("button");
   tile.type = "button";
   tile.className = "plane-tile";
   tile.dataset.plane = p.id;
   tile.style.borderLeftColor = p.color;
   tile.style.setProperty("--tile-color", p.color);
-  tile.innerHTML = '<span class="ptile-id" style="color:'+p.color+'">'+p.id+'</span>' +
-                    '<span class="ptile-label">'+p.label+'</span>';
-  planeLegend.appendChild(tile);
+  tile.innerHTML = '<span class="ptile-label" style="color:'+p.color+'">'+p.label+'</span>';
+  (i < 5 ? planeRow1 : planeRow2).appendChild(tile);
 });
 
 function render(){
@@ -496,7 +499,7 @@ const overlay = document.getElementById("overlay");
 const modalTitle = document.getElementById("modalTitle");
 const modalBody = document.getElementById("modalBody");
 function openPlaneModal(plane){
-  modalTitle.textContent = plane.id + " — " + plane.label + " (Plane Overview)";
+  modalTitle.textContent = plane.label + " (Overview)";
   modalBody.innerHTML = "";
   const img = document.createElement("img");
   img.alt = plane.label;
