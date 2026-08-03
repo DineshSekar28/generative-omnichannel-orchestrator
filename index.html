@@ -6,7 +6,7 @@
     <title>Generative Omnichannel AI Orchestrator - Architecture Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,700&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
 
     <meta name="description" content="Production-grade enterprise architecture for a multi-channel generative AI platform — 8 architectural planes, 22 microservices, spanning IVR, live agent assist, and design-time workflow authoring.">
 
@@ -120,6 +120,19 @@
             font-size: 0.9rem;
             color: var(--accent-orange);
             margin-top: 6px;
+        }
+
+        .author-byline {
+            position: fixed;
+            top: 14px;
+            right: 20px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            letter-spacing: .3px;
+            z-index: 20;
         }
  
         /* ============ MASTER DIAGRAM SECTION ============ */
@@ -586,6 +599,8 @@
     </style>
 </head>
 <body>
+
+    <div class="author-byline">Dinesh Sekar</div>
  
     <!-- ============ HEADER ============ -->
     <header>
@@ -596,7 +611,7 @@
             <span class="stat-badge"><strong>32</strong>System Nodes</span>
             <span class="stat-badge"><strong>3</strong>Types of Data Stores</span>
         </p>
-        <p class="usage-hint">Click services to view diagrams. Select flows to highlight specific paths.</p>
+        <p class="usage-hint">Double-Click services to view diagrams. Select flows to highlight specific paths.</p>
     </header>
  
     <!-- ============ MASTER DIAGRAM ============ -->
