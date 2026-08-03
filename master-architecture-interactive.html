@@ -84,7 +84,7 @@
     cursor:pointer;padding:0;}
   .view-btn:hover{background:#eef0ff;color:#4f46e5;}
 
-  .plane-rows{padding:6px 32px 4px;}
+  .plane-rows{padding:20px 32px 24px;border-top:1px solid var(--line);margin-top:8px;}
   .plane-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
   .plane-tile{position:relative;display:flex;align-items:center;width:200px;flex:0 0 auto;
     background:var(--card);border:1.5px solid var(--line);border-left-width:6px;
@@ -126,13 +126,13 @@
   <button id="resetBtn">Show all</button>
 </div>
 
-<div class="plane-rows" id="planeLegend"></div>
-
 <div class="canvas-wrap">
   <div id="canvas">
     <svg id="edges" width="2020" height="1180"></svg>
   </div>
 </div>
+
+<div class="plane-rows" id="planeLegend"></div>
 
 
 <div class="overlay" id="overlay">
