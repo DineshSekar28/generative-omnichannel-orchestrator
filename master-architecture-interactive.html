@@ -41,7 +41,9 @@
   .hint{padding:6px 32px 0;color:var(--muted);font-size:12px;max-width:920px;}
 
   .canvas-wrap{overflow:auto;padding:24px 32px 60px;}
-  #canvas{position:relative;width:2020px;height:1180px;}
+  .col-header-row{position:sticky;top:0;z-index:8;height:26px;width:2020px;background:var(--bg);}
+  .col-header-row .col-label{position:absolute;top:6px;}
+  #canvas{position:relative;width:2020px;height:960px;}
   svg#edges{position:absolute;left:0;top:0;pointer-events:none;}
 
   .col-label{position:absolute;top:-26px;font-size:10.5px;font-weight:700;
@@ -127,8 +129,9 @@
 </div>
 
 <div class="canvas-wrap">
+  <div class="col-header-row" id="colHeaderRow"></div>
   <div id="canvas">
-    <svg id="edges" width="2020" height="1180"></svg>
+    <svg id="edges" width="2020" height="960"></svg>
   </div>
 </div>
 
@@ -271,12 +274,14 @@ const posMap = {};
 nodes.forEach(n=>posMap[n.id]=pos(n));
 const nodeById = Object.fromEntries(nodes.map(n=>[n.id,n]));
 
+const colHeaderRow = document.getElementById("colHeaderRow");
 COLUMNS.forEach((name,i)=>{
   const d = document.createElement("div");
   d.className = "col-label";
   d.style.left = (MARGIN_L + i*COLW) + "px";
+  d.style.color = PLANES[i] ? PLANES[i].color : "var(--ink)";
   d.textContent = name;
-  canvas.appendChild(d);
+  colHeaderRow.appendChild(d);
 });
 
 // band divider + label above supporting services
@@ -477,12 +482,9 @@ let activePlanes = new Set();
 let selectedNode = null;
 
 const planeLegend = document.getElementById("planeLegend");
-const planeRow1 = document.createElement("div");
-planeRow1.className = "plane-row";
-const planeRow2 = document.createElement("div");
-planeRow2.className = "plane-row";
-planeLegend.appendChild(planeRow1);
-planeLegend.appendChild(planeRow2);
+const planeRow = document.createElement("div");
+planeRow.className = "plane-row";
+planeLegend.appendChild(planeRow);
 PLANES.forEach((p,i)=>{
   const tile = document.createElement("button");
   tile.type = "button";
@@ -491,7 +493,7 @@ PLANES.forEach((p,i)=>{
   tile.style.borderLeftColor = p.color;
   tile.style.setProperty("--tile-color", p.color);
   tile.innerHTML = '<span class="ptile-label" style="color:'+p.color+'">'+p.label+'</span>';
-  (i < 5 ? planeRow1 : planeRow2).appendChild(tile);
+  planeRow.appendChild(tile);
 });
 
 function render(){
@@ -567,10 +569,13 @@ document.querySelectorAll(".plane-tile").forEach(tile=>{
     selectedNode = null;
     activeFlows = new Set();
     const p = tile.dataset.plane;
-    const wasActive = activePlanes.has(p);
-    if(wasActive) activePlanes.delete(p); else activePlanes.add(p);
+    if(activePlanes.has(p)) activePlanes.delete(p); else activePlanes.add(p);
     render();
-    if(!wasActive) openPlaneModal(PLANEBYID[p]);
+  });
+  tile.addEventListener("dblclick", (e)=>{
+    e.preventDefault();
+    cancelAutoplay();
+    openPlaneModal(PLANEBYID[tile.dataset.plane]);
   });
 });
 document.getElementById("resetBtn").addEventListener("click", ()=>{
