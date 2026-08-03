@@ -13,8 +13,8 @@
     font-family:Inter,-apple-system,Segoe UI,Roboto,sans-serif;}
   .mono{font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace;}
 
-  header{padding:22px 32px 14px;text-align:center;}
-  h1{margin:0 0 10px;font-size:22px;}
+  header{padding:18px 32px 6px;text-align:center;}
+  h1{margin:0 0 6px;font-size:22px;}
   .subtitle{margin:0;color:var(--muted);font-size:13px;}
   .cta-line{margin:0;color:var(--ink);font-size:14px;font-weight:600;}
   .cta-line strong{color:#4f46e5;font-weight:800;}
@@ -45,7 +45,7 @@
   svg#edges{position:absolute;left:0;top:0;pointer-events:none;}
 
   .col-label{position:absolute;top:-26px;font-size:10.5px;font-weight:700;
-    text-transform:uppercase;letter-spacing:.6px;color:var(--muted);}
+    text-transform:uppercase;letter-spacing:.6px;color:var(--ink);}
   .band-label{position:absolute;font-size:11px;font-weight:700;color:var(--sup);
     text-transform:uppercase;letter-spacing:.6px;}
   .band-line{position:absolute;border-top:1px dashed var(--line);}
@@ -84,7 +84,7 @@
     cursor:pointer;padding:0;}
   .view-btn:hover{background:#eef0ff;color:#4f46e5;}
 
-  .plane-rows{padding:14px 32px 4px;}
+  .plane-rows{padding:6px 32px 4px;}
   .plane-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
   .plane-tile{position:relative;display:flex;align-items:center;width:200px;flex:0 0 auto;
     background:var(--card);border:1.5px solid var(--line);border-left-width:6px;
@@ -118,11 +118,6 @@
 </head>
 <body>
 
-<header>
-  <h1>End-to-End Interactive Flow Map</h1>
-  <p class="cta-line">Double-click any block to view interactive details about each node</p>
-</header>
-
 <div class="legend">
   <span class="chip" data-flow="cs"><span class="dot"></span>Command Studio</span>
   <span class="chip" data-flow="ivr"><span class="dot"></span>IVR</span>
@@ -139,7 +134,6 @@
   </div>
 </div>
 
-<p class="footnote">Diagrams are pulled from <code>diagrams/services/plane-0X/</code> in your repo — every internal service now has its real diagram linked. Data stores and external systems intentionally have no service diagram. This file should sit at your repo root as <code>master-architecture-interactive.html</code>, alongside the existing <code>diagrams/</code> folder — no changes needed to that folder's structure.</p>
 
 <div class="overlay" id="overlay">
   <div class="modal">
