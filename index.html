@@ -653,7 +653,7 @@ drawEdges();
 
 /* ============ State / persistence ============ */
 var LS={get:function(k,d){try{var v=JSON.parse(localStorage.getItem("goas."+k));return v===null||v===undefined?d:v;}catch(e){return d;}},set:function(k,v){try{localStorage.setItem("goas."+k,JSON.stringify(v));}catch(e){}}};
-var state={zoom:0.55};
+var state={zoom:0.85};
 var activeFlows=new Set(),activePlanes=new Set(),selectedNode=null;
 
 /* ============ Dock / legend / chips ============ */
@@ -926,7 +926,7 @@ runIntro();
     (saved.f||[]).forEach(function(f){activeFlows.add(f);});
     (saved.p||[]).forEach(function(p){activePlanes.add(p);});
   }
-  setZoom(LS.get("zoom",0.55));
+  setZoom(LS.get("zoom",0.85));
   var sc=LS.get("scroll",null);
   if(sc&&sc.l!=null){canvasScroll.scrollLeft=sc.l;canvasScroll.scrollTop=sc.t;}
   render();
