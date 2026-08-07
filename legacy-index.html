@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Omnichannel AI Orchestrator - Architecture Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,700&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+
+    <meta name="description" content="Production-grade enterprise architecture for a multi-channel generative AI platform — 8 architectural planes, 22 microservices, spanning IVR, live agent assist, and design-time workflow authoring.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Generative Omnichannel AI Orchestrator">
+    <meta property="og:description" content="Production-grade enterprise architecture for a multi-channel generative AI platform — 8 architectural planes, 22 microservices, spanning IVR, live agent assist, and design-time workflow authoring.">
+    <meta property="og:url" content="https://dineshsekar28.github.io/generative-omnichannel-orchestrator/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Generative Omnichannel AI Orchestrator">
+    <meta name="twitter:description" content="Production-grade enterprise architecture for a multi-channel generative AI platform — 8 architectural planes, 22 microservices, spanning IVR, live agent assist, and design-time workflow authoring.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+        :root {
+            --bg-dark: #ffffff;
+            --bg-card: #f8fafc;
+            --bg-hover: #e2e8f0;
+            --accent-blue: #003d82;
+            --accent-green: #16a34a;
+            --accent-purple: #9333ea;
+            --accent-orange: #ea580c;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border: #cbd5e1;
+        }
+ 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(160deg, #f5f8ff 0%, #cddbf5 45%, #a9c0e8 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            padding: 32px 24px;
+            line-height: 1.6;
+        }
+ 
+        /* ============ HEADER ============ */
+        header {
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+ 
+        h1 {
+            font-size: 2.2rem;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+ 
+        .subtitle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+ 
+        .stat-badge {
+            position: relative;
+            padding: 0 22px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            letter-spacing: .2px;
+        }
+ 
+        .stat-badge strong {
+            color: var(--accent-blue);
+            font-size: 1.25em;
+            font-weight: 800;
+            margin-right: 5px;
+        }
+ 
+        .stat-badge:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+        }
+ 
+        .tagline {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+            margin-bottom: 6px;
+        }
+ 
+        .stat-badge-tag {
+            color: var(--accent-blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: .8px;
+        }
+ 
+        .usage-hint {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent-orange);
+            margin-top: 6px;
+        }
+
+        .author-byline {
+            position: fixed;
+            top: 14px;
+            right: 20px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            letter-spacing: .3px;
+            z-index: 20;
+        }
+
+        .byline-label {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 0.72rem;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-right: 5px;
+        }
+ 
+        /* ============ MASTER DIAGRAM SECTION ============ */
+        .section {
+            margin-bottom: 48px;
+        }
+ 
+        .section-title {
+            font-size: 1.6rem;
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+ 
+        .section-icon {
+            font-size: 1.8rem;
+        }
+ 
+        .master-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+        }
+ 
+        .diagram-placeholder {
+            background: #f0f9ff;
+            border: 2px solid var(--accent-blue);
+            border-radius: 6px;
+            padding: 20px;
+            color: var(--text-sub);
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+ 
+        .diagram-placeholder:hover {
+            background: #e0f2fe;
+            border-color: #003d82;
+        }
+ 
+        .diagram-placeholder img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+ 
+        .master-info {
+            background: #eff6ff;
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-top: 16px;
+        }
+ 
+        /* ============ VISUAL FLOW DIAGRAM ============ */
+        .flow-diagram {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+ 
+        .flow-diagram svg {
+            min-width: 100%;
+            height: auto;
+        }
+ 
+        .plane-box {
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+ 
+        .plane-box:hover {
+            opacity: 0.8;
+        }
+ 
+        .plane-box:hover rect {
+            filter: brightness(0.9);
+        }
+ 
+        /* ============ PLANE SECTIONS ============ */
+        .planes-container {
+            display: grid;
+            gap: 24px;
+        }
+ 
+        .plane-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+ 
+        .plane-section:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 16px rgba(56, 189, 248, 0.1);
+        }
+ 
+        /* ============ PLANE HEADER (CLICKABLE) ============ */
+        .plane-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dbeafe, #ddf4f2);
+            border-bottom: 2px solid var(--border);
+            user-select: none;
+            transition: background 0.2s;
+        }
+ 
+        .plane-header:hover {
+            background: linear-gradient(135deg, #bfdbfe, #bff4ed);
+        }
+ 
+        .plane-title-group {
+            flex: 1;
+        }
+ 
+        .plane-number {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+        }
+ 
+        .plane-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+ 
+        .plane-emoji {
+            font-size: 1.4rem;
+            margin-right: 12px;
+        }
+ 
+        .plane-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+ 
+        /* ============ PLANE CONTENT ============ */
+        .plane-content {
+            display: block;
+            background: #f5f9fc;
+            padding: 24px;
+        }
+ 
+ 
+ 
+        /* Plane Diagram */
+        .plane-diagram-container {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+ 
+        .plane-diagram-label {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+ 
+        .diagram-placeholder.plane-diagram {
+            padding: 20px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+ 
+        /* Services List */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+ 
+        .service-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+ 
+        .service-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-blue);
+            transition: width 0.2s ease;
+        }
+ 
+        .service-card:hover {
+            background: #f0f9ff;
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+        }
+ 
+        .service-card:hover::before {
+            width: 8px;
+        }
+ 
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+ 
+        .service-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            flex: 1;
+        }
+ 
+        .service-tag {
+            font-family: monospace;
+            font-size: 0.7rem;
+            background: var(--accent-blue);
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+ 
+        .service-codebase {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #003d82;
+            background: #eff6ff;
+            padding: 4px 8px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            display: block;
+            overflow-x: auto;
+            border: 1px solid #bfdbfe;
+        }
+ 
+        .service-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+ 
+        .view-diagram-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #eff6ff;
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+ 
+        .view-diagram-btn:hover {
+            background: var(--accent-blue);
+            color: #ffffff;
+        }
+ 
+        /* ============ DATA STORES SECTION ============ */
+        .datastores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+ 
+        .datastore-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+ 
+        .datastore-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+        }
+ 
+        .datastore-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, #003d82, #9333ea);
+        }
+ 
+        .datastore-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+ 
+        .datastore-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+ 
+        .datastore-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+ 
+        /* ============ MODAL/DIAGRAM VIEWER ============ */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.7);
+            animation: fadeIn 0.3s ease;
+        }
+ 
+        .modal.open {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+ 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+ 
+        .modal-content {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.2);
+        }
+ 
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+ 
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-sub);
+            transition: color 0.2s;
+        }
+ 
+        .modal-close:hover {
+            color: var(--accent-blue);
+        }
+ 
+        .modal-diagram {
+            margin-top: 32px;
+            text-align: center;
+        }
+ 
+        .modal-diagram img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+ 
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+ 
+            h1 {
+                font-size: 1.6rem;
+            }
+ 
+            .section-title {
+                font-size: 1.3rem;
+            }
+ 
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+ 
+            .plane-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+ 
+            .expand-icon {
+                align-self: flex-end;
+                margin-top: -32px;
+            }
+        }
+ 
+        /* ============ FOOTER ============ */
+        footer {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 24px;
+            margin-top: 48px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+ 
+        footer a {
+            color: #003d82;
+            text-decoration: none;
+            font-weight: 500;
+        }
+ 
+        footer a:hover {
+            text-decoration: underline;
+            color: #0972ba;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="author-byline"><span class="byline-label">Architected by</span> Dinesh Sekar</div>
+ 
+    <!-- ============ HEADER ============ -->
+    <header>
+        <h1>Generative Omnichannel AI Orchestrator Suite</h1>
+        <p class="tagline"><strong>Production-Grade Enterprise Architecture</strong></p>
+        <p class="subtitle">
+            <span class="stat-badge"><strong>8</strong>Architectural Planes</span>
+            <span class="stat-badge"><strong>32</strong>System Nodes</span>
+            <span class="stat-badge"><strong>3</strong>Types of Data Stores</span>
+        </p>
+        <p class="usage-hint">Double-Click services to view diagrams. Select flows to highlight specific paths.</p>
+    </header>
+ 
+    <!-- ============ MASTER DIAGRAM ============ -->
+    <section class="section">
+        <div class="master-container" style="padding: 0 !important; background: transparent !important; border: none !important; text-align: left !important;">
+            <div class="diagram-placeholder" style="background: transparent !important; border: none !important; padding: 0 !important; margin: 0 !important; text-align: left !important;">
+                <iframe 
+                    id="masterArchitectureFrame"
+                    src="./master-architecture-interactive.html" 
+                    style="width: 100%; height: 900px; border: 1px solid #cbd5e1; border-radius: 6px; display: block; background: white;"
+                    title="Interactive Master Architecture Diagram"
+                    allowfullscreen
+                    scrolling="yes">
+                </iframe>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const iframe = document.getElementById("masterArchitectureFrame");
+                console.log("✓ Master Architecture iframe element found:", !!iframe);
+                if (!iframe) {
+                    console.error("❌ Master Architecture iframe not found in DOM");
+                    return;
+                }
+                iframe.onload = function() {
+                    console.log("✅ Master Architecture iframe loaded successfully");
+                };
+                iframe.onerror = function() {
+                    console.error("❌ Failed to load Master Architecture iframe");
+                };
+            });
+        </script>
+    </section>
+        </div>
+    </div>
+ 
+    <footer>
+        <p>• Generative Omnichannel AI Orchestrator Suite •</p>
+        <p style="margin-top: 12px;">
+            <a href="https://github.com/DineshSekar28/generative-omnichannel-orchestrator" target="_blank" rel="noopener">GitHub Repository</a>
+            <span style="color: var(--border); margin: 0 8px;">|</span>
+            <span>v1.0 (July 2026)</span>
+        </p>
+    </footer>
+ 
+</body>
+</html>

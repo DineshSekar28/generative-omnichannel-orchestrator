@@ -29,8 +29,9 @@ A single static diagram can show *what exists*. It can't show *how a request act
 
 ```
 generative-omnichannel-orchestrator/
-├── index.html                          # Landing page — embeds the flow map
+├── index.html                          # Live landing page — architecture portal
 ├── master-architecture-interactive.html # The interactive flow map itself
+├── legacy-index.html                   # Previous landing page (embedded the flow map via iframe)
 ├── README.md
 └── diagrams/
     ├── planes/                         # 8 plane-level overview diagrams
@@ -53,7 +54,7 @@ generative-omnichannel-orchestrator/
         └── plane-08/  (2 services)
 ```
 
-`index.html` embeds `master-architecture-interactive.html` in an iframe — the two are meant to be deployed together, at the repo root, with the `diagrams/` folder alongside them exactly as structured above. All image references are relative paths, so nothing needs reconfiguring beyond keeping that folder layout intact.
+`index.html` is the live architecture portal, deployed at the repo root alongside the `diagrams/` folder exactly as structured above. All image references are relative paths, so nothing needs reconfiguring beyond keeping that folder layout intact. `master-architecture-interactive.html` remains available standalone as the interactive flow map; `legacy-index.html` is the previous landing page that embedded it via iframe.
 
 ## The 8 planes
 
