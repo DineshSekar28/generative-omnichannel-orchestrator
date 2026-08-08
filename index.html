@@ -136,21 +136,21 @@ h1{font-family:var(--font-display);font-weight:700;letter-spacing:-.025em;line-h
 .col-header-track{position:sticky;top:0;z-index:30;height:30px;background:#fff;border-bottom:1px solid var(--border)}
 .col-label{position:absolute;top:8px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
 .canvas-stage{position:relative;transform-origin:0 0}
-.canvas-content{position:absolute;top:0;left:0;transform:scale(var(--zoom));transform-origin:0 0;width:2340px;height:1080px}
+.canvas-content{position:absolute;top:0;left:0;transform:scale(var(--zoom));transform-origin:0 0;width:2340px;height:1260px}
 svg#edges{position:absolute;left:0;top:0;pointer-events:none}
 @keyframes flowArrowAnim{0%{offset-distance:0%}100%{offset-distance:100%}}
 .flow-arrow{animation:flowArrowAnim 4s linear infinite;opacity:1;filter:drop-shadow(0 0 3px currentColor)}
-#canvas{position:relative;width:2340px;height:1080px}
+#canvas{position:relative;width:2340px;height:1260px}
 .band-line{position:absolute;border-top:1px dashed rgba(29,78,216,.45)}
 .band-label{position:absolute;font-size:10px;font-weight:700;color:var(--sup);text-transform:uppercase;letter-spacing:.08em}
-.node{position:absolute;width:196px;background:rgba(255,255,255,.94);border:1px solid #dbe2ee;border-radius:12px;
+.node{position:absolute;width:196px;background:#fff;border:1px solid #dbe2ee;border-radius:12px;
   padding:9px 26px 9px 12px;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.05);transition:opacity .22s,filter .22s,box-shadow .22s,transform .12s,border-color .2s}
 .node:hover{transform:translateY(-1px);border-color:var(--border-strong);box-shadow:0 6px 16px rgba(15,23,42,.1)}
 .node .name{font-size:12.5px;font-weight:600;line-height:1.3;color:var(--fg);letter-spacing:.002em}
 .node .sub{font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.3}
 .node .bars{position:absolute;left:0;top:0;bottom:0;width:5px;border-radius:12px 0 0 12px;overflow:hidden;display:flex;flex-direction:column}
 .node .bars span{flex:1}
-.node.user{border-radius:16px;text-align:center;width:150px;padding:14px 10px 11px;background:rgba(255,255,255,.97)}
+.node.user{border-radius:16px;text-align:center;width:150px;padding:14px 10px 11px;background:#fff}
 .node.user .name{font-size:12px;line-height:1.2}
 .node.user .sub{font-size:10px}
 .node .avatar{width:38px;height:38px;margin:0 auto 7px;border-radius:50%;display:grid;place-items:center;box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--flow,var(--cs))}
@@ -277,7 +277,7 @@ footer{border-top:1px solid var(--border);margin-top:24px;backdrop-filter:blur(1
 
 <nav data-od-id="nav" aria-label="Primary">
   <a class="brand" href="#hero" aria-label="Orchestrator Suite home">
-    <span class="monogram">GOAS</span>
+    <span class="monogram">DS</span>
     <span class="brand-name">Orchestrator Suite<small>Enterprise Architecture</small></span>
   </a>
   <div class="nav-right">
@@ -413,7 +413,7 @@ footer{border-top:1px solid var(--border);margin-top:24px;backdrop-filter:blur(1
 
 <script>
 /* ============ Data ============ */
-var COLW=232,ROWH=70,MARGIN_L=40,MARGIN_T=40,BOXW=196,CW=2340,CH=1080;
+var COLW=232,ROWH=110,MARGIN_L=40,MARGIN_T=40,BOXW=196,CW=2340,CH=1260;
 var COLUMNS=["Users","Frontend","Gateway","Decision & Orch","MCP & Context","Intelligence","Data Stores","Monitoring","Outputs"];
 var S="diagrams/services/",A="diagrams/";
 var NODES=[
@@ -498,8 +498,8 @@ NODES.forEach(function(n){
   el.tabIndex=0;el.setAttribute("role","button");
   if(n.plane&&PLANEBYID[n.plane]){
     var pc=PLANEBYID[n.plane].color;
-    el.style.background="linear-gradient(180deg,"+rgbA(pc,0.12)+",rgba(255,255,255,.94))";
-    el.style.borderColor=rgbA(pc,0.5);
+    el.style.background="#fff";
+    el.style.borderColor=rgbA(pc,0.65);
   }
   var bars=document.createElement("div");bars.className="bars";
   n.flows.forEach(function(f){var s=document.createElement("span");s.style.background=FLOWCOLOR[f];bars.appendChild(s);});
